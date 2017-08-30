@@ -1,0 +1,36 @@
+{
+    "name": "rygilles/openapi-php-client-generator",
+    "description": "Generate PHP client library from OpenAPI schema.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "OpenAPI",
+        "Schema",
+        "PHP",
+        "Generator"
+    ],
+    "homepage": "http://github.com/rygilles/openapi-php-client-generator",
+    "authors": [
+        {
+            "name": "Ryan Gilles",
+            "email": "ryan@e-monsite.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0 || ~5.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Rygilles\\OpenApiPhpClientGenerator": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rygilles\\OpenApiPhpClientGenerator\\Tests\\": "tests/"
+        }
+    }
+}
