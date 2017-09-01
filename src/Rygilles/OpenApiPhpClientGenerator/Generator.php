@@ -73,8 +73,9 @@ class Generator
 		// Load the OpenAPI schema file
 		$this->loadOpenApiFile();
 
+		// Clear the output path
+		$this->clearOutput();
 
-		// @todo Step : Clear the output path
 		// @todo Step : Make the root directory
 		// @todo Step : Root directory : Make README.md
 		// @todo Step : Root directory : Make LICENSE.md
@@ -131,5 +132,13 @@ class Generator
 		if (!is_null($this->outputInterface)) {
 			$this->outputInterface->writeln('<info>File decoded</info>');
 		}
+	}
+
+	/**
+	 * Clear the output folder / Create folder if not defined yet
+	 */
+	protected function clearOutput()
+	{
+		print_r(glob($this->outputPath), true);
 	}
 }
