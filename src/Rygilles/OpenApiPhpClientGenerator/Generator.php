@@ -150,7 +150,7 @@ class Generator
 				$this->outputInterface->writeln('<info>Directory ' . $this->outputPath . ' already exists</info>');
 			}
 		}
-*/
-		print_r(glob($this->outputPath . '/*'), true);
+		*/
+		echo(print_r(glob($this->outputPath . '/*'), true));
 	}
 }
