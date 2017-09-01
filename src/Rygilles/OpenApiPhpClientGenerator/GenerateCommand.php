@@ -39,8 +39,9 @@ class GenerateCommand extends Command
 		$outputPath = '';
 		$options = [];
 
-		$generator = new Generator($openApiFilePath, $outputPath, $options);
+		$generator = new Generator($openApiFilePath, $outputPath, $options, $this);
+		$generator->generate();
 
-		$output->writeln('<info>Test...</info>');
+		$output->writeln('<info>Generation complete</info>');
 	}
 }

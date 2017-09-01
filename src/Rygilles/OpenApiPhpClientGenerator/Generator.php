@@ -2,6 +2,9 @@
 
 namespace Rygilles\OpenApiPhpClientGenerator;
 
+use Symfony\Component\Console\Output\OutputInterface;
+
+
 /**
  * Class Generator
  * @package Rygilles\OpenApiGenerator
@@ -32,6 +35,13 @@ class Generator
 	];
 
 	/**
+	 * Output interface if running binary
+	 *
+	 * @var Command
+	 */
+	protected $outputInterface;
+
+	/**
 	 * OpenAPI File content decoded
 	 *
 	 * @var mixed
@@ -44,12 +54,14 @@ class Generator
 	 * @param string $openApiFilePath Path of the OpenAPI file
 	 * @param string $outputPath Path where the PHP client library files will be generated
 	 * @param mixed[] $options Array of options
+	 * @param OutputInterface $outputInterface Output interface if running binary
 	 */
-	public function __construct($openApiFilePath, $outputPath, $options = [])
+	public function __construct($openApiFilePath, $outputPath, $options = [], $outputInterface = null)
 	{
 		$this->openApiFilePath = $openApiFilePath;
 		$this->outputPath = $outputPath;
 		$this->options = array_merge($this->options, $options);
+		$this->outputInterface = $outputInterface;
 	}
 
 	/**
@@ -85,6 +97,9 @@ class Generator
 	 */
 	protected function loadOpenApiFile()
 	{
+		if (!is_null($this->outputInterface)) {
+			$this->outputInterface->writeln('<info>Loading OpenAPI file</info>');
+		}
 		$this->openApiFileContent = json_decode($this->openApiFilePath);
 	}
 }
