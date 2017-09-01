@@ -124,6 +124,7 @@ class Generator
 		{
 			$this->outputInterface->writeln('<info>Can not decode JSON, try YAML</info>');
 			$content = Yaml::parse($fileContent, Yaml::PARSE_OBJECT | Yaml::PARSE_OBJECT_FOR_MAP | Yaml::PARSE_DATETIME | Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
+			die(print_r($content, true));
 			$this->openApiFileContent = json_decode($content);
 		}
 
