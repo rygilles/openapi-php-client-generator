@@ -1,6 +1,6 @@
 <?php
 
-namespace Rygilles\OpenApiGenerator;
+namespace Rygilles\OpenApiPhpClientGenerator;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
