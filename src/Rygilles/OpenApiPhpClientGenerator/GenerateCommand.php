@@ -5,6 +5,7 @@ namespace Rygilles\OpenApiPhpClientGenerator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Rygilles\OpenApiGenerator\Generator;
 
 
 class GenerateCommand extends Command
@@ -30,6 +31,12 @@ class GenerateCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$openApiFilePath = $input->getArgument('source');
+		$outputPath = '';
+		$options = [];
+
+		$generator = new Generator($openApiFilePath, $outputPath, $options);
+
 		$output->writeln('<info>Test...</info>');
 	}
 }
