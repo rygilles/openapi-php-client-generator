@@ -73,6 +73,7 @@ class Generator
 		// Load the OpenAPI schema file
 		$this->loadOpenApiFile();
 
+		die('ffff');
 		// Clear the output path
 		$this->clearOutput();
 
