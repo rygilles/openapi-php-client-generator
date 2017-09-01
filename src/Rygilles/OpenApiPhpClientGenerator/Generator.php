@@ -3,6 +3,7 @@
 namespace Rygilles\OpenApiPhpClientGenerator;
 
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 
 /**
@@ -37,7 +38,7 @@ class Generator
 	/**
 	 * Output interface if running binary
 	 *
-	 * @var Command
+	 * @var OutputInterface
 	 */
 	protected $outputInterface;
 
@@ -69,10 +70,10 @@ class Generator
 	 */
 	public function generate()
 	{
-		// @todo Step : Load the OpenAPI schema file
+		// Load the OpenAPI schema file
 		$this->loadOpenApiFile();
 
-		// @todo Step : Parse the file using the right parser (json or yaml)
+
 		// @todo Step : Clear the output path
 		// @todo Step : Make the root directory
 		// @todo Step : Root directory : Make README.md
@@ -100,6 +101,24 @@ class Generator
 		if (!is_null($this->outputInterface)) {
 			$this->outputInterface->writeln('<info>Loading OpenAPI file</info>');
 		}
-		$this->openApiFileContent = json_decode($this->openApiFilePath);
+
+		$fileContent = file_get_contents($this->openApiFilePath);
+
+		// Parse the file using the right parser (json or yaml)
+
+		$jsonException = null;
+
+		try {
+			$this->openApiFileContent = json_decode($fileContent);
+		} catch (\Exception $e) {
+			$jsonException = $e;
+		}
+
+		if (!is_null($jsonException))
+		{
+			$this->outputInterface->writeln('<info>Can not decode JSON, try YAML</info>');
+			$content = Yaml::parse($fileContent, Yaml::PARSE_OBJECT | Yaml::PARSE_OBJECT_FOR_MAP | Yaml::PARSE_DATETIME | Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
+			$this->openApiFileContent = json_decode($content);
+		}
 	}
 }
