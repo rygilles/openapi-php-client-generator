@@ -108,6 +108,8 @@ class Generator
 
 		$jsonException = null;
 
+		$this->outputInterface->writeln('<info>Decode JSON from OpenAPI file</info>');
+
 		try {
 			$this->openApiFileContent = json_decode($fileContent);
 		} catch (\Exception $e) {
