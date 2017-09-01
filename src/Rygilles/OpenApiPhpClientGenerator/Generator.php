@@ -150,6 +150,6 @@ class Generator
 			}
 		}
 
-		print_r(glob($this->outputPath), true);
+		print_r(glob($this->outputPath . '/*'), true);
 	}
 }
