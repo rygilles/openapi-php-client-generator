@@ -32,6 +32,13 @@ class Generator
 	];
 
 	/**
+	 * OpenAPI File content decoded
+	 *
+	 * @var mixed
+	 */
+	protected $openApiFileContent;
+
+	/**
 	 * Generator constructor.
 	 *
 	 * @param string $openApiFilePath Path of the OpenAPI file
@@ -51,6 +58,8 @@ class Generator
 	public function generate()
 	{
 		// @todo Step : Load the OpenAPI schema file
+		$this->loadOpenApiFile();
+
 		// @todo Step : Parse the file using the right parser (json or yaml)
 		// @todo Step : Clear the output path
 		// @todo Step : Make the root directory
@@ -69,5 +78,13 @@ class Generator
 		// @todo Step : "%libNamespace% subdirectory : Make "%libName%Client.php"
 		// @todo Step : Make "tests" directory
 
+	}
+
+	/**
+	 * Load the OpenAPI file content
+	 */
+	protected function loadOpenApiFile()
+	{
+		$this->openApiFileContent = json_decode($this->openApiFilePath);
 	}
 }
