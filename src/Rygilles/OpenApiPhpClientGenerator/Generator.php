@@ -147,6 +147,7 @@ class Generator
 				$this->outputInterface->writeln('<info>Directory ' . $this->outputPath . ' already exists</info>');
 			}
 		}
+		die('merde');
 		print_r(glob($this->outputPath), true);
 	}
 }
