@@ -104,13 +104,13 @@ class Generator
 
 		$fileContent = file_get_contents($this->openApiFilePath);
 
-		echo($fileContent);
-
 		// Parse the file using the right parser (json or yaml)
 
 		$jsonException = null;
 
-		$this->outputInterface->writeln('<info>Decode JSON from OpenAPI file</info>');
+		if (!is_null($this->outputInterface)) {
+			$this->outputInterface->writeln('<info>Decode JSON from OpenAPI file</info>');
+		}
 
 		try {
 			$this->openApiFileContent = json_decode($fileContent);
@@ -122,12 +122,14 @@ class Generator
 
 		if ($jsonLastError != JSON_ERROR_NONE)
 		{
-			$this->outputInterface->writeln('<info>Can not decode JSON, try YAML</info>');
-			$content = Yaml::parse($fileContent, Yaml::PARSE_OBJECT | Yaml::PARSE_OBJECT_FOR_MAP | Yaml::PARSE_DATETIME | Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
-			die(print_r($content, true));
-			$this->openApiFileContent = json_decode($content);
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Can not decode JSON, try YAML</info>');
+			}
+			$this->openApiFileContent = Yaml::parse($fileContent, Yaml::PARSE_OBJECT | Yaml::PARSE_OBJECT_FOR_MAP | Yaml::PARSE_DATETIME | Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
 		}
 
-		die($this->openApiFileContent);
+		if (!is_null($this->outputInterface)) {
+			$this->outputInterface->writeln('<info>File decoded</info>');
+		}
 	}
 }
