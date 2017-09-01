@@ -1,6 +1,6 @@
 <?php
 
-namespace Rygilles\OpenApiGenerator;
+namespace Rygilles\OpenApiPhpClientGenerator;
 
 /**
  * Class Generator
