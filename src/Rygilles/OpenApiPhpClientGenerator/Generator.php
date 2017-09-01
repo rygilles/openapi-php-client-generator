@@ -139,6 +139,10 @@ class Generator
 	 */
 	protected function clearOutput()
 	{
+		if (!file_exists($this->outputPath)) {
+			die('making '.$this->outputPath);
+			//mkdir($this->outputPath, 0755, true);
+		};
 		print_r(glob($this->outputPath), true);
 	}
 }
