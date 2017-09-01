@@ -142,7 +142,11 @@ class Generator
 		if (!file_exists($this->outputPath)) {
 			die('making '.$this->outputPath);
 			//mkdir($this->outputPath, 0755, true);
-		};
+		} else {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Directory ' . $this->outputPath . ' already exists</info>');
+			}
+		}
 		print_r(glob($this->outputPath), true);
 	}
 }
