@@ -104,6 +104,8 @@ class Generator
 
 		$fileContent = file_get_contents($this->openApiFilePath);
 
+		echo($fileContent);
+
 		// Parse the file using the right parser (json or yaml)
 
 		$jsonException = null;
