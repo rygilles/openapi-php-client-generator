@@ -36,8 +36,8 @@ class GenerateCommand extends Command
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$openApiFilePath = $input->getArgument('source');
-		$outputPath = '';
-		$options = [];
+		$outputPath = $input->getArgument('output');
+		$options = $input->getArgument('options');
 
 		$generator = new Generator($openApiFilePath, $outputPath, $options, $output);
 		$generator->generate();

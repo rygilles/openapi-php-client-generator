@@ -73,7 +73,6 @@ class Generator
 		// Load the OpenAPI schema file
 		$this->loadOpenApiFile();
 
-		die('ffff');
 		// Clear the output path
 		$this->clearOutput();
 
@@ -148,7 +147,7 @@ class Generator
 				$this->outputInterface->writeln('<info>Directory ' . $this->outputPath . ' already exists</info>');
 			}
 		}
-		die('merde');
+
 		print_r(glob($this->outputPath), true);
 	}
 }
