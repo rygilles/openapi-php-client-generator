@@ -3,6 +3,7 @@
 namespace Rygilles\OpenApiPhpClientGenerator;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Rygilles\OpenApiGenerator\Generator;
@@ -19,7 +20,10 @@ class GenerateCommand extends Command
 	{
 		$this
 			->setName('generate')
-			->setDescription('Generate PHP client files.');
+			->setDescription('Generate PHP client files.')
+			->addArgument('source', InputArgument::REQUIRED, 'The OpenAPI file path')
+			->addArgument('output', InputArgument::REQUIRED, 'The output folder path')
+			->addArgument('options', InputArgument::OPTIONAL, 'Options');
 	}
 
 	/**
