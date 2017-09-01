@@ -122,5 +122,7 @@ class Generator
 			$content = Yaml::parse($fileContent, Yaml::PARSE_OBJECT | Yaml::PARSE_OBJECT_FOR_MAP | Yaml::PARSE_DATETIME | Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
 			$this->openApiFileContent = json_decode($content);
 		}
+
+		die($this->openApiFileContent);
 	}
 }
