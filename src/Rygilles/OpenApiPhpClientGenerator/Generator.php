@@ -99,7 +99,7 @@ class Generator
 	protected function loadOpenApiFile()
 	{
 		if (!is_null($this->outputInterface)) {
-			$this->outputInterface->writeln('<info>Loading OpenAPI file</info>');
+			$this->outputInterface->writeln('<info>Loading OpenAPI file : ' . $this->openApiFilePath . '</info>');
 		}
 
 		$fileContent = file_get_contents($this->openApiFilePath);
