@@ -118,7 +118,9 @@ class Generator
 			$jsonException = $e;
 		}
 
-		if (!is_null($jsonException))
+		$jsonLastError = json_last_error();
+
+		if ($jsonLastError != JSON_ERROR_NONE)
 		{
 			$this->outputInterface->writeln('<info>Can not decode JSON, try YAML</info>');
 			$content = Yaml::parse($fileContent, Yaml::PARSE_OBJECT | Yaml::PARSE_OBJECT_FOR_MAP | Yaml::PARSE_DATETIME | Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
