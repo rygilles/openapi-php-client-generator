@@ -140,8 +140,10 @@ class Generator
 	protected function clearOutput()
 	{
 		if (!file_exists($this->outputPath)) {
-			die('making '.$this->outputPath);
-			//mkdir($this->outputPath, 0755, true);
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Making folder ' . $this->outputPath . '</info>');
+			}
+			mkdir($this->outputPath, 0755, true);
 		} else {
 			if (!is_null($this->outputInterface)) {
 				$this->outputInterface->writeln('<info>Directory ' . $this->outputPath . ' already exists</info>');
