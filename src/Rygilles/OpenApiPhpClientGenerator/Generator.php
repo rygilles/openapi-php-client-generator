@@ -76,6 +76,10 @@ class Generator
 		// Make the output directory
 		$this->makeOutputDirectory();
 
+		// Gather "Manager:*" and "Resource:*" tags
+		$tags = $this->getOperationsTags();
+		die(print_r($tags, true));
+
 		// @todo Step : Root directory : Make README.md
 		// @todo Step : Root directory : Make LICENSE.md
 		// @todo Step : Root directory : Make .gitignore
@@ -91,6 +95,23 @@ class Generator
 		// @todo Step : "%libNamespace% subdirectory : Make "%libName%Client.php"
 		// @todo Step : Make "tests" directory
 
+	}
+
+	protected function getOperationsTags()
+	{
+		$tags = [];
+
+		foreach ($this->openApiFileContent['paths'] as $path) {
+			foreach ($path as $httpMethod => $operation) {
+				if (isset($operation['tags'])) {
+					foreach ($operation['tags'] as $tag) {
+						$tags[] = $tag;
+					}
+				}
+			}
+		}
+
+		return $tags;
 	}
 
 	/**
@@ -113,7 +134,7 @@ class Generator
 		}
 
 		try {
-			$this->openApiFileContent = json_decode($fileContent);
+			$this->openApiFileContent = json_decode($fileContent, true);
 		} catch (\Exception $e) {
 			$jsonException = $e;
 		}
