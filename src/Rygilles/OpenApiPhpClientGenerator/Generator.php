@@ -207,7 +207,7 @@ class Generator
 
 			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Managers' . DIRECTORY_SEPARATOR . $managerName . '.php';
 
-			file_put_contents($filePath, $this->resourceTemplate->render($data));
+			file_put_contents($filePath, $this->managerTemplate->render($data));
 		}
 	}
 
@@ -216,7 +216,17 @@ class Generator
 	 */
 	protected function writeResourcesTemplates()
 	{
+		foreach ($this->resourcesData as $resourceName => $resourceData) {
+			$data = [
+				'className' => $resourceName,
+				'namespace' => $this->namespace . '\Resources',
+				'operations' => $resourceData['operations']
+			];
 
+			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $resourceName . '.php';
+
+			file_put_contents($filePath, $this->resourceTemplate->render($data));
+		}
 	}
 
 	/**
@@ -253,18 +263,6 @@ class Generator
 			'className' => ucfirst($resourceTag),
 			'operations' => []
 		];
-	}
-
-	/**
-	 * Parse Resource path operation
-	 *
-	 * @param string $resourceTag Resource tag extracted
-	 * @param string $path Api path
-	 * @param mixed[] $operation OpenAPI Operation object
-	 */
-	protected function parseResourcePathOperation($resourceTag, $path, $operation)
-	{
-
 	}
 
 	/**
