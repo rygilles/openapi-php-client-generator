@@ -1,0 +1,3 @@
+{% for parameterName, parameter in parameters %}
+${{ parameterName}}{% if not loop.last %},{% endif %}}
+{% endif %}

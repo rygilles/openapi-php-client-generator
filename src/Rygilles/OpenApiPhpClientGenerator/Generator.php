@@ -207,6 +207,10 @@ class Generator
 
 			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Managers' . DIRECTORY_SEPARATOR . $managerName . 'Manager.php';
 
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
+			}
+
 			file_put_contents($filePath, $this->managerTemplate->render($data));
 		}
 	}
@@ -224,6 +228,10 @@ class Generator
 			];
 
 			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $resourceName . 'Resource.php';
+
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
+			}
 
 			file_put_contents($filePath, $this->resourceTemplate->render($data));
 		}

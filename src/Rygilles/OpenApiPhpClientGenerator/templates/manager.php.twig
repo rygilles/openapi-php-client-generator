@@ -12,7 +12,7 @@ class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
 {
 {% if operations is defined %}
 {% for op in operations %}
-    public function {{ op.operationId }}()
+    public function {{ op.operationId }}({% if op.parameters is defined %}{% include 'includes/functionDefinitionParameters.php.twig' with {'parameters': op.parameters} %} {%  endif %})
     {
 
     }
