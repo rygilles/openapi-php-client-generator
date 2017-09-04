@@ -347,7 +347,7 @@ class Generator
 			mkdir($resourcesDirectoryPath ,0755, true);
 		}
 
-		$managersDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Resources";
+		$managersDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Managers";
 		if (file_exists($managersDirectoryPath)) {
 			if (!is_null($this->outputInterface)) {
 				$this->outputInterface->writeln('<info>Managers output directory already created (' . $managersDirectoryPath . ')</info>');
