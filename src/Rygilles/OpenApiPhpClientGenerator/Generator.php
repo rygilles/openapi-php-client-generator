@@ -105,7 +105,9 @@ class Generator
 			foreach ($path as $httpMethod => $operation) {
 				if (isset($operation['tags'])) {
 					foreach ($operation['tags'] as $tag) {
-						$tags[] = $tag;
+						if (!in_array($tag, $tags)) {
+							$tags[] = $tag;
+						}
 					}
 				}
 			}
