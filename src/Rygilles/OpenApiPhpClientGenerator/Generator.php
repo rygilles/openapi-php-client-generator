@@ -4,6 +4,8 @@ namespace Rygilles\OpenApiPhpClientGenerator;
 
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
+use Twig_Environment;
+use Twig_TemplateWrapper;
 
 
 /**
@@ -48,6 +50,41 @@ class Generator
 	 * @var mixed
 	 */
 	protected $openApiFileContent;
+
+	/**
+	 * Generated managers data
+	 *
+	 * @var mixed[]
+	 */
+	protected $outputManagersData = [];
+
+	/**
+	 * Generated resources data
+	 *
+	 * @var mixed[]
+	 */
+	protected $outputResourcesData = [];
+
+	/**
+	 * Twig templates environment
+	 *
+	 * @var Twig_Environment
+	 */
+	protected $twigEnv;
+
+	/**
+	 * Twig resource template
+	 *
+	 * @var Twig_TemplateWrapper
+	 */
+	protected $resourceTemplate;
+
+	/**
+	 * Twig manager template
+	 *
+	 * @var Twig_TemplateWrapper
+	 */
+	protected $managerTemplate;
 
 	/**
 	 * Generator constructor.
@@ -97,7 +134,15 @@ class Generator
 			}
 		}
 
-		die(print_r($managerTags, true));
+		// Load template filesystem
+		$this->loadTemplates();
+
+		$data = [
+			'className' => 'MonTest',
+			'namespace' => 'Test\Test'
+		];
+		
+		die($this->resourceTemplate->render($data));
 
 		// @todo Step : Root directory : Make README.md
 		// @todo Step : Root directory : Make LICENSE.md
@@ -114,6 +159,18 @@ class Generator
 		// @todo Step : "%libNamespace% subdirectory : Make "%libName%Client.php"
 		// @todo Step : Make "tests" directory
 
+	}
+
+	/**
+	 * Load Twig templates filesystem
+	 */
+	protected function loadTemplates()
+	{
+		$loader = new \Twig_Loader_Filesystem(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'templates');
+		$this->twigEnv = new Twig_Environment($loader, ['cache' => false]);
+
+		$this->managerTemplate = $this->twigEnv->load('manager.php.twig');
+		$this->resourceTemplate = $this->twigEnv->load('resource.php.twig');
 	}
 
 	/**

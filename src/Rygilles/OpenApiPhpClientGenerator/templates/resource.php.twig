@@ -1,0 +1,18 @@
+<?php
+
+{{ namespace is defined ? "namespace " ~ namespace ~ ";" : "" }}
+
+{% if uses is defined %}
+{% for use in uses %}
+use {{ use }};
+{% endfor %}
+{% endif %}
+
+class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
+{
+{% if functions is defined %}
+{% for f in functions %}
+    {{ f }}
+{% endfor %}
+{% functions %}
+}
