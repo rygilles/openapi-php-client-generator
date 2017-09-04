@@ -326,13 +326,37 @@ class Generator
 	{
 		if (file_exists($this->outputPath)) {
 			if (!is_null($this->outputInterface)) {
-				$this->outputInterface->writeln('<info>Output directory already created (' . $this->outputPath . ')</info>');
+				$this->outputInterface->writeln('<info>Main output directory already created (' . $this->outputPath . ')</info>');
 			}
 		} else {
 			if (!is_null($this->outputInterface)) {
-				$this->outputInterface->writeln('<info>Making output directory (' . $this->outputPath . ')</info>');
+				$this->outputInterface->writeln('<info>Making main output directory (' . $this->outputPath . ')</info>');
 			}
 			mkdir($this->outputPath ,0755, true);
+		}
+
+		$resourcesDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Resources";
+		if (file_exists($resourcesDirectoryPath)) {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Resources output directory already created (' . $resourcesDirectoryPath . ')</info>');
+			}
+		} else {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Making resources output directory (' . $resourcesDirectoryPath . ')</info>');
+			}
+			mkdir($resourcesDirectoryPath ,0755, true);
+		}
+
+		$managersDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Resources";
+		if (file_exists($managersDirectoryPath)) {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Managers output directory already created (' . $managersDirectoryPath . ')</info>');
+			}
+		} else {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Making managers output directory (' . $managersDirectoryPath . ')</info>');
+			}
+			mkdir($managersDirectoryPath ,0755, true);
 		}
 	}
 }
