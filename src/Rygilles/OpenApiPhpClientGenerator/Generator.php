@@ -146,7 +146,7 @@ class Generator
 			if (!is_null($this->outputInterface)) {
 				$this->outputInterface->writeln('<info>Making output directory (' . $this->outputPath . ')</info>');
 			}
-			//mkdir($this->outputPath ,0755, true);
+			mkdir($this->outputPath ,0755, true);
 		}
 	}
 }
