@@ -140,11 +140,11 @@ class Generator
 	{
 		if (file_exists($this->outputPath)) {
 			if (!is_null($this->outputInterface)) {
-				$this->outputInterface->writeln('<info>Output directory already created (' . realpath(__DIR__ . DIRECTORY_SEPARATOR . $this->outputPath) . ')</info>');
+				$this->outputInterface->writeln('<info>Output directory already created (' . $this->outputPath . ')</info>');
 			}
 		} else {
 			if (!is_null($this->outputInterface)) {
-				$this->outputInterface->writeln('<info>Making output directory (' . realpath(__DIR__ . DIRECTORY_SEPARATOR . $this->outputPath) . ')</info>');
+				$this->outputInterface->writeln('<info>Making output directory (' . $this->outputPat . ')</info>');
 			}
 			//mkdir($this->outputPath ,0755, true);
 		}
