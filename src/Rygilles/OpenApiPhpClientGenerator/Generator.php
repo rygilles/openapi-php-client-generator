@@ -200,12 +200,12 @@ class Generator
 	{
 		foreach ($this->managersData as $managerName => $managerData) {
 			$data = [
-				'className' => $managerName,
+				'className' => $managerName . 'Manager',
 				'namespace' => $this->namespace . '\Managers',
 				'operations' => $managerData['operations']
 			];
 
-			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Managers' . DIRECTORY_SEPARATOR . $managerName . '.php';
+			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Managers' . DIRECTORY_SEPARATOR . $managerName . 'Manager.php';
 
 			file_put_contents($filePath, $this->managerTemplate->render($data));
 		}
@@ -218,12 +218,12 @@ class Generator
 	{
 		foreach ($this->resourcesData as $resourceName => $resourceData) {
 			$data = [
-				'className' => $resourceName,
+				'className' => $resourceName . 'Resource',
 				'namespace' => $this->namespace . '\Resources',
 				'operations' => $resourceData['operations']
 			];
 
-			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $resourceName . '.php';
+			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $resourceName . 'Resource.php';
 
 			file_put_contents($filePath, $this->resourceTemplate->render($data));
 		}
