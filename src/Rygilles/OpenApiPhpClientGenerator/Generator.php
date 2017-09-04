@@ -76,9 +76,28 @@ class Generator
 		// Make the output directory
 		$this->makeOutputDirectory();
 
-		// Gather "Manager:*" and "Resource:*" tags
+		// Gather tags
 		$tags = $this->getOperationsTags();
-		die(print_r($tags, true));
+
+		// Split tags by pattern ("Manager:*" and "Resource:*" tags)
+		$managerTags = [];
+		$resourcesTags = [];
+
+		foreach ($tags as $tag) {
+			$split = explode(':', $tag);
+			if (count($split) == 2) {
+				switch ($split[0]) {
+					case 'Manager' :
+						$managerTags[] = $split[1];
+						break;
+					case 'Resource' :
+						$resourcesTags[] = $split[1];
+						break;
+				}
+			}
+		}
+
+		die(print_r($managerTags, true));
 
 		// @todo Step : Root directory : Make README.md
 		// @todo Step : Root directory : Make LICENSE.md
@@ -97,6 +116,11 @@ class Generator
 
 	}
 
+	/**
+	 * Grab operations tags from OpenAPI schema
+	 *
+	 * @return string[]
+	 */
 	protected function getOperationsTags()
 	{
 		$tags = [];
