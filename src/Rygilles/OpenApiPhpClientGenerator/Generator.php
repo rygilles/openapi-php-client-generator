@@ -73,7 +73,9 @@ class Generator
 		// Load the OpenAPI schema file
 		$this->loadOpenApiFile();
 
-		// @todo Step : Make the root directory
+		// Make the output directory
+		$this->makeOutputDirectory();
+
 		// @todo Step : Root directory : Make README.md
 		// @todo Step : Root directory : Make LICENSE.md
 		// @todo Step : Root directory : Make .gitignore
@@ -128,6 +130,23 @@ class Generator
 
 		if (!is_null($this->outputInterface)) {
 			$this->outputInterface->writeln('<info>File decoded</info>');
+		}
+	}
+
+	/**
+	 * Make the output directory
+	 */
+	protected function makeOutputDirectory()
+	{
+		if (file_exists($this->outputPath)) {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Output directory already created (' . $this->outputPath . ')</info>');
+			}
+		} else {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Making output directory (' . $this->outputPath . ')</info>');
+			}
+			//mkdir($this->outputPath ,0755, true);
 		}
 	}
 }
