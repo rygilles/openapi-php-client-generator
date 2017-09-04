@@ -148,11 +148,11 @@ class Generator
 							switch ($split[0]) {
 								case 'Manager' :
 									$this->prepareManager($extractedTag);
-									$this->managersData[ucfirst($extractedTag)]['functions'][$operation['operationId']] = $operation;
+									$this->managersData[ucfirst($extractedTag)]['operations'][$operation['operationId']] = $operation;
 									break;
 								case 'Resource' :
 									$this->prepareResource($extractedTag);
-									$this->resourcesData[ucfirst($extractedTag)]['functions'][$operation['operationId']] = $operation;
+									$this->resourcesData[ucfirst($extractedTag)]['operations'][$operation['operationId']] = $operation;
 									break;
 							}
 						}
@@ -201,7 +201,8 @@ class Generator
 		foreach ($this->managersData as $managerName => $managerData) {
 			$data = [
 				'className' => $managerName,
-				'namespace' => $this->namespace . '\Managers'
+				'namespace' => $this->namespace . '\Managers',
+				'operations' => $managerData['operations']
 			];
 
 			die($this->resourceTemplate->render($data));
@@ -230,7 +231,7 @@ class Generator
 
 		$this->managersData[ucfirst($managerTag)] = [
 			'className' => ucfirst($managerTag),
-			'functions' => []
+			'operations' => []
 		];
 	}
 
@@ -248,7 +249,7 @@ class Generator
 
 		$this->resourcesData[ucfirst($resourceTag)] = [
 			'className' => ucfirst($resourceTag),
-			'functions' => []
+			'operations' => []
 		];
 	}
 
