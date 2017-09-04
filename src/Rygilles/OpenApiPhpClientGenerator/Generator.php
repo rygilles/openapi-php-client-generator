@@ -29,6 +29,13 @@ class Generator
 	protected $outputPath;
 
 	/**
+	 * Output files base namespace
+	 *
+	 * @var string
+	 */
+	protected $namespace;
+
+	/**
 	 * Array of options
 	 *
 	 * @var mixed[]
@@ -52,18 +59,32 @@ class Generator
 	protected $openApiFileContent;
 
 	/**
-	 * Generated managers data
+	 * Managers operations
 	 *
 	 * @var mixed[]
 	 */
-	protected $outputManagersData = [];
+	protected $managerOperations = [];
 
 	/**
-	 * Generated resources data
+	 * Resources operations
 	 *
 	 * @var mixed[]
 	 */
-	protected $outputResourcesData = [];
+	protected $resourcesOperations = [];
+
+	/**
+	 * Managers data
+	 *
+	 * @var mixed[]
+	 */
+	protected $managersData = [];
+
+	/**
+	 * Resrouces data
+	 *
+	 * @var mixed[]
+	 */
+	protected $resourcesData = [];
 
 	/**
 	 * Twig templates environment
@@ -91,13 +112,15 @@ class Generator
 	 *
 	 * @param string $openApiFilePath Path of the OpenAPI file
 	 * @param string $outputPath Path where the PHP client library files will be generated
+	 * @param string $namespace Base namespace of generated files
 	 * @param mixed[] $options Array of options
 	 * @param OutputInterface $outputInterface Output interface if running binary
 	 */
-	public function __construct($openApiFilePath, $outputPath, $options = [], $outputInterface = null)
+	public function __construct($openApiFilePath, $outputPath, $namespace, $options = [], $outputInterface = null)
 	{
 		$this->openApiFilePath = $openApiFilePath;
 		$this->outputPath = $outputPath;
+		$this->namespace = $namespace;
 		$this->options = array_merge($this->options, $options);
 		$this->outputInterface = $outputInterface;
 	}
@@ -113,23 +136,27 @@ class Generator
 		// Make the output directory
 		$this->makeOutputDirectory();
 
-		// Gather tags
-		$tags = $this->getOperationsTags();
+		// Parse OpenAPI file for operations
 
-		// Split tags by pattern ("Manager:*" and "Resource:*" tags)
-		$managerTags = [];
-		$resourcesTags = [];
-
-		foreach ($tags as $tag) {
-			$split = explode(':', $tag);
-			if (count($split) == 2) {
-				switch ($split[0]) {
-					case 'Manager' :
-						$managerTags[] = $split[1];
-						break;
-					case 'Resource' :
-						$resourcesTags[] = $split[1];
-						break;
+		foreach ($this->openApiFileContent['paths'] as $path => $operations) {
+			foreach ($operations as $httpMethod => $operation) {
+				if (isset($operation['tags'])) {
+					foreach ($operation['tags'] as $tag) {
+						$split = explode(':', $tag);
+						if (count($split) == 2) {
+							$extractedTag = $split[1];
+							switch ($split[0]) {
+								case 'Manager' :
+									$this->prepareManager($extractedTag);
+									$this->managersData[ucfirst($extractedTag)]['functions'][$operation['operationId']] = $operation;
+									break;
+								case 'Resource' :
+									$this->prepareResource($extractedTag);
+									$this->resourcesData[ucfirst($extractedTag)]['functions'][$operation['operationId']] = $operation;
+									break;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -137,12 +164,8 @@ class Generator
 		// Load template filesystem
 		$this->loadTemplates();
 
-		$data = [
-			'className' => 'MonTest',
-			'namespace' => 'Test\Test'
-		];
-		
-		die($this->resourceTemplate->render($data));
+		// Write files
+		$this->writeTemplates();
 
 		// @todo Step : Root directory : Make README.md
 		// @todo Step : Root directory : Make LICENSE.md
@@ -162,6 +185,86 @@ class Generator
 	}
 
 	/**
+	 * Write templates files
+	 */
+	protected function writeTemplates()
+	{
+		$this->writeManagersTemplates();
+		$this->writeResourcesTemplates();
+	}
+
+	/**
+	 * Write managers templates files
+	 */
+	protected function writeManagersTemplates()
+	{
+		foreach ($this->managersData as $managerName => $managerData) {
+			$data = [
+				'className' => $managerName,
+				'namespace' => $this->namespace . '\Managers'
+			];
+
+			die($this->resourceTemplate->render($data));
+		}
+	}
+
+	/**
+	 * Write resources templates files
+	 */
+	protected function writeResourcesTemplates()
+	{
+
+	}
+
+	/**
+	 * Prepare new manager data if not already done
+	 *
+	 * @param string $managerTag
+	 */
+	protected function prepareManager($managerTag)
+	{
+		// Already prepared ?
+		if (isset($this->managersData[ucfirst($managerTag)])) {
+			return;
+		}
+
+		$this->managersData[ucfirst($managerTag)] = [
+			'className' => ucfirst($managerTag),
+			'functions' => []
+		];
+	}
+
+	/**
+	 * Prepare new resource data if not already done
+	 *
+	 * @param string $resourceTag
+	 */
+	protected function prepareResource($resourceTag)
+	{
+		// Already prepared ?
+		if (isset($this->resourcesData[ucfirst($resourceTag)])) {
+			return;
+		}
+
+		$this->resourcesData[ucfirst($resourceTag)] = [
+			'className' => ucfirst($resourceTag),
+			'functions' => []
+		];
+	}
+
+	/**
+	 * Parse Resource path operation
+	 *
+	 * @param string $resourceTag Resource tag extracted
+	 * @param string $path Api path
+	 * @param mixed[] $operation OpenAPI Operation object
+	 */
+	protected function parseResourcePathOperation($resourceTag, $path, $operation)
+	{
+
+	}
+
+	/**
 	 * Load Twig templates filesystem
 	 */
 	protected function loadTemplates()
@@ -171,30 +274,6 @@ class Generator
 
 		$this->managerTemplate = $this->twigEnv->load('manager.php.twig');
 		$this->resourceTemplate = $this->twigEnv->load('resource.php.twig');
-	}
-
-	/**
-	 * Grab operations tags from OpenAPI schema
-	 *
-	 * @return string[]
-	 */
-	protected function getOperationsTags()
-	{
-		$tags = [];
-
-		foreach ($this->openApiFileContent['paths'] as $path) {
-			foreach ($path as $httpMethod => $operation) {
-				if (isset($operation['tags'])) {
-					foreach ($operation['tags'] as $tag) {
-						if (!in_array($tag, $tags)) {
-							$tags[] = $tag;
-						}
-					}
-				}
-			}
-		}
-
-		return $tags;
 	}
 
 	/**
