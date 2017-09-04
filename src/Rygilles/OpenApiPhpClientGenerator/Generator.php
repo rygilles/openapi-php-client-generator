@@ -205,7 +205,9 @@ class Generator
 				'operations' => $managerData['operations']
 			];
 
-			die($this->resourceTemplate->render($data));
+			$filePath = $this->outputPath . PATH_SEPARATOR . 'Managers' . PATH_SEPARATOR . $managerName . '.php';
+			die($filePath);
+			//file_put_contents($filePath, $this->resourceTemplate->render($data));
 		}
 	}
 
