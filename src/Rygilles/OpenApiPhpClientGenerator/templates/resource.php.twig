@@ -14,5 +14,5 @@ class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
 {% for f in functions %}
     {{ f }}
 {% endfor %}
-{% functions %}
+{% endif %}
 }
