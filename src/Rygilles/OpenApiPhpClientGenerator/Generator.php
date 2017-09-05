@@ -170,8 +170,8 @@ class Generator
 									$relatedResource = null;
 
 									if (isset($extractedTags['Resources'])) {
-										die(print_r($extractedTags, true));
-										$relatedResource = array_shift($extractedTags['Resources']);
+										$firstKey = array_keys($extractedTags['Resources'])[0];
+										$relatedResource = $extractedTags['Resources'][$firstKey];
 										die($relatedResource);
 									}
 
