@@ -8,7 +8,14 @@
 {% if parameter.parameter.type == 'string' %}{% set paramType = 'string' %}{% endif %}
 {% if parameter.parameter.type == 'integer' %}{% set paramType = 'int' %}{% endif %}
 {% endif %}
-{% set params = params ~ '@param ' ~ paramType ~ ' ' ~ parameterName ~ "\n" %}
+{% set paramDescription = '' %}
+{% if parameter.parameter.format is defined %}
+{% set paramDescription = 'Format: ' ~ parameter.parameter.format ~ '.' %}
+{% endif %}
+{% if parameter.parameter.description is defined %}
+{% set paramDescription = paramDescription ~ (paramDescription == '' ? '' : ' ') ~ parameter.parameter.description %}
+{% endif %}
+{% set params = params ~ '@param ' ~ paramType ~ ' ' ~ parameterName ~ (paramDescription == '' ? '' : (' ' ~ paramDescription)) ~"\n" %}
 {% endfor %}
 {% if params != '' %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ params %}{% endif %}
 {% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
