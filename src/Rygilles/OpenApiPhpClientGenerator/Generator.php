@@ -333,6 +333,7 @@ class Generator
 		foreach ($this->managersData as $managerName => $managerData) {
 			$data = [
 				'className' => $managerName . 'Manager',
+				'classPhpDocTitle' => $managerName . ' manager class',
 				'namespace' => $this->namespace . '\Managers',
 				'routes' => $managerData['routes']
 			];
