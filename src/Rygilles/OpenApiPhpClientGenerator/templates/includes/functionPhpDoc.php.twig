@@ -17,5 +17,5 @@
 {% endif %}
 {% set params = params ~ '@param ' ~ paramType ~ ' $' ~ parameterName ~ (paramDescription == '' ? '' : (' ' ~ paramDescription)) ~ "\n" %}
 {% endfor %}
-{% if params != '' %}{% set doc = doc ~ (doc == '' ? '' : "\n\n") ~ params %}{% endif %}
+{% if params != '' %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ params %}{% endif %}
 {% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}

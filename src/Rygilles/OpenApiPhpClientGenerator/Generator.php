@@ -382,7 +382,7 @@ class Generator
 		$filter = new \Twig_Filter('phpdoc', function($string, $indentationCount = 0, $indentChar = "\t") {
 			$result = str_repeat($indentChar, $indentationCount) . '/**' . "\n";
 			// Split per line
-			$lines = explode("\n", $string);
+			$lines = explode("\n", trim($string));
 			foreach ($lines as $line) {
 				$result .= str_repeat($indentChar, $indentationCount) . ' * ' . $line . "\n";
 			}
