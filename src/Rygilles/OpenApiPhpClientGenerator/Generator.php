@@ -166,10 +166,11 @@ class Generator
 						foreach ($typeTags as $typeTag) {
 							switch ($tagType) {
 								case 'Managers' :
-									die(print_r($extractedTags, true));
+
 									$relatedResource = null;
 
 									if (isset($extractedTags['Resources'])) {
+										die(print_r($extractedTags, true));
 										$relatedResource = array_shift($extractedTags['Resources']);
 										die($relatedResource);
 									}
