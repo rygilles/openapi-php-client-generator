@@ -1,4 +1,4 @@
-{% var doc = '' %}
+{% set doc = '' %}
 {% if route.summary != '' %}{{ doc = doc ~ route.summary ~ "\n" }}{% endif %}
 {% if route.description != '' %}{{ doc = doc ~ route.description ~"\n" }}{% endif %}
 {% if doc != '' %}{{ doc|phpdoc(1) }}{% endif %}
