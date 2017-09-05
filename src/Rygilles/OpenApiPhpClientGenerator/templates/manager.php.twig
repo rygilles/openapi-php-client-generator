@@ -8,10 +8,9 @@ use {{ use }};
 {% endfor %}
 {% endif %}
 
-{% set classPhpDoc = classPhpDocTitle %}
+{% set classPhpDoc = classPhpDocTitle ~ "\n" %}
 {% if namespace is defined %}{% set classPhpDoc = classPhpDoc ~ "@package " ~ namespace ~ "\n" %}{% endif %}
-{{ classPhpDoc|phpdoc(0)|raw }}
-class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
+{{ classPhpDoc|phpdoc(0)|raw }}class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
 {
 {% if routes is defined %}
 {% for route in routes %}
