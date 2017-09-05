@@ -1,4 +1,4 @@
 {% set doc = '' %}
 {% if route.summary != '' %}{% set doc = doc ~ route.summary|raw ~ "\n" %}{% endif %}
-{% if route.description != '' %}{% set doc = doc ~ route.description|raw ~ "\n" %}{% endif %}
+{% if route.description != '' %}{% set doc = doc ~ (route.description == '' ? '' : "\n") ~ route.description|raw ~ "\n" %}{% endif %}
 {% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
