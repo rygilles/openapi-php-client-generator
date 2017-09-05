@@ -9,7 +9,7 @@ use {{ use }};
 {% endif %}
 
 {% set classPhpDoc = '' %}
-{% if namespace is defined %}{% set classPhpDoc = classPhpDoc ~ "@package " ~ namespace ~ "\n" : "" %}{% endif %}
+{% if namespace is defined %}{% set classPhpDoc = classPhpDoc ~ "@package " ~ namespace ~ "\n" %}{% endif %}
 {% if classPhpDoc != '' %}{{ classPhpDoc|phpdoc(0)|raw }}{% endif %}
 class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
 {
