@@ -153,7 +153,9 @@ class Generator
 										'path' => $path,
 										'httpMethod' => $httpMethod,
 										'operation' => $operation,
-										'definitionParameters' => $this->getRouteOperationDefinitionParameters($path, $httpMethod, $operation)
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters($path, $httpMethod, $operation),
+										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
+										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
 									];
 									break;
 								case 'Resource' :
@@ -162,7 +164,9 @@ class Generator
 										'path' => $path,
 										'httpMethod' => $httpMethod,
 										'operation' => $operation,
-										'definitionParameters' => $this->getRouteOperationDefinitionParameters($path, $httpMethod, $operation)
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters($path, $httpMethod, $operation),
+										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
+										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
 									];
 									break;
 							}
@@ -196,6 +200,34 @@ class Generator
 	}
 
 	/**
+	 * Return the phpdoc summary of a resource/manager class method
+	 *
+	 * @param string $path
+	 * @param string $httpMethod
+	 * @param mixed[] $operation
+	 * @return string
+	 * @throws Exception
+	 */
+	protected function getRouteOperationSummary($path, $httpMethod, $operation)
+	{
+		return isset($operation['summary']) ? $operation['summary'] : '';
+	}
+
+	/**
+	 * Return the phpdoc description of a resource/manager class method
+	 *
+	 * @param string $path
+	 * @param string $httpMethod
+	 * @param mixed[] $operation
+	 * @return string
+	 * @throws Exception
+	 */
+	protected function getRouteOperationDescription($path, $httpMethod, $operation)
+	{
+		return isset($operation['description']) ? $operation['description'] : '';
+	}
+
+	/**
 	 * Return the definition parameters of a resource/manager class method
 	 *
 	 * @param string $path
@@ -217,7 +249,7 @@ class Generator
 							$firstContentKey = array_keys($operation['requestBody']['content'])[0];
 							$firstContent = array_shift($operation['requestBody']['content']);
 							$schema = $firstContent['schema'];
-							
+
 							$orderedParameters = [];
 
 							// Place required parameters first
