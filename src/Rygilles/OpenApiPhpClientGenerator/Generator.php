@@ -166,6 +166,7 @@ class Generator
 						switch ($tagType) {
 							case 'Manager' :
 								$relatedResource = null;
+								die(print_r($extractedTags, true));
 								if (isset($extractedTags['Resources'])) {
 									$relatedResource = array_shift($extractedTags['Resources']);
 									die($relatedResource);
