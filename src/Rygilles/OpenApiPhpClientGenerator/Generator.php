@@ -153,7 +153,7 @@ class Generator
 										'path' => $path,
 										'httpMethod' => $httpMethod,
 										'operation' => $operation,
-										'definitionParameters' => $this->getRouteOperationDefinitionParameters($path, $httpMethod, $operation),
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
 										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
 										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
 									];
@@ -164,7 +164,7 @@ class Generator
 										'path' => $path,
 										'httpMethod' => $httpMethod,
 										'operation' => $operation,
-										'definitionParameters' => $this->getRouteOperationDefinitionParameters($path, $httpMethod, $operation),
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
 										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
 										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
 									];
@@ -230,13 +230,14 @@ class Generator
 	/**
 	 * Return the definition parameters of a resource/manager class method
 	 *
+	 * @param boolean $inPath Grab parameters "in = path" (only for Managers)
 	 * @param string $path
 	 * @param string $httpMethod
 	 * @param mixed[] $operation
 	 * @return mixed[]
 	 * @throws Exception
 	 */
-	protected function getRouteOperationDefinitionParameters($path, $httpMethod, $operation)
+	protected function getRouteOperationDefinitionParameters($inPath, $path, $httpMethod, $operation)
 	{
 		$result = [];
 
