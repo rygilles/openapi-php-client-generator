@@ -246,6 +246,10 @@ class Generator
 
 			foreach ($operation['parameters'] as $parameter) {
 
+				if (!$inPath && $parameter['in'] == 'path') {
+					continue;
+				}
+				
 				$result[$parameter['name']] = [
 					'name' => $parameter['name'],
 					'required' => $parameter['required'],
