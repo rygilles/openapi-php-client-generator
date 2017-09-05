@@ -17,9 +17,7 @@ class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
 	{
 
 	}
-	{% if loop.last %}
-
-{% endif %}
+	{% if not loop.last %}{{ "\n\t\n" }}{% endif %}
 {% endfor %}
 {% endif %}
 }
