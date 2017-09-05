@@ -213,12 +213,11 @@ class Generator
 						// Resolver not supported here
 						throw new Exception('Reference object in requestBody is not supported' . "\n" . 'Path: ' . $path . ', HTTP Method: ' . $httpMethod);
 					} else {
-						die(print_r($operation['requestBody']['content'], true));
-						if (count($operation['requestBody']['content']) > 1) {
+						if (count($operation['requestBody']['content']) > 0) {
 							$firstContentKey = array_keys($operation['requestBody']['content'])[0];
 							$firstContent = array_shift($operation['requestBody']['content']);
 							$schema = $firstContent['schema'];
-
+							
 							$orderedParameters = [];
 
 							// Place required parameters first
