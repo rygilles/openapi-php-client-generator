@@ -380,12 +380,13 @@ class Generator
 
 		// Custom filter for phpdoc
 		$filter = new \Twig_Filter('phpdoc', function($string, $indentationCount = 0, $indentChar = "\t") {
-			$result = '';
+			$result = str_repeat($indentChar, $indentationCount) . '/**' . "\n";
 			// Split per line
 			$lines = explode("\n", $string);
 			foreach ($lines as $line) {
-				$result .= str_repeat($indentChar, $indentationCount) . ' * ' . $line;
+				$result .= str_repeat($indentChar, $indentationCount) . ' * ' . $line . "\n";
 			}
+			$result .= str_repeat($indentChar, $indentationCount) . ' */' . "\n";
 			return $result;
 		});
 
