@@ -12,11 +12,13 @@ class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
 {
 {% if routes is defined %}
 {% for route in routes %}
+
 {% include 'includes/functionPhpDoc.php.twig' with {'route': route} %}
 	public function {{ route.operation.operationId }}({% include 'includes/functionDefinitionParameters.php.twig' with {'route': route} %})
 	{
-		
+
 	}
+	
 {% endfor %}
 {% endif %}
 }
