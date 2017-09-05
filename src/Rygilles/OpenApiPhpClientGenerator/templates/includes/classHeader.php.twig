@@ -1,0 +1,13 @@
+<?php
+
+{{ namespace is defined ? "namespace " ~ namespace ~ ";" : "" }}
+
+{% if uses is defined %}
+{% for use in uses %}
+use {{ use }};
+{% endfor %}
+{% endif %}
+
+{% set classPhpDoc = classPhpDocTitle ~ "\n\n" %}
+{% if namespace is defined %}{% set classPhpDoc = classPhpDoc ~ "@package " ~ namespace ~ "\n" %}{% endif %}
+{{ classPhpDoc|phpdoc(0)|raw }}class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
