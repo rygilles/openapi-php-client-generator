@@ -172,6 +172,12 @@ class Generator
 									if (isset($extractedTags['Resources'])) {
 										$firstKey = array_keys($extractedTags['Resources'])[0];
 										$relatedResource = $extractedTags['Resources'][$firstKey];
+
+										// Add class file "use"
+										if (!isset($this->managersData[ucfirst($typeTag)]['uses'])) {
+											$this->managersData[ucfirst($typeTag)]['uses'] = [];
+										}
+										$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $relatedResource;
 									}
 
 									$this->prepareManager($typeTag);
