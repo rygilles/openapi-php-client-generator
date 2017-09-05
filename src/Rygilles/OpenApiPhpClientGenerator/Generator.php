@@ -373,8 +373,12 @@ class Generator
 				'className' => $managerName . 'Manager',
 				'classPhpDocTitle' => $managerName . ' manager class',
 				'namespace' => $this->namespace . '\Managers',
-				'routes' => $managerData['routes']
+				'routes' => $managerData['routes'],
 			];
+
+			if (isset($managerData['uses'])) {
+				$data['uses'] = $managerData['uses'];
+			}
 
 			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Managers' . DIRECTORY_SEPARATOR . $managerName . 'Manager.php';
 
@@ -398,6 +402,10 @@ class Generator
 				'namespace' => $this->namespace . '\Resources',
 				'routes' => $resourceData['routes']
 			];
+
+			if (isset($managerData['uses'])) {
+				$data['uses'] = $managerData['uses'];
+			}
 
 			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $resourceName . 'Resource.php';
 
