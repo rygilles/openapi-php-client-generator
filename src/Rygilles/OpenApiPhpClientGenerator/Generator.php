@@ -168,6 +168,7 @@ class Generator
 								$relatedResource = null;
 								if (isset($extractedTags['Resources'])) {
 									$relatedResource = array_shift($extractedTags['Resources']);
+									die($relatedResource);
 								}
 
 								$this->prepareManager($extractedTag);
