@@ -8,6 +8,9 @@ use {{ use }};
 {% endfor %}
 {% endif %}
 
+{% set classPhpDoc = '' %}
+{% if namespace is defined %}{% classPhpDoc = classPhpDoc ~ "@package " ~ namespace ~ "\n" : "" %}{% endif %}
+{{ classPhpDoc != '' ? classPhpDoc|phpdoc(0)|raw }}
 class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
 {
 {% if routes is defined %}
