@@ -162,41 +162,43 @@ class Generator
 							}
 						}
 					}
-					foreach ($extractedTags as $tagType => $extractedTag) {
-						switch ($tagType) {
-							case 'Managers' :
-								$relatedResource = null;
+					foreach ($extractedTags as $tagType => $typeTags) {
+						foreach ($typeTags as $typeTag) {
+							switch ($tagType) {
+								case 'Managers' :
+									$relatedResource = null;
 
-								if (isset($extractedTags['Resources'])) {
-									$relatedResource = array_shift($extractedTags['Resources']);
-									die($relatedResource);
-								}
+									if (isset($extractedTags['Resources'])) {
+										$relatedResource = array_shift($extractedTags['Resources']);
+										die($relatedResource);
+									}
 
-								$this->prepareManager($extractedTag);
-								$this->managersData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
-									'path' => $path,
-									'httpMethod' => $httpMethod,
-									'operation' => $operation,
-									'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
-									'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
-									'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
-								];
+									$this->prepareManager($typeTag);
+									$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']] = [
+										'path' => $path,
+										'httpMethod' => $httpMethod,
+										'operation' => $operation,
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
+										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
+										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
+									];
 
-								if (!is_null($relatedResource)) {
-									$this->managersData[ucfirst($extractedTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource . 'Resource';
-								}
-								break;
-							case 'Resources' :
-								$this->prepareResource($extractedTag);
-								$this->resourcesData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
-									'path' => $path,
-									'httpMethod' => $httpMethod,
-									'operation' => $operation,
-									'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation),
-									'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
-									'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
-								];
-								break;
+									if (!is_null($relatedResource)) {
+										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource . 'Resource';
+									}
+									break;
+								case 'Resources' :
+									$this->prepareResource($typeTag);
+									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']] = [
+										'path' => $path,
+										'httpMethod' => $httpMethod,
+										'operation' => $operation,
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation),
+										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
+										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
+									];
+									break;
+							}
 						}
 					}
 				}
