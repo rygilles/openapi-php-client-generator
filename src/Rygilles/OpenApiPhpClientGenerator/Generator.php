@@ -2,6 +2,7 @@
 
 namespace Rygilles\OpenApiPhpClientGenerator;
 
+use Exception;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use Twig_Environment;
@@ -152,7 +153,7 @@ class Generator
 										'path' => $path,
 										'httpMethod' => $httpMethod,
 										'operation' => $operation,
-										'definitionParameters' => []
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters($path, $httpMethod, $operation)
 									];
 									break;
 								case 'Resource' :
@@ -161,7 +162,7 @@ class Generator
 										'path' => $path,
 										'httpMethod' => $httpMethod,
 										'operation' => $operation,
-										'definitionParameters' => []
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters($path, $httpMethod, $operation)
 									];
 									break;
 							}
@@ -192,6 +193,60 @@ class Generator
 		// @todo Step : "%libNamespace% subdirectory : Make "%libName%Client.php"
 		// @todo Step : Make "tests" directory
 
+	}
+
+	/**
+	 * Return the definition parameters of a resource/manager class method
+	 *
+	 * @param string $path
+	 * @param string $httpMethod
+	 * @param mixed[] $operation
+	 * @return mixed[]
+	 * @throws Exception
+	 */
+	protected function getRouteOperationDefinitionParameters($path, $httpMethod, $operation)
+	{
+		switch ($httpMethod) {
+			case 'post':
+				if (isset($operation['requestBody'])) {
+					if (isset($operation['requestBody']['$ref'])) {
+						// Resolver not supported here
+						throw new Exception('Reference object in requestBody is not supported' . "\n" . 'Path: ' . $path . ', HTTP Method: ' . $httpMethod);
+					} else {
+						if (count($operation['requestBody']['content']) > 1) {
+							$firstContentKey = array_keys($operation['requestBody']['content'])[0];
+							$firstContent = array_shift($operation['requestBody']['content']);
+							$schema = $firstContent['schema'];
+
+							$orderedParameters = [];
+
+							// Place required parameters first
+							foreach ($schema['required'] as $required) {
+								$orderedParameters[$required] = $schema['properties'][$required];
+							}
+							foreach ($schema['properties'] as $propertyName => $property) {
+								if (!isset($orderedParameters[$propertyName])) {
+									$orderedParameters[$propertyName] = $property;
+								}
+							}
+
+							$result = [];
+							foreach ($orderedParameters as $parameterName => $parameter) {
+								$result[$parameterName] = [
+									'name' => $parameterName,
+									'parameter' => $parameter,
+									'required' => in_array($parameterName, $schema['required'])
+								];
+							}
+
+							return $result;
+						}
+					}
+				}
+				break;
+		}
+
+		return [];
 	}
 
 	/**
@@ -316,7 +371,7 @@ class Generator
 
 		try {
 			$this->openApiFileContent = json_decode($fileContent, true);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$jsonException = $e;
 		}
 
