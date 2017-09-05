@@ -371,12 +371,25 @@ class Generator
 	}
 
 	/**
-	 * Load Twig templates filesystem
+	 * Load Twig templates filesystem and custom filters
 	 */
 	protected function loadTemplates()
 	{
 		$loader = new \Twig_Loader_Filesystem(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'templates');
 		$this->twigEnv = new Twig_Environment($loader, ['cache' => false]);
+
+		// Custom filter for phpdoc
+		$filter = new \Twig_Filter('phpdoc', function($string, $indentationCount = 0, $indentChar = "\t") {
+			$result = '';
+			// Split per line
+			$lines = explode("\n", $string);
+			foreach ($lines as $line) {
+				$result .= str_repeat($indentChar, $indentationCount) . ' * ' . $line;
+			}
+			return $result;
+		});
+
+		$this->twigEnv->addFilter($filter);
 
 		$this->managerTemplate = $this->twigEnv->load('manager.php.twig');
 		$this->resourceTemplate = $this->twigEnv->load('resource.php.twig');

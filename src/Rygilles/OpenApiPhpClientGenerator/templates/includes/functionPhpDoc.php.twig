@@ -1,7 +1,4 @@
     /**
-{% if route.summary != '' %}    * {{ route.summary }}
-    *
-{% endif %}{% if route.description != '' %} *{{ route.description }}
-    *
-{% endif %}
+{% if route.summary != '' %}{{ route.summary|phpdoc(1) }}{% endif %}
+{% if route.description != '' %}{{ route.description|phpdoc(1) }}{% endif %}
     */
