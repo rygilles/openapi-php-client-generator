@@ -4,11 +4,11 @@
 {% set params = '' %}
 {% for parameterName, parameter in route.definitionParameters %}
 {% set paramType = 'mixed' %}
-{% if parameter.type is defined %}
-{% if parameter.type == 'string' %}{% set paramType = 'string' %}{% endif %}
-{% if parameter.type == 'integer' %}{% set paramType = 'int' %}{% endif %}
+{% if parameter.parameter.type is defined %}
+{% if parameter.parameter.type == 'string' %}{% set paramType = 'string' %}{% endif %}
+{% if parameter.parameter.type == 'integer' %}{% set paramType = 'int' %}{% endif %}
 {% endif %}
-{% set params = params ~ (params == '' ? '' : "\n") ~ '@param ' ~ paramType ~ ' ' ~ parameterName ~ "\n" %}
+{% set params = params ~ '@param ' ~ paramType ~ ' ' ~ parameterName ~ "\n" %}
 {% endfor %}
 {% if params != '' %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ params %}{% endif %}
 {% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
