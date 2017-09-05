@@ -238,89 +238,81 @@ class Generator
 	 */
 	protected function getRouteOperationDefinitionParameters($path, $httpMethod, $operation)
 	{
-		switch ($httpMethod) {
-			case 'get':
-			case 'head':
-				if (isset($operation['parameters'])) {
-					$result = [];
+		$result = [];
 
-					foreach ($operation['parameters'] as $parameter) {
+		if (isset($operation['parameters'])) {
+			$result = [];
 
-						$result[$parameter['name']] = [
-							'name' => $parameter['name'],
-							'required' => $parameter['required'],
+			foreach ($operation['parameters'] as $parameter) {
+
+				$result[$parameter['name']] = [
+					'name' => $parameter['name'],
+					'required' => $parameter['required'],
+				];
+
+				if (isset($parameter['schema'])) {
+					if (isset($parameter['schema']['type'])) {
+						$result[$parameter['name']]['type'] = $parameter['schema']['type'];
+					}
+
+					if (isset($parameter['schema']['format'])) {
+						$result[$parameter['name']]['format'] = $parameter['schema']['format'];
+					}
+				}
+
+				if (isset($parameter['description'])) {
+					$result[$parameter['name']]['description'] = $parameter['description'];
+				}
+			}
+
+			return $result;
+		}
+
+		if (isset($operation['requestBody'])) {
+			if (isset($operation['requestBody']['$ref'])) {
+				// Resolver not supported here
+				throw new Exception('Reference object in requestBody is not supported' . "\n" . 'Path: ' . $path . ', HTTP Method: ' . $httpMethod);
+			} else {
+				if (count($operation['requestBody']['content']) > 0) {
+					$firstContentKey = array_keys($operation['requestBody']['content'])[0];
+					$firstContent = array_shift($operation['requestBody']['content']);
+					$schema = $firstContent['schema'];
+
+					$orderedParameters = [];
+
+					// Place required parameters first
+					foreach ($schema['required'] as $required) {
+						$orderedParameters[$required] = $schema['properties'][$required];
+					}
+					foreach ($schema['properties'] as $propertyName => $property) {
+						if (!isset($orderedParameters[$propertyName])) {
+							$orderedParameters[$propertyName] = $property;
+						}
+					}
+
+					foreach ($orderedParameters as $parameterName => $parameter) {
+						$result[$parameterName] = [
+							'name' => $parameterName,
+							'required' => in_array($parameterName, $schema['required'])
 						];
 
-						if (isset($parameter['schema'])) {
-							if (isset($parameter['schema']['type'])) {
-								$result[$parameter['name']]['type'] = $parameter['schema']['type'];
-							}
+						if (isset($parameter['type'])) {
+							$result[$parameterName]['type'] = $parameter['type'];
+						}
 
-							if (isset($parameter['schema']['format'])) {
-								$result[$parameter['name']]['format'] = $parameter['schema']['format'];
-							}
+						if (isset($parameter['format'])) {
+							$result[$parameterName]['format'] = $parameter['format'];
 						}
 
 						if (isset($parameter['description'])) {
-							$result[$parameter['name']]['description'] = $parameter['description'];
-						}
-					}
-
-					return $result;
-				}
-				break;
-
-			case 'post':
-				if (isset($operation['requestBody'])) {
-					if (isset($operation['requestBody']['$ref'])) {
-						// Resolver not supported here
-						throw new Exception('Reference object in requestBody is not supported' . "\n" . 'Path: ' . $path . ', HTTP Method: ' . $httpMethod);
-					} else {
-						if (count($operation['requestBody']['content']) > 0) {
-							$firstContentKey = array_keys($operation['requestBody']['content'])[0];
-							$firstContent = array_shift($operation['requestBody']['content']);
-							$schema = $firstContent['schema'];
-
-							$orderedParameters = [];
-
-							// Place required parameters first
-							foreach ($schema['required'] as $required) {
-								$orderedParameters[$required] = $schema['properties'][$required];
-							}
-							foreach ($schema['properties'] as $propertyName => $property) {
-								if (!isset($orderedParameters[$propertyName])) {
-									$orderedParameters[$propertyName] = $property;
-								}
-							}
-
-							$result = [];
-							foreach ($orderedParameters as $parameterName => $parameter) {
-								$result[$parameterName] = [
-									'name' => $parameterName,
-									'required' => in_array($parameterName, $schema['required'])
-								];
-
-								if (isset($parameter['type'])) {
-									$result[$parameterName]['type'] = $parameter['type'];
-								}
-
-								if (isset($parameter['format'])) {
-									$result[$parameterName]['format'] = $parameter['format'];
-								}
-
-								if (isset($parameter['description'])) {
-									$result[$parameterName]['description'] = $parameter['description'];
-								}
-							}
-
-							return $result;
+							$result[$parameterName]['description'] = $parameter['description'];
 						}
 					}
 				}
-				break;
+			}
 		}
 
-		return [];
+		return $result;
 	}
 
 	/**
