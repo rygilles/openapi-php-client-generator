@@ -217,6 +217,7 @@ class Generator
 							$firstContentKey = array_keys($operation['requestBody']['content'])[0];
 							$firstContent = array_shift($operation['requestBody']['content']);
 							$schema = $firstContent['schema'];
+							die(print_r($schema, true));
 
 							$orderedParameters = [];
 
