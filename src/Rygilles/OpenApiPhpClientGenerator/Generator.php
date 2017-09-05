@@ -151,7 +151,8 @@ class Generator
 									$this->managersData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
 										'path' => $path,
 										'httpMethod' => $httpMethod,
-										'operation' => $operation
+										'operation' => $operation,
+										'definitionParameters' => []
 									];
 									break;
 								case 'Resource' :
@@ -159,7 +160,8 @@ class Generator
 									$this->resourcesData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
 										'path' => $path,
 										'httpMethod' => $httpMethod,
-										'operation' => $operation
+										'operation' => $operation,
+										'definitionParameters' => []
 									];
 									break;
 							}
