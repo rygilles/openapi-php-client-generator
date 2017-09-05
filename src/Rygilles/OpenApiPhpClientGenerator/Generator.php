@@ -148,11 +148,19 @@ class Generator
 							switch ($split[0]) {
 								case 'Manager' :
 									$this->prepareManager($extractedTag);
-									$this->managersData[ucfirst($extractedTag)]['operations'][$operation['operationId']] = $operation;
+									$this->managersData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
+										'path' => $path,
+										'httpMethod' => $httpMethod,
+										'operation' => $operation
+									];
 									break;
 								case 'Resource' :
 									$this->prepareResource($extractedTag);
-									$this->resourcesData[ucfirst($extractedTag)]['operations'][$operation['operationId']] = $operation;
+									$this->resourcesData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
+										'path' => $path,
+										'httpMethod' => $httpMethod,
+										'operation' => $operation
+									];
 									break;
 							}
 						}
@@ -202,7 +210,7 @@ class Generator
 			$data = [
 				'className' => $managerName . 'Manager',
 				'namespace' => $this->namespace . '\Managers',
-				'operations' => $managerData['operations']
+				'routes' => $managerData['routes']
 			];
 
 			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Managers' . DIRECTORY_SEPARATOR . $managerName . 'Manager.php';
@@ -224,7 +232,7 @@ class Generator
 			$data = [
 				'className' => $resourceName . 'Resource',
 				'namespace' => $this->namespace . '\Resources',
-				'operations' => $resourceData['operations']
+				'routes' => $resourceData['routes']
 			];
 
 			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $resourceName . 'Resource.php';
@@ -251,7 +259,7 @@ class Generator
 
 		$this->managersData[ucfirst($managerTag)] = [
 			'className' => ucfirst($managerTag),
-			'operations' => []
+			'routes' => []
 		];
 	}
 
@@ -269,7 +277,7 @@ class Generator
 
 		$this->resourcesData[ucfirst($resourceTag)] = [
 			'className' => ucfirst($resourceTag),
-			'operations' => []
+			'routes' => []
 		];
 	}
 
