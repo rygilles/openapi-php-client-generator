@@ -158,7 +158,7 @@ class Generator
 										$extractedTags['Resources'] = [];
 									}
 									$extractedTags['Resources'][] = $split[1];
-									dd($extractedTags);
+									die(print_r($extractedTags, true));
 									break;
 							}
 						}
