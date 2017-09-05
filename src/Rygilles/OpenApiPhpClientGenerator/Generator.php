@@ -249,7 +249,7 @@ class Generator
 				if (!$inPath && $parameter['in'] == 'path') {
 					continue;
 				}
-				
+
 				$result[$parameter['name']] = [
 					'name' => $parameter['name'],
 					'required' => $parameter['required'],
@@ -269,8 +269,6 @@ class Generator
 					$result[$parameter['name']]['description'] = $parameter['description'];
 				}
 			}
-
-			return $result;
 		}
 
 		if (isset($operation['requestBody'])) {
