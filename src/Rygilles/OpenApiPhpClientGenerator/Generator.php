@@ -164,9 +164,9 @@ class Generator
 					}
 					foreach ($extractedTags as $tagType => $extractedTag) {
 						switch ($tagType) {
-							case 'Manager' :
+							case 'Managers' :
 								$relatedResource = null;
-								die(print_r($extractedTags, true));
+
 								if (isset($extractedTags['Resources'])) {
 									$relatedResource = array_shift($extractedTags['Resources']);
 									die($relatedResource);
@@ -186,7 +186,7 @@ class Generator
 									$this->managersData[ucfirst($extractedTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource . 'Resource';
 								}
 								break;
-							case 'Resource' :
+							case 'Resources' :
 								$this->prepareResource($extractedTag);
 								$this->resourcesData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
 									'path' => $path,
