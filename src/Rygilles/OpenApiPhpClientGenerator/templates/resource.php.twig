@@ -12,10 +12,10 @@ class {{ className }} {{ extends is defined ? "extends " ~ extends : "" }}
 {
 {% if routes is defined %}
 {% for route in routes %}
-    public function {{ route.operation.operationId }}()
-    {
+	public function {{ route.operation.operationId }}()
+	{
 
-    }
+	}
 {% endfor %}
 {% endif %}
 }
