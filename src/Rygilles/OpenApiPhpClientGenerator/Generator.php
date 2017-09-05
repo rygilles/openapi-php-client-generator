@@ -356,6 +356,7 @@ class Generator
 		foreach ($this->resourcesData as $resourceName => $resourceData) {
 			$data = [
 				'className' => $resourceName . 'Resource',
+				'classPhpDocTitle' => $resourceName . ' resource class',
 				'namespace' => $this->namespace . '\Resources',
 				'routes' => $resourceData['routes']
 			];
