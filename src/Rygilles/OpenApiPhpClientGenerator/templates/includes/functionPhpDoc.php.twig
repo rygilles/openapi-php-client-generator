@@ -18,4 +18,5 @@
 {% set params = params ~ '@param ' ~ paramType ~ ' $' ~ parameterName ~ (paramDescription == '' ? '' : (' ' ~ paramDescription)) ~ "\n" %}
 {% endfor %}
 {% if params != '' %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ params %}{% endif %}
+{% if route.relatedResource is defined %}{% set set doc = doc ~ (doc == '' ? '' : "\n") ~ '@return ' ~ route.relatedResource ~ "\n" %}{% endif %}
 {% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}

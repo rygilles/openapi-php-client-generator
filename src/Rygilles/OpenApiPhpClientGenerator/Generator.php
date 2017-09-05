@@ -142,34 +142,59 @@ class Generator
 		foreach ($this->openApiFileContent['paths'] as $path => $operations) {
 			foreach ($operations as $httpMethod => $operation) {
 				if (isset($operation['tags'])) {
+					$extractedTags = [];
 					foreach ($operation['tags'] as $tag) {
 						$split = explode(':', $tag);
 						if (count($split) == 2) {
-							$extractedTag = $split[1];
 							switch ($split[0]) {
 								case 'Manager' :
-									$this->prepareManager($extractedTag);
-									$this->managersData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
-										'path' => $path,
-										'httpMethod' => $httpMethod,
-										'operation' => $operation,
-										'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
-										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
-										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
-									];
+									if (!isset($extractedTags['Managers'])) {
+										$extractedTags['Managers'] = [];
+									}
+									$extractedTags['Managers'][] = $split[1];
 									break;
 								case 'Resource' :
-									$this->prepareResource($extractedTag);
-									$this->resourcesData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
-										'path' => $path,
-										'httpMethod' => $httpMethod,
-										'operation' => $operation,
-										'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation),
-										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
-										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
-									];
+									if (!isset($extractedTags['Resources'])) {
+										$extractedTags['Managers'] = [];
+									}
+									$extractedTags['Managers'][] = $split[1];
 									break;
 							}
+						}
+					}
+					foreach ($extractedTags as $tagType => $extractedTag) {
+						switch ($tagType) {
+							case 'Manager' :
+								$relatedResource = null;
+								if (isset($extractedTags['Resources'])) {
+									$relatedResource = array_shift($extractedTags['Resources']);
+								}
+
+								$this->prepareManager($extractedTag);
+								$this->managersData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
+									'path' => $path,
+									'httpMethod' => $httpMethod,
+									'operation' => $operation,
+									'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
+									'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
+									'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
+								];
+
+								if (!is_null($relatedResource)) {
+									$this->managersData[ucfirst($extractedTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource . 'Resource';
+								}
+								break;
+							case 'Resource' :
+								$this->prepareResource($extractedTag);
+								$this->resourcesData[ucfirst($extractedTag)]['routes'][$operation['operationId']] = [
+									'path' => $path,
+									'httpMethod' => $httpMethod,
+									'operation' => $operation,
+									'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation),
+									'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
+									'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
+								];
+								break;
 						}
 					}
 				}
