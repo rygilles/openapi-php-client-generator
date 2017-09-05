@@ -2,10 +2,12 @@
 {
 {% if routes is defined %}
 {% for route in routes %}
-	public function {{ route.operation.operationId }}()
+	{% include 'includes/functionPhpDoc.php.twig' with {'route': route} %}
+	public function {{ route.operation.operationId }}({% include 'includes/functionDefinitionParameters.php.twig' with {'route': route} %})
 	{
 
 	}
+	{% if not loop.last %}{{ "\t\n" }}{% endif %}
 {% endfor %}
 {% endif %}
 }
