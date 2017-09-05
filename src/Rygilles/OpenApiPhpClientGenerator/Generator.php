@@ -164,7 +164,7 @@ class Generator
 										'path' => $path,
 										'httpMethod' => $httpMethod,
 										'operation' => $operation,
-										'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation),
 										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
 										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
 									];
