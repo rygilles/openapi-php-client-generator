@@ -1,4 +1,14 @@
 {% set doc = '' %}
 {% if route.summary != '' %}{% set doc = doc ~ route.summary|raw ~ "\n" %}{% endif %}
-{% if route.description != '' %}{% set doc = doc ~ (route.description == '' ? '' : "\n") ~ route.description|raw ~ "\n" %}{% endif %}
+{% if route.description != '' %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ route.description|raw ~ "\n" %}{% endif %}
+{% set params = '' %}
+{% for parameterName, parameter in route.definitionParameters %}
+{% set paramType = 'mixed' %}
+{% if parameter.type is defined %}
+{% if parameter.type == 'string' %}{% set paramType = 'string' %}{% endif %}
+{% if parameter.type == 'integer' %}{% set paramType = 'int' %}{% endif %}
+{% endif %}
+{% set params = params ~ (params == '' ? '' : "\n") ~ '@param ' ~ paramType ~ ' ' ~ parameterName ~ "\n" %}
+{% endfor %}
+{% if params != '' %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ params %}{% endif %}
 {% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
