@@ -177,7 +177,9 @@ class Generator
 										if (!isset($this->managersData[ucfirst($typeTag)]['uses'])) {
 											$this->managersData[ucfirst($typeTag)]['uses'] = [];
 										}
-										$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $relatedResource;
+										if (!in_array($this->namespace . '\\Resources\\' . $relatedResource, $this->managersData[ucfirst($typeTag)]['uses'])) {
+											$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $relatedResource;
+										}
 									}
 
 									$this->prepareManager($typeTag);
