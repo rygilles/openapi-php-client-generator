@@ -155,9 +155,9 @@ class Generator
 									break;
 								case 'Resource' :
 									if (!isset($extractedTags['Resources'])) {
-										$extractedTags['Managers'] = [];
+										$extractedTags['Resources'] = [];
 									}
-									$extractedTags['Managers'][] = $split[1];
+									$extractedTags['Resources'][] = $split[1];
 									break;
 							}
 						}
