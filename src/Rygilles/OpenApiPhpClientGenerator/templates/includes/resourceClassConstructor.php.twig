@@ -1,6 +1,7 @@
 {% set doc = classPhpDocTitle ~ ' constructor' ~ "\n" %}
 {% set params = '' %}
-{% for property in route.properties %}
+{% if properties is defined %}
+{% for property in properties %}
 {% if property.type is defined %}
 {% if property.type == 'boolean' %}{% set propType = 'boolean' %}
 {% elseif property.type == 'string' %}{% set propType = 'string' %}
@@ -26,7 +27,6 @@
 {% endfor %}
 {% if params != '' %}{% set doc = doc ~ params %}{% endif %}
 {% set parametersDefinition = '' %}
-{% if properties is defined %}
 {% for property in properties %}
 {% set parametersDefinition = parametersDefinition ~ (parametersDefinition == '' ? '' : ', ') ~ '$' ~ property.name ~ ' = null' %}
 {% endfor %}
