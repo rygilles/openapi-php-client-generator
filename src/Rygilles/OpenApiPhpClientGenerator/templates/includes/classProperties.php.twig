@@ -1,28 +1,28 @@
 {% for property in properties %}
-{% set doc = '' %}
-{% set propDescription = '' %}
-{% if property.format is defined %}
-{% set propDescription = 'Format: ' ~ property.format ~ '.' %}
-{% endif %}
-{% if property.description is defined %}
-{% set propDescription = propDescription ~ (propDescription == '' ? '' : ' ') ~ property.description|raw %}
-{% endif %}
-{% if propDescription != '' %}
-{% set doc = doc ~ (doc == '' ? '' : "\n") ~ propDescription %}
-{% endif %}
-{% if property.type is defined %}
-{% if property.type == 'boolean' %}{% set propType = 'boolean' %}
-{% elseif property.type == 'string' %}{% set propType = 'string' %}
-{% elseif property.type == 'integer' %}{% set propType = 'int' %}
-{% elseif property.type == 'number' %}{% set propType = 'float' %}
-{% else %}
-{% set propType = property.type %}
-{% endif %}
-{% else %}
-{% set propType = 'mixed' %}
-{% endif %}
-{% set doc = doc ~ (doc == '' ? '' : "\n\n") ~ '@var ' ~ propType %}
-{% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
+	{% set doc = '' %}
+	{% set propDescription = '' %}
+	{% if property.format is defined %}
+		{% set propDescription = 'Format: ' ~ property.format ~ '.' %}
+	{% endif %}
+	{% if property.description is defined %}
+		{% set propDescription = propDescription ~ (propDescription == '' ? '' : ' ') ~ property.description|raw %}
+	{% endif %}
+	{% if propDescription != '' %}
+		{% set doc = doc ~ (doc == '' ? '' : "\n") ~ propDescription %}
+	{% endif %}
+	{% if property.type is defined %}
+		{% if property.type == 'boolean' %}{% set propType = 'boolean' %}
+		{% elseif property.type == 'string' %}{% set propType = 'string' %}
+		{% elseif property.type == 'integer' %}{% set propType = 'int' %}
+		{% elseif property.type == 'number' %}{% set propType = 'float' %}
+		{% else %}
+			{% set propType = property.type %}
+		{% endif %}
+	{% else %}
+		{% set propType = 'mixed' %}
+	{% endif %}
+	{% set doc = doc ~ (doc == '' ? '' : "\n\n") ~ '@var ' ~ propType %}
+	{% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
 	public ${{ property.name }};
 
 {% endfor %}
