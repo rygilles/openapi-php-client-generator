@@ -298,49 +298,39 @@ class Generator
 		// Analyze properties for references
 		if (isset($schema['properties'])) {
 			foreach ($schema['properties'] as $propertyName => $property) {
-				$isRef = false;
+				$this->prepareResource($name);
+
 				if (isset($property['$ref'])) {
 					$resolved = $this->resolveReference($property['$ref']);
-					$isRef = true;
 					$this->prepareResource($resolved['name']);
 
-					$propertySchema = $resolved['target'];
+					if (!isset($this->resourcesData[$resolved['name']]['properties'])) {
+						$this->resourcesData[$resolved['name']]['properties'] = [];
+					}
+
+					if (!isset($this->resourcesData[$name]['uses'])) {
+						$this->resourcesData[$name]['uses'] = [];
+					}
+					if (!in_array($this->namespace . '\\Resources\\' . $resolved['name'], $this->resourcesData[$name]['uses'])) {
+						$this->resourcesData[$name]['uses'][] = $this->namespace . '\\Resources\\' . $resolved['name'];
+					}
+
+					$this->resourcesData[$name]['properties'][$propertyName]['type'] = $resolved['name'];
 				} else {
-					$propertySchema = $property;
-				}
-
-				if (!isset($this->resourcesData[$resolved['name']]['properties'])) {
-					$this->resourcesData[$resolved['name']]['properties'] = [];
-				}
-
-				$this->resourcesData[$resolved['name']]['properties'][$propertyName] = [
-					'name' => $propertyName,
-				];
-
-				if ($isRef) {
-					if (!isset($this->resourcesData[$resolved['name']]['uses'])) {
-						$this->resourcesData[$resolved['name']]['uses'] = [];
+					if (isset($property['type'])) {
+						$this->resourcesData[$name]['properties'][$propertyName]['type'] = $property['type'];
 					}
-					if (!in_array($this->namespace . '\\Resources\\' . $resolved['name'], $this->resourcesData[$resolved['name']]['uses'])) {
-						$this->resourcesData[$resolved['name']]['uses'][] = $this->namespace . '\\Resources\\' . $resolved['name'];
+					if (isset($property['format'])) {
+						$this->resourcesData[$name]['properties'][$propertyName]['format'] = $property['format'];
 					}
-
-					$this->resourcesData[$resolved['name']]['properties'][$propertyName]['type'] = $resolved['name'];
-				} else {
-					if (isset($propertySchema['type'])) {
-						$this->resourcesData[$resolved['name']]['properties'][$propertyName]['type'] = $propertySchema['type'];
-					}
-					if (isset($propertySchema['format'])) {
-						$this->resourcesData[$resolved['name']]['properties'][$propertyName]['format'] = $propertySchema['format'];
-					}
-					if (isset($propertySchema['description'])) {
-						$this->resourcesData[$resolved['name']]['properties'][$propertyName]['description'] = $propertySchema['description'];
+					if (isset($property['description'])) {
+						$this->resourcesData[$name]['properties'][$propertyName]['description'] = $property['description'];
 					}
 				}
 			}
 		}
 
-		$this->responsesResourcesData[$name] = $schema;
+		//$this->responsesResourcesData[$name] = $schema;
 	}
 
 	/**
