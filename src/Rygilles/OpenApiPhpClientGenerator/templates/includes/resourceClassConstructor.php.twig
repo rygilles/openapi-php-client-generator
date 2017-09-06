@@ -1,5 +1,6 @@
-{% set doc = classPhpDocTitle ~ ' constructor' %}
-{% set params = '' %}
+{%
+set doc = classPhpDocTitle ~ ' constructor'
+set params = '' %}
 {% if properties is defined %}
 {% for property in properties %}
 {% if property.type is defined %}
