@@ -14,5 +14,5 @@
 {% set doc = doc ~ (doc == '' ? '' : "\n\n") ~ '@var ' ~ paramType %}
 {% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
 	public ${{ property.name }};
-
+	{{ dump(property) }}
 {% endfor %}
