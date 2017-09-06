@@ -31,7 +31,7 @@
 {% set parametersDefinition = parametersDefinition ~ (parametersDefinition == '' ? '' : ', ') ~ '$' ~ property.name ~ ' = null' %}
 {% endfor %}
 {% endif %}
-{ doc|phpdoc(1)|raw }}
+{{ doc|phpdoc(1)|raw }}
 	public function __constructor({{ parametersDefinition }})
 	{
 
