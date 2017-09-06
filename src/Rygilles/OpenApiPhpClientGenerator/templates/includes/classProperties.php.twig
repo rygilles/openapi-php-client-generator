@@ -22,7 +22,7 @@
 		{% set propType = 'mixed' %}
 	{% endif %}
 	{% set doc = doc ~ (doc == '' ? '' : "\n\n") ~ '@var ' ~ propType %}
-	{% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
+{% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
 	public ${{ property.name }};
 
 {% endfor %}
