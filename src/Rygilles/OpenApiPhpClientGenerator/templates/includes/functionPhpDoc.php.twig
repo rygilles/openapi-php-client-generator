@@ -20,6 +20,7 @@
 {% set params = params ~ '@param ' ~ paramType ~ ' $' ~ parameterName ~ (paramDescription == '' ? '' : (' ' ~ paramDescription)) ~ "\n" %}
 {% endfor %}
 {% if params != '' %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ params %}{% endif %}
+{% if route.return is defined %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ '@return ' ~ route.return ~ "\n" %}{% endif %}
 {# relatedResource disabled, to remove
 {% if route.relatedResource is defined %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ '@return ' ~ route.relatedResource ~ "\n" %}{% endif %}
 #}

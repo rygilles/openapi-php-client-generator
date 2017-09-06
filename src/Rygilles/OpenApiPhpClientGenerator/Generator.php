@@ -209,6 +209,11 @@ class Generator
 										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
 									];
 
+									// Add response resource return
+									if (!is_null($resolvedResponseReference)) {
+										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReference['name'];
+									}
+
 									/*
 									if (!is_null($relatedResource)) {
 										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource;
@@ -237,6 +242,12 @@ class Generator
 										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
 										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
 									];
+
+									// Add response resource return
+									if (!is_null($resolvedResponseReference)) {
+										$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReference['name'];
+									}
+
 									break;
 							}
 						}
