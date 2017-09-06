@@ -297,7 +297,7 @@ class Generator
 			throw new Exception('Can not resolve this $ref atm (todo) : ' . $ref);
 		}
 
-		$componentPath = ltrim($ref, '#/components/');
+		$componentPath = str_replace('#/components/', $ref);
 		$pathParts = explode('/', $componentPath);
 
 		echo(print_r($pathParts, true) . "\n");
