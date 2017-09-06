@@ -193,7 +193,7 @@ class Generator
 		$this->mainClientData['namespace'] = $this->namespace;
 
 		foreach ($this->managersData as $managerName => $managerData) {
-			$this->mainClientData['uses'][] = $this->namespace . '\\Managers\\' . $managerName['name'] . 'Manager';
+			$this->mainClientData['uses'][] = $this->namespace . '\\Managers\\' . $managerName . 'Manager';
 			$this->mainClientData['managers'][$managerName] = [
 				'name' => $managerName
 			];
