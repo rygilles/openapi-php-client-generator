@@ -582,7 +582,7 @@ class Generator
 	protected function loadTemplates()
 	{
 		$loader = new \Twig_Loader_Filesystem(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'templates');
-		$this->twigEnv = new Twig_Environment($loader, ['cache' => false]);
+		$this->twigEnv = new Twig_Environment($loader, ['cache' => false, 'debug' => true]);
 
 		// Custom filter for phpdoc
 		$filter = new \Twig_Filter('phpdoc', function($string, $indentationCount = 0, $indentChar = "\t") {
