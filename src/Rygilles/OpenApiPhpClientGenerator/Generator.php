@@ -297,6 +297,8 @@ class Generator
 					$this->resourcesData[$name]['properties'][$propertyName]['type'] = $resolved['name'];
 					$this->prepareResource($resolved['name']);
 
+					$this->makeResponseResource($resolved['name'], $resolved['target']);
+
 					if (!isset($this->resourcesData[$resolved['name']]['properties'])) {
 						$this->resourcesData[$resolved['name']]['properties'] = [];
 					}
