@@ -89,6 +89,13 @@ class Generator
 	protected $resourcesData = [];
 
 	/**
+	 * Main client data
+	 *
+	 * @var mixed[]
+	 */
+	protected $mainClientData = [];
+
+	/**
 	 * Twig templates environment
 	 *
 	 * @var Twig_Environment
@@ -108,6 +115,13 @@ class Generator
 	 * @var Twig_TemplateWrapper
 	 */
 	protected $resourceTemplate;
+
+	/**
+	 * Twig main client template
+	 *
+	 * @var Twig_TemplateWrapper
+	 */
+	protected $mainClientTemplate;
 
 	/**
 	 * Generator constructor.
@@ -139,122 +153,10 @@ class Generator
 		$this->makeOutputDirectory();
 
 		// Parse OpenAPI file for operations
+		$this->parseOperations();
 
-		foreach ($this->openApiFileContent['paths'] as $path => $operations) {
-			foreach ($operations as $httpMethod => $operation) {
-				if (isset($operation['tags'])) {
-					$extractedTags = [];
-					foreach ($operation['tags'] as $tag) {
-						$split = explode(':', $tag);
-						if (count($split) == 2) {
-							switch ($split[0]) {
-								case 'Manager' :
-									if (!isset($extractedTags['Managers'])) {
-										$extractedTags['Managers'] = [];
-									}
-									$extractedTags['Managers'][] = $split[1];
-									break;
-								case 'Resource' :
-									if (!isset($extractedTags['Resources'])) {
-										$extractedTags['Resources'] = [];
-									}
-									$extractedTags['Resources'][] = $split[1];
-									break;
-							}
-						}
-					}
-
-					$resolvedResponseReference = $this->analyzeRouteOperationResponses($path, $httpMethod, $operation);
-
-					foreach ($extractedTags as $tagType => $typeTags) {
-						foreach ($typeTags as $typeTag) {
-							switch ($tagType) {
-								case 'Managers' :
-
-									//$relatedResource = null;
-
-									/*
-									if (isset($extractedTags['Resources'])) {
-										$firstKey = array_keys($extractedTags['Resources'])[0];
-										$relatedResource = $extractedTags['Resources'][$firstKey];
-
-										// Add class file "use"
-										if (!isset($this->managersData[ucfirst($typeTag)]['uses'])) {
-											$this->managersData[ucfirst($typeTag)]['uses'] = [];
-										}
-										if (!in_array($this->namespace . '\\Resources\\' . $relatedResource, $this->managersData[ucfirst($typeTag)]['uses'])) {
-											$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $relatedResource;
-										}
-									}
-									*/
-
-									$this->prepareManager($typeTag);
-
-									// Add the response resolved reference resource use if exists
-									if (!is_null($resolvedResponseReference)) {
-										if (!isset($this->managersData[ucfirst($typeTag)]['uses'])) {
-											$this->managersData[ucfirst($typeTag)]['uses'] = [];
-										}
-										if (!in_array($this->namespace . '\\Resources\\' . $resolvedResponseReference['name'], $this->managersData[ucfirst($typeTag)]['uses'])) {
-											$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $resolvedResponseReference['name'];
-										}
-									}
-
-									$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']] = [
-										'path' => $path,
-										'httpMethod' => $httpMethod,
-										'operation' => $operation,
-										'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
-										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
-										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
-									];
-
-									// Add response resource return
-									if (!is_null($resolvedResponseReference)) {
-										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReference['name'];
-									}
-
-									/*
-									if (!is_null($relatedResource)) {
-										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource;
-									}
-									*/
-									break;
-
-								case 'Resources' :
-									$this->prepareResource($typeTag);
-
-									// Add the response resolved reference resource use if exists
-									if (!is_null($resolvedResponseReference)) {
-										if (!isset($this->resourcesData[ucfirst($typeTag)]['uses'])) {
-											$this->resourcesData[ucfirst($typeTag)]['uses'] = [];
-										}
-										if (!in_array($this->namespace . '\\Resources\\' . $resolvedResponseReference['name'], $this->resourcesData[ucfirst($typeTag)]['uses'])) {
-											$this->resourcesData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $resolvedResponseReference['name'];
-										}
-									}
-
-									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']] = [
-										'path' => $path,
-										'httpMethod' => $httpMethod,
-										'operation' => $operation,
-										'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation),
-										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
-										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
-									];
-
-									// Add response resource return
-									if (!is_null($resolvedResponseReference)) {
-										$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReference['name'];
-									}
-
-									break;
-							}
-						}
-					}
-				}
-			}
-		}
+		// Make the main client data
+		$this->makeMainClient();
 
 		// Load template filesystem
 		$this->loadTemplates();
@@ -279,6 +181,149 @@ class Generator
 
 	}
 
+	/**
+	 * Make the main client data
+	 */
+	protected function makeMainClient()
+	{
+		$this->mainClientData['uses'] = [];
+		$this->mainClientData['managers'] = [];
+		$this->mainClientData['className'] = 'Api';
+		$this->mainClientData['classPhpDocTitle'] = 'Api client class';
+		$this->mainClientData['namespace'] = $this->namespace;
+
+		foreach ($this->managersData as $managerName => $managerData) {
+			$this->mainClientData['uses'][] = $this->namespace . '\\Managers\\' . $managerName['name'] . 'Manager';
+			$this->mainClientData['managers'][$managerName] = [
+				'name' => $managerName
+			];
+		}
+	}
+	
+	/**
+	 * Parse OpenAPI file for operations
+	 * 
+	 * @throws Exception
+	 */
+	protected function parseOperations()
+	{
+		foreach ($this->openApiFileContent['paths'] as $path => $operations) {
+			foreach ($operations as $httpMethod => $operation) {
+				if (isset($operation['tags'])) {
+					$extractedTags = [];
+					foreach ($operation['tags'] as $tag) {
+						$split = explode(':', $tag);
+						if (count($split) == 2) {
+							switch ($split[0]) {
+								case 'Manager' :
+									if (!isset($extractedTags['Managers'])) {
+										$extractedTags['Managers'] = [];
+									}
+									$extractedTags['Managers'][] = $split[1];
+									break;
+								case 'Resource' :
+									if (!isset($extractedTags['Resources'])) {
+										$extractedTags['Resources'] = [];
+									}
+									$extractedTags['Resources'][] = $split[1];
+									break;
+							}
+						}
+					}
+					
+					$resolvedResponseReference = $this->analyzeRouteOperationResponses($path, $httpMethod, $operation);
+					
+					foreach ($extractedTags as $tagType => $typeTags) {
+						foreach ($typeTags as $typeTag) {
+							switch ($tagType) {
+								case 'Managers' :
+									
+									//$relatedResource = null;
+									
+									/*
+									if (isset($extractedTags['Resources'])) {
+										$firstKey = array_keys($extractedTags['Resources'])[0];
+										$relatedResource = $extractedTags['Resources'][$firstKey];
+
+										// Add class file "use"
+										if (!isset($this->managersData[ucfirst($typeTag)]['uses'])) {
+											$this->managersData[ucfirst($typeTag)]['uses'] = [];
+										}
+										if (!in_array($this->namespace . '\\Resources\\' . $relatedResource, $this->managersData[ucfirst($typeTag)]['uses'])) {
+											$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $relatedResource;
+										}
+									}
+									*/
+									
+									$this->prepareManager($typeTag);
+									
+									// Add the response resolved reference resource use if exists
+									if (!is_null($resolvedResponseReference)) {
+										if (!isset($this->managersData[ucfirst($typeTag)]['uses'])) {
+											$this->managersData[ucfirst($typeTag)]['uses'] = [];
+										}
+										if (!in_array($this->namespace . '\\Resources\\' . $resolvedResponseReference['name'], $this->managersData[ucfirst($typeTag)]['uses'])) {
+											$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $resolvedResponseReference['name'];
+										}
+									}
+									
+									$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']] = [
+										'path' => $path,
+										'httpMethod' => $httpMethod,
+										'operation' => $operation,
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
+										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
+										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
+									];
+									
+									// Add response resource return
+									if (!is_null($resolvedResponseReference)) {
+										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReference['name'];
+									}
+									
+									/*
+									if (!is_null($relatedResource)) {
+										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource;
+									}
+									*/
+									break;
+								
+								case 'Resources' :
+									$this->prepareResource($typeTag);
+									
+									// Add the response resolved reference resource use if exists
+									if (!is_null($resolvedResponseReference)) {
+										if (!isset($this->resourcesData[ucfirst($typeTag)]['uses'])) {
+											$this->resourcesData[ucfirst($typeTag)]['uses'] = [];
+										}
+										if (!in_array($this->namespace . '\\Resources\\' . $resolvedResponseReference['name'], $this->resourcesData[ucfirst($typeTag)]['uses'])) {
+											$this->resourcesData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $resolvedResponseReference['name'];
+										}
+									}
+									
+									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']] = [
+										'path' => $path,
+										'httpMethod' => $httpMethod,
+										'operation' => $operation,
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation),
+										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
+										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
+									];
+									
+									// Add response resource return
+									if (!is_null($resolvedResponseReference)) {
+										$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReference['name'];
+									}
+									
+									break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Analyze the route operation responses and return te first resolved response reference if exists
 	 *
@@ -525,6 +570,23 @@ class Generator
 	{
 		$this->writeManagersTemplates();
 		$this->writeResourcesTemplates();
+		$this->writeMainClientTemplate();
+	}
+
+	/**
+	 * Write main client template file
+	 */
+	protected function writeMainClientTemplate()
+	{
+		$data = $this->mainClientData;
+
+		$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Api.php';
+
+		if (!is_null($this->outputInterface)) {
+			$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
+		}
+
+		file_put_contents($filePath, $this->mainClientTemplate->render($data));
 	}
 
 	/**
@@ -647,6 +709,7 @@ class Generator
 
 		$this->managerTemplate = $this->twigEnv->load('manager.php.twig');
 		$this->resourceTemplate = $this->twigEnv->load('resource.php.twig');
+		$this->mainClientTemplate = $this->twigEnv->load('mainClient.php.twig');
 	}
 
 	/**
