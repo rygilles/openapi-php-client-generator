@@ -1,4 +1,4 @@
-{% set doc = classPhpDocTitle ~ ' constructor' ~ "\n" %}
+{% set doc = classPhpDocTitle ~ ' constructor' %}
 {% set params = '' %}
 {% if properties is defined %}
 {% for property in properties %}
@@ -22,7 +22,7 @@
 {% endif %}
 {% set params = params ~ '@param ' ~ propType ~ ' $' ~ property.name ~ (propDescription == '' ? '' : (' ' ~ propDescription)) ~ "\n" %}
 {% endfor %}
-{% if params != '' %}{% set doc = doc ~ params %}{% endif %}
+{% if params != '' %}{% set doc = doc ~ "\n\n" ~ params %}{% endif %}
 {% set parametersDefinition = '' %}
 {% for property in properties %}
 {% set parametersDefinition = parametersDefinition ~ (parametersDefinition == '' ? '' : ', ') ~ '$' ~ property.name ~ ' = null' %}
