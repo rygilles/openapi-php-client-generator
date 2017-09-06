@@ -1,10 +1,12 @@
 {% set parametersDefinition = '' %}
 {% if properties is defined %}
 {% for property in properties %}
-{% set parametersDefinition = parametersDefinition ~ (parametersDefinition == '' ? '' : ', ') ~ '$' ~ property.name ~ ' = null' ~ parametersDefinition %}
+{% set parametersDefinition = parametersDefinition ~ (parametersDefinition == '' ? '' : ', ') ~ '$' ~ property.name ~ ' = null' %}
 {% endfor %}
 {% endif %}
 	public function __constructor({{ parametersDefinition }})
 	{
 
 	}
+
+
