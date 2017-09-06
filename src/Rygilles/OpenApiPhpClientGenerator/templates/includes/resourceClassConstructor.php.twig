@@ -1,7 +1,7 @@
 {% set parametersDefinition = '' %}
 {% if properties is defined %}
 {% for property in properties %}
-{% set parametersDefinition = (parametersDefinition == '' ? '', ', ') ~ '$' ~ property.name ~ ' = null' ~ parametersDefinition %}
+{% set parametersDefinition = (parametersDefinition == '' ? '' : ', ') ~ '$' ~ property.name ~ ' = null' ~ parametersDefinition %}
 {% endfor %}
 {% endif %}
 	public function __constructor({{ parametersDefiniton }})
