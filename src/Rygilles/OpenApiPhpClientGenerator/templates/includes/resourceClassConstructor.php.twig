@@ -1,9 +1,37 @@
+{% set doc = classPhpDocTitle ~ ' constructor' ~ "\n" %}
+{% set params = '' %}
+{% for property in route.properties %}
+{% if property.type is defined %}
+{% if property.type == 'boolean' %}{% set propType = 'boolean' %}
+{% elseif property.type == 'string' %}{% set propType = 'string' %}
+{% elseif property.type == 'integer' %}{% set propType = 'int' %}
+{% elseif property.type == 'number' %}{% set propType = 'float' %}
+{% else %}
+{% set propType = property.type %}
+{% endif %}
+{% else %}
+{% set propType = 'mixed' %}
+{% endif %}
+{% set propDescription = '' %}
+{% if property.format is defined %}
+{% set propDescription = 'Format: ' ~ property.format ~ '.' %}
+{% endif %}
+{% if property.description is defined %}
+{% set propDescription = propDescription ~ (propDescription == '' ? '' : ' ') ~ property.description|raw %}
+{% endif %}
+{% if propDescription != '' %}
+{% set doc = doc ~ (doc == '' ? '' : "\n") ~ propDescription %}
+{% endif %}
+{% set params = params ~ '@param ' ~ propType ~ ' $' ~ property.name ~ (propDescription == '' ? '' : (' ' ~ propDescription)) ~ "\n" %}
+{% endfor %}
+{% if params != '' %}{% set doc = doc ~ params %}{% endif %}
 {% set parametersDefinition = '' %}
 {% if properties is defined %}
 {% for property in properties %}
 {% set parametersDefinition = parametersDefinition ~ (parametersDefinition == '' ? '' : ', ') ~ '$' ~ property.name ~ ' = null' %}
 {% endfor %}
 {% endif %}
+{ doc|phpdoc(1)|raw }}
 	public function __constructor({{ parametersDefinition }})
 	{
 
