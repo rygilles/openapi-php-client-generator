@@ -81,11 +81,18 @@ class Generator
 	protected $managersData = [];
 
 	/**
-	 * Resrouces data
+	 * Resources data
 	 *
 	 * @var mixed[]
 	 */
 	protected $resourcesData = [];
+
+	/**
+	 * Responses data
+	 *
+	 * @var mixed[]
+	 */
+	protected $responsesData = [];
 
 	/**
 	 * Twig templates environment
@@ -162,6 +169,9 @@ class Generator
 							}
 						}
 					}
+
+					$this->analyzeRouteOperationResponses($path, $httpMethod, $operation);
+
 					foreach ($extractedTags as $tagType => $typeTags) {
 						foreach ($typeTags as $typeTag) {
 							switch ($tagType) {
@@ -196,6 +206,7 @@ class Generator
 										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource . 'Resource';
 									}
 									break;
+
 								case 'Resources' :
 									$this->prepareResource($typeTag);
 									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']] = [
@@ -238,13 +249,72 @@ class Generator
 	}
 
 	/**
+	 * Analyze the route operation responses
+	 *
+	 * @param string $path
+	 * @param string $httpMethod
+	 * @param mixed[] $operation
+	 */
+	protected function analyzeRouteOperationResponses($path, $httpMethod, $operation)
+	{
+		if (!isset($operation['responses'])) {
+			return;
+		}
+
+		foreach ($operation['responses'] as $httpCode => $response) {
+			if (!isset($response['content'])) {
+				continue;
+			}
+
+			$mediaType = array_keys($response['content'])[0];
+
+			if (!isset($response['content'][$mediaType]['schema'])) {
+				continue;
+			}
+
+			// Response object or reference ?
+			if (isset($response['content'][$mediaType]['schema']['$ref'])) {
+				$schema = $this->resolveReference($response['content'][$mediaType]['schema']['$ref']);
+			} else {
+				$schema = $response['content'][$mediaType]['schema'];
+			}
+
+			die(print_r($schema, true));
+		}
+	}
+
+	/**
+	 * Resolve OpenAPI reference
+	 *
+	 * @param string $ref
+	 * @return \mixed[]
+	 * @throws Exception
+	 */
+	protected function resolveReference($ref)
+	{
+		// @todo Better resolver (Only work with internal components atm)
+		if (strpos($ref, '#/components/') !== 0) {
+			throw new Exception('Can not resolve this $ref atm (todo) : ' . $ref);
+		}
+
+		$componentPath = ltrim($ref, '#/components/');
+		$pathParts = explode('/', $componentPath);
+
+		$target = $this->openApiFileContent['components'];
+		foreach ($pathParts as $pathPart) {
+			$target = $target[$pathPart];
+		}
+
+		return $target;
+	}
+
+	/**
 	 * Return the phpdoc summary of a resource/manager class method
 	 *
 	 * @param string $path
 	 * @param string $httpMethod
 	 * @param mixed[] $operation
 	 * @return string
-	 * @throws Exception
 	 */
 	protected function getRouteOperationSummary($path, $httpMethod, $operation)
 	{
@@ -258,7 +328,6 @@ class Generator
 	 * @param string $httpMethod
 	 * @param mixed[] $operation
 	 * @return string
-	 * @throws Exception
 	 */
 	protected function getRouteOperationDescription($path, $httpMethod, $operation)
 	{
@@ -537,6 +606,18 @@ class Generator
 			mkdir($this->outputPath ,0755, true);
 		}
 
+		$managersDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Managers";
+		if (file_exists($managersDirectoryPath)) {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Managers output directory already created (' . $managersDirectoryPath . ')</info>');
+			}
+		} else {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Making managers output directory (' . $managersDirectoryPath . ')</info>');
+			}
+			mkdir($managersDirectoryPath ,0755, true);
+		}
+
 		$resourcesDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Resources";
 		if (file_exists($resourcesDirectoryPath)) {
 			if (!is_null($this->outputInterface)) {
@@ -549,16 +630,16 @@ class Generator
 			mkdir($resourcesDirectoryPath ,0755, true);
 		}
 
-		$managersDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Managers";
-		if (file_exists($managersDirectoryPath)) {
+		$responsesDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Responses";
+		if (file_exists($responsesDirectoryPath)) {
 			if (!is_null($this->outputInterface)) {
-				$this->outputInterface->writeln('<info>Managers output directory already created (' . $managersDirectoryPath . ')</info>');
+				$this->outputInterface->writeln('<info>Responses output directory already created (' . $responsesDirectoryPath . ')</info>');
 			}
 		} else {
 			if (!is_null($this->outputInterface)) {
-				$this->outputInterface->writeln('<info>Making managers output directory (' . $managersDirectoryPath . ')</info>');
+				$this->outputInterface->writeln('<info>Making responses output directory (' . $responsesDirectoryPath . ')</info>');
 			}
-			mkdir($managersDirectoryPath ,0755, true);
+			mkdir($responsesDirectoryPath ,0755, true);
 		}
 	}
 }
