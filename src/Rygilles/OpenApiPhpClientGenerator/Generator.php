@@ -300,7 +300,7 @@ class Generator
 		$componentPath = ltrim($ref, '#/components/');
 		$pathParts = explode('/', $componentPath);
 
-		echo($ref . "\n");
+		echo(print_r($pathParts, true) . "\n");
 
 		$target = $this->openApiFileContent['components'];
 		foreach ($pathParts as $pathPart) {
