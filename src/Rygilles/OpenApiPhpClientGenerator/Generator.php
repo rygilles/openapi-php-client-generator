@@ -88,13 +88,6 @@ class Generator
 	protected $resourcesData = [];
 
 	/**
-	 * Responses resources data
-	 *
-	 * @var mixed[]
-	 */
-	protected $responsesResourcesData = [];
-
-	/**
 	 * Twig templates environment
 	 *
 	 * @var Twig_Environment
@@ -291,10 +284,6 @@ class Generator
 	 */
 	protected function makeResponseResource($name, $schema)
 	{
-		if (isset($this->responsesResourcesData[$name])) {
-			return;
-		}
-
 		// Analyze properties for references
 		if (isset($schema['properties'])) {
 			foreach ($schema['properties'] as $propertyName => $property) {
@@ -329,8 +318,6 @@ class Generator
 				}
 			}
 		}
-
-		//$this->responsesResourcesData[$name] = $schema;
 	}
 
 	/**
