@@ -1,3 +1,9 @@
 {% include 'includes/classHeader.php.twig' %}
 {
+{% for manager in managers %}
+	public function {{ manager.name }}()
+	{
+		return $this->{{ manager.lowerCamelCaseName }};
+	}
+{% endfor %}
 }

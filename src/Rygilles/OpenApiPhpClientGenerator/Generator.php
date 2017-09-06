@@ -195,7 +195,8 @@ class Generator
 		foreach ($this->managersData as $managerName => $managerData) {
 			$this->mainClientData['uses'][] = $this->namespace . '\\Managers\\' . $managerName . 'Manager';
 			$this->mainClientData['managers'][$managerName] = [
-				'name' => $managerName
+				'name' => $managerName,
+				'lowerCamelCaseName' => lcfirst($managerName)
 			];
 		}
 	}
