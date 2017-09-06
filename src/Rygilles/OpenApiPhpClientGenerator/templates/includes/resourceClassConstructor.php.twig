@@ -32,7 +32,7 @@
 	{
 {% if properties is defined %}
 {% for property in properties %}
-	$this->{{ property.name }} = ${{ property.name }};
+		$this->{{ property.name }} = ${{ property.name }};
 {% endfor %}
 {% endif %}
 	}
