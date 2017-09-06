@@ -1,21 +1,25 @@
 {% for property in properties %}
 {% set doc = '' %}
+{% set propDescription = '' %}
+{% if property.format is defined %}
+{% set propDescription = 'Format: ' ~ property.format ~ '.' %}
+{% endif %}
 {% if property.description is defined %}
-{% set doc = doc ~ (doc == '' ? '' : "\n") ~ property.description|raw %}
+{% set propDescription = propDescription ~ (propDescription == '' ? '' : ' ') ~ property.description|raw %}
 {% endif %}
 {% if property.type is defined %}
-{% if property.type == 'boolean' %}{% set paramType = 'boolean' %}
-{% elseif property.type == 'string' %}{% set paramType = 'string' %}
-{% elseif property.type == 'integer' %}{% set paramType = 'int' %}
-{% elseif property.type == 'number' %}{% set paramType = 'float' %}
+{% if property.type == 'boolean' %}{% set propType = 'boolean' %}
+{% elseif property.type == 'string' %}{% set propType = 'string' %}
+{% elseif property.type == 'integer' %}{% set propType = 'int' %}
+{% elseif property.type == 'number' %}{% set propType = 'float' %}
 {% else %}
-{% set paramType = property.type %}
+{% set propType = property.type %}
 {% endif %}
 {% else %}
-{% set paramType = 'mixed' %}
+{% set propType = 'mixed' %}
 {% endif %}
-{% set doc = doc ~ (doc == '' ? '' : "\n\n") ~ '@var ' ~ paramType %}
+{% set doc = doc ~ (doc == '' ? '' : "\n\n") ~ '@var ' ~ propType %}
 {% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
 	public ${{ property.name }};
-	
+
 {% endfor %}
