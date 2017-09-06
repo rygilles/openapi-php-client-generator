@@ -7,6 +7,9 @@
 {% if property.description is defined %}
 {% set propDescription = propDescription ~ (propDescription == '' ? '' : ' ') ~ property.description|raw %}
 {% endif %}
+{% if propDescription != '' %}
+{% set doc = doc ~ (doc == '' ? '' : "\n") ~ propDescription %}
+{% endif %}
 {% if property.type is defined %}
 {% if property.type == 'boolean' %}{% set propType = 'boolean' %}
 {% elseif property.type == 'string' %}{% set propType = 'string' %}
