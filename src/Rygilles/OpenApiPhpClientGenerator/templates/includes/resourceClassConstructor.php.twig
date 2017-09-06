@@ -30,5 +30,9 @@
 {% endif %}
 {{ doc|phpdoc(1)|raw ~ "\t" }}public function __constructor({{ parametersDefinition }})
 	{
-
+{% if properties is defined %}
+{% for property in properties %}
+	$this->{{ property.name }} = ${{ property.name }};
+{% endfor %}
+{% endif %}
 	}
