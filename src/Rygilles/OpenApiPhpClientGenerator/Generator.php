@@ -618,7 +618,6 @@ class Generator
 
 		$this->managerTemplate = $this->twigEnv->load('manager.php.twig');
 		$this->resourceTemplate = $this->twigEnv->load('resource.php.twig');
-		$this->responseTemplate = $this->twigEnv->load('response.php.twig');
 	}
 
 	/**
