@@ -522,8 +522,12 @@ class Generator
 				'routes' => $resourceData['routes']
 			];
 
-			if (isset($managerData['uses'])) {
-				$data['uses'] = $managerData['uses'];
+			if (isset($resourceData['uses'])) {
+				$data['uses'] = $resourceData['uses'];
+			}
+
+			if (isset($resourceData['properties'])) {
+				$data['properties'] = $resourceData['properties'];
 			}
 
 			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $resourceName . '.php';
