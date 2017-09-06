@@ -290,8 +290,11 @@ class Generator
 			foreach ($schema['properties'] as $propertyName => $property) {
 				$this->prepareResource($name);
 
+				$this->resourcesData[$name]['properties'][$propertyName]['name'] = $propertyName;
+
 				if (isset($property['$ref'])) {
 					$resolved = $this->resolveReference($property['$ref']);
+					$this->resourcesData[$name]['properties'][$propertyName]['type'] = $resolved['name'];
 					$this->prepareResource($resolved['name']);
 
 					if (!isset($this->resourcesData[$resolved['name']]['properties'])) {

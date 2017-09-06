@@ -4,10 +4,13 @@
 {% set doc = doc ~ (doc == '' ? '' : "\n") ~ property.description|raw %}
 {% endif %}
 {% if property.type is defined %}
-{% if property.type == 'boolean' %}{% set paramType = 'boolean' %}{% endif %}
-{% if property.type == 'string' %}{% set paramType = 'string' %}{% endif %}
-{% if property.type == 'integer' %}{% set paramType = 'int' %}{% endif %}
-{% if property.type == 'number' %}{% set paramType = 'float' %}{% endif %}
+{% if property.type == 'boolean' %}{% set paramType = 'boolean' %}
+{% elseif property.type == 'string' %}{% set paramType = 'string' %}
+{% elseif property.type == 'integer' %}{% set paramType = 'int' %}
+{% elseif property.type == 'number' %}{% set paramType = 'float' %}
+{% else %}
+{% set paramType = property.type %}
+{% endif %}
 {% else %}
 {% set paramType = 'mixed' %}
 {% endif %}
