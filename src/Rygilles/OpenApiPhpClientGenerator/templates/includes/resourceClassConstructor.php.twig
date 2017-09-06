@@ -4,7 +4,7 @@
 {% set parametersDefinition = parametersDefinition ~ (parametersDefinition == '' ? '' : ', ') ~ '$' ~ property.name ~ ' = null' ~ parametersDefinition %}
 {% endfor %}
 {% endif %}
-	public function __constructor({{ parametersDefiniton }})
+	public function __constructor({{ parametersDefinition }})
 	{
 
 	}
