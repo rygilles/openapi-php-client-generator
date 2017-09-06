@@ -300,10 +300,13 @@ class Generator
 		$componentPath = str_replace('#/components/', '', $ref);
 		$pathParts = explode('/', $componentPath);
 
-		echo(print_r($pathParts, true) . "\n");
-
 		$target = $this->openApiFileContent['components'];
+		$processingPathParts = ['#', 'components'];
 		foreach ($pathParts as $pathPart) {
+			$processingPathParts[] = $pathPart;
+			if (!isset($target[$pathPart])) {
+				throw new Exception('Can not resolve $ref "' . $ref . '" : Path resolve failed at "' . implode('/', $processingPathParts) . '"');
+			}
 			$target = $target[$pathPart];
 		}
 
