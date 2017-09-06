@@ -5,8 +5,10 @@
 {% for parameterName, parameter in route.definitionParameters %}
 {% set paramType = 'mixed' %}
 {% if parameter.type is defined %}
+{% if parameter.type == 'boolean' %}{% set paramType = 'boolean' %}{% endif %}
 {% if parameter.type == 'string' %}{% set paramType = 'string' %}{% endif %}
 {% if parameter.type == 'integer' %}{% set paramType = 'int' %}{% endif %}
+{% if parameter.type == 'number' %}{% set paramType = 'float' %}{% endif %}
 {% endif %}
 {% set paramDescription = '' %}
 {% if parameter.format is defined %}

@@ -88,11 +88,11 @@ class Generator
 	protected $resourcesData = [];
 
 	/**
-	 * Responses data
+	 * Responses resources data
 	 *
 	 * @var mixed[]
 	 */
-	protected $responsesData = [];
+	protected $responsesResourcesData = [];
 
 	/**
 	 * Twig templates environment
@@ -114,13 +114,6 @@ class Generator
 	 * @var Twig_TemplateWrapper
 	 */
 	protected $resourceTemplate;
-
-	/**
-	 * Twig response template
-	 *
-	 * @var Twig_TemplateWrapper
-	 */
-	protected $responseTemplate;
 
 	/**
 	 * Generator constructor.
@@ -194,8 +187,8 @@ class Generator
 										if (!isset($this->managersData[ucfirst($typeTag)]['uses'])) {
 											$this->managersData[ucfirst($typeTag)]['uses'] = [];
 										}
-										if (!in_array($this->namespace . '\\Resources\\' . $relatedResource . 'Resource', $this->managersData[ucfirst($typeTag)]['uses'])) {
-											$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $relatedResource . 'Resource';
+										if (!in_array($this->namespace . '\\Resources\\' . $relatedResource, $this->managersData[ucfirst($typeTag)]['uses'])) {
+											$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $relatedResource;
 										}
 									}
 
@@ -210,7 +203,7 @@ class Generator
 									];
 
 									if (!is_null($relatedResource)) {
-										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource . 'Resource';
+										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource;
 									}
 									break;
 
@@ -282,8 +275,7 @@ class Generator
 			// Response object or reference ?
 			if (isset($response['content'][$mediaType]['schema']['$ref'])) {
 				$resolved = $this->resolveReference($response['content'][$mediaType]['schema']['$ref']);
-				$this->makeResponse($resolved['name'], $resolved['target']);
-				$schema = $resolved['target'];
+				$this->makeResponseResource($resolved['name'], $resolved['target']);
 			} else {
 				//$schema = $response['content'][$mediaType]['schema'];
 				// @todo what to do ?
@@ -292,16 +284,63 @@ class Generator
 	}
 
 	/**
-	 * Make response (if not defined yet)
+	 * Make response resource (if not defined yet)
 	 *
 	 * @param string $name
 	 * @param mixed[] $schema
 	 */
-	protected function makeResponse($name, $schema)
+	protected function makeResponseResource($name, $schema)
 	{
-		if (!isset($this->responsesData[$name])) {
-			$this->responsesData[$name] = $schema;
+		if (isset($this->responsesResourcesData[$name])) {
+			return;
 		}
+
+		// Analyze properties for references
+		if (isset($schema['properties'])) {
+			foreach ($schema['properties'] as $propertyName => $property) {
+				$isRef = false;
+				if (isset($property['$ref'])) {
+					$resolved = $this->resolveReference($property['$ref']);
+					$isRef = true;
+					$this->prepareResource($resolved['name']);
+
+					$propertySchema = $resolved['target'];
+				} else {
+					$propertySchema = $property;
+				}
+
+				if (!isset($this->resourcesData[$resolved['name']]['properties'])) {
+					$this->resourcesData[$resolved['name']]['properties'] = [];
+				}
+
+				$this->resourcesData[$resolved['name']]['properties'][$propertyName] = [
+					'name' => $propertyName,
+				];
+
+				if ($isRef) {
+					if (!isset($this->resourcesData[$resolved['name']]['uses'])) {
+						$this->resourcesData[$resolved['name']]['uses'] = [];
+					}
+					if (!in_array($this->namespace . '\\Resources\\' . $resolved['name'], $this->resourcesData[$resolved['name']]['uses'])) {
+						$this->resourcesData[$resolved['name']]['uses'][] = $this->namespace . '\\Resources\\' . $resolved['name'];
+					}
+
+					$this->resourcesData[$resolved['name']]['properties'][$propertyName]['type'] = $resolved['name'];
+				} else {
+					if (isset($propertySchema['type'])) {
+						$this->resourcesData[$resolved['name']]['properties'][$propertyName]['type'] = $propertySchema['type'];
+					}
+					if (isset($propertySchema['format'])) {
+						$this->resourcesData[$resolved['name']]['properties'][$propertyName]['format'] = $propertySchema['format'];
+					}
+					if (isset($propertySchema['description'])) {
+						$this->resourcesData[$resolved['name']]['properties'][$propertyName]['description'] = $propertySchema['description'];
+					}
+				}
+			}
+		}
+
+		$this->responsesResourcesData[$name] = $schema;
 	}
 
 	/**
@@ -463,7 +502,6 @@ class Generator
 	{
 		$this->writeManagersTemplates();
 		$this->writeResourcesTemplates();
-		$this->writeResponsesTemplates();
 	}
 
 	/**
@@ -500,7 +538,7 @@ class Generator
 	{
 		foreach ($this->resourcesData as $resourceName => $resourceData) {
 			$data = [
-				'className' => $resourceName . 'Resource',
+				'className' => $resourceName,
 				'classPhpDocTitle' => $resourceName . ' resource class',
 				'namespace' => $this->namespace . '\Resources',
 				'routes' => $resourceData['routes']
@@ -510,36 +548,13 @@ class Generator
 				$data['uses'] = $managerData['uses'];
 			}
 
-			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $resourceName . 'Resource.php';
+			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . $resourceName . '.php';
 
 			if (!is_null($this->outputInterface)) {
 				$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
 			}
 
 			file_put_contents($filePath, $this->resourceTemplate->render($data));
-		}
-	}
-
-	/**
-	 * Write responses templates files
-	 */
-	protected function writeResponsesTemplates()
-	{
-		foreach ($this->responsesData as $responseName => $schema)
-		{
-			$data = [
-				'className' => $responseName,
-				'classPhpDocTitle' => $responseName . ' class',
-				'namespace' => $this->namespace . '\Responses'
-			];
-
-			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Responses' . DIRECTORY_SEPARATOR . $responseName . '.php';
-
-			if (!is_null($this->outputInterface)) {
-				$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
-			}
-
-			file_put_contents($filePath, $this->responseTemplate->render($data));
 		}
 	}
 

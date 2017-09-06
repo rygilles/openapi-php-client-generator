@@ -1,5 +1,8 @@
 {% include 'includes/classHeader.php.twig' %}
 {
+{% if properties is defined %}
+{% include 'includes/classProperties.php.twig' %}
+{% endif %}
 {% if routes is defined %}
 {% for route in routes %}
 {% include 'includes/functionPhpDoc.php.twig' with {'route': route} %}

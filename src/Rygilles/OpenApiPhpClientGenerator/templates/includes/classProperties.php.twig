@@ -1,0 +1,18 @@
+{% for property in properties %}
+{% set doc = '' %}
+{% if property.description is defined %}
+{% set doc = doc ~ (doc == '' ? '' : "\n") ~ property.description|raw %}
+{% endif %}
+{% if property.type is defined %}
+{% if property.type == 'boolean' %}{% set paramType = 'boolean' %}{% endif %}
+{% if property.type == 'string' %}{% set paramType = 'string' %}{% endif %}
+{% if property.type == 'integer' %}{% set paramType = 'int' %}{% endif %}
+{% if property.type == 'number' %}{% set paramType = 'float' %}{% endif %}
+{% else %}
+{% set paramType = 'mixed' %}
+{% endif %}
+{% set doc = doc ~ (doc == '' ? '' : "\n\n") ~ '@var ' ~ paramType %}
+{% if doc != '' %}{{ doc|phpdoc(1)|raw }}{% endif %}
+	public ${{ property.name }};
+
+{% endfor %}
