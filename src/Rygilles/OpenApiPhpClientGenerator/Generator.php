@@ -102,6 +102,13 @@ class Generator
 	protected $twigEnv;
 
 	/**
+	 * Twig manager template
+	 *
+	 * @var Twig_TemplateWrapper
+	 */
+	protected $managerTemplate;
+
+	/**
 	 * Twig resource template
 	 *
 	 * @var Twig_TemplateWrapper
@@ -109,11 +116,11 @@ class Generator
 	protected $resourceTemplate;
 
 	/**
-	 * Twig manager template
+	 * Twig response template
 	 *
 	 * @var Twig_TemplateWrapper
 	 */
-	protected $managerTemplate;
+	protected $responseTemplate;
 
 	/**
 	 * Generator constructor.
@@ -274,12 +281,26 @@ class Generator
 
 			// Response object or reference ?
 			if (isset($response['content'][$mediaType]['schema']['$ref'])) {
-				$schema = $this->resolveReference($response['content'][$mediaType]['schema']['$ref']);
+				$resolved = $this->resolveReference($response['content'][$mediaType]['schema']['$ref']);
+				$this->makeResponse($resolved['name'], $resolved['target']);
+				$schema = $resolved['target'];
 			} else {
-				$schema = $response['content'][$mediaType]['schema'];
+				//$schema = $response['content'][$mediaType]['schema'];
+				// @todo what to do ?
 			}
+		}
+	}
 
-			die(print_r($schema, true));
+	/**
+	 * Make response (if not defined yet)
+	 *
+	 * @param string $name
+	 * @param mixed[] $schema
+	 */
+	protected function makeResponse($name, $schema)
+	{
+		if (!isset($this->responsesData[$name])) {
+			$this->responsesData[$name] = $schema;
 		}
 	}
 
@@ -302,15 +323,20 @@ class Generator
 
 		$target = $this->openApiFileContent['components'];
 		$processingPathParts = ['#', 'components'];
+		$targetName = '';
 		foreach ($pathParts as $pathPart) {
 			$processingPathParts[] = $pathPart;
 			if (!isset($target[$pathPart])) {
-				throw new Exception('Can not resolve $ref "' . $ref . '" : Path resolve failed at "' . implode('/', $processingPathParts) . '"');
+				throw new Exception('Can not resolve $ref "' . $ref . '" : Segment not found at "' . implode('/', $processingPathParts) . '"');
 			}
 			$target = $target[$pathPart];
+			$targetName = $pathPart;
 		}
 
-		return $target;
+		return [
+			'name' => $targetName,
+			'target' => $target
+		];
 	}
 
 	/**
@@ -437,6 +463,7 @@ class Generator
 	{
 		$this->writeManagersTemplates();
 		$this->writeResourcesTemplates();
+		$this->writeResponsesTemplates();
 	}
 
 	/**
@@ -490,6 +517,29 @@ class Generator
 			}
 
 			file_put_contents($filePath, $this->resourceTemplate->render($data));
+		}
+	}
+
+	/**
+	 * Write responses templates files
+	 */
+	protected function writeResponsesTemplates()
+	{
+		foreach ($this->responsesData as $responseName => $schema)
+		{
+			$data = [
+				'className' => $responseName,
+				'classPhpDocTitle' => $responseName . ' class',
+				'namespace' => $this->namespace . '\Responses'
+			];
+
+			$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Responses' . DIRECTORY_SEPARATOR . $responseName . '.php';
+
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
+			}
+
+			file_put_contents($filePath, $this->responseTemplate->render($data));
 		}
 	}
 
@@ -553,6 +603,7 @@ class Generator
 
 		$this->managerTemplate = $this->twigEnv->load('manager.php.twig');
 		$this->resourceTemplate = $this->twigEnv->load('resource.php.twig');
+		$this->responseTemplate = $this->twigEnv->load('response.php.twig');
 	}
 
 	/**
