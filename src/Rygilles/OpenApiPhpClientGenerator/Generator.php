@@ -513,6 +513,7 @@ class Generator
 	 */
 	protected function writeResourcesTemplates()
 	{
+		echo("\n" . print_r($this->resourcesData, true) . "\n");
 		foreach ($this->resourcesData as $resourceName => $resourceData) {
 			$data = [
 				'className' => $resourceName,
