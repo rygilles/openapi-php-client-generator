@@ -120,10 +120,7 @@
 		return $this->httpClient;
 	}
 
-{% if security is defined %}
-{% for scheme in security %}
-{% if scheme.type == 'http' %}
-{% if scheme.scheme == 'bearer' %}
+{% if bearerTokenDefined is defined %}
 	/**
 	 * Set the bearer token manually
 	 *
@@ -134,9 +131,6 @@
 		$this->bearerToken = $bearerToken;
 	}
 
-{% endif %}
-{% endif %}
-{% endfor %}
 {% endif %}
 {% for manager in managers %}
 	/**
