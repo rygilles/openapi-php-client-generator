@@ -21,6 +21,7 @@
 	 * @var {{ manager.className }}
 	 */
 	protected ${{ manager.lowerCamelCaseClassName }};
+	
 {% endfor %}
 
 	public function __construct($apiBaseUrl = '{{ apiBaseUrl }}')
@@ -57,7 +58,6 @@
 	{
 		return $this->{{ manager.lowerCamelCaseClassName }};
 	}
-
 
 {% endfor %}
 }
