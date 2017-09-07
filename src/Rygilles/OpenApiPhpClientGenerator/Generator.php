@@ -186,11 +186,16 @@ class Generator
 	 */
 	protected function makeMainClient()
 	{
-		$this->mainClientData['uses'] = [];
+		$this->mainClientData['uses'] = [
+			'GuzzleHttp\Client as GuzzleClient'
+		];
 		$this->mainClientData['managers'] = [];
 		$this->mainClientData['className'] = 'Api';
 		$this->mainClientData['classPhpDocTitle'] = 'Api client class';
 		$this->mainClientData['namespace'] = $this->namespace;
+
+		$firstKey = array_keys($this->openApiFileContent['servers'])[0];
+		$this->mainClientData['apiBaseUrl'] = $this->openApiFileContent['servers'][$firstKey]['url'];
 
 		foreach ($this->managersData as $managerName => $managerData) {
 			$this->mainClientData['uses'][] = $this->namespace . '\\Managers\\' . $managerName . 'Manager';

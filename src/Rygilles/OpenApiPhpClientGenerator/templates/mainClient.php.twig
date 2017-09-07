@@ -1,10 +1,36 @@
 {% include 'includes/classHeader.php.twig' %}
 {
-	public function __construct()
+	/**
+	 * Guzzle client for API requests
+	 *
+	 * @var GuzzleClient;
+	 */
+	protected $httpClient;
+
+	/**
+	 * API base url for requests
+	 *
+	 * @var string
+	 */
+	protected $apiBaseUrl;
+
+	public function __construct($apiBaseUrl = '{{ apiBaseUrl }}')
 	{
+		$this->apiBaseUrl = $apiBaseUrl;
+
 {% for manager in managers %}
 		$this->{{ manager.lowerCamelCaseClassName }} = new {{ manager.className }}();
 {% endfor %}
+	}
+
+	/**
+	 * Return the API base url
+	 *
+	 * @return string
+	 */
+	public function getApiBaseUrl()
+	{
+		return $this->apiBaseUrl;
 	}
 
 {% for manager in managers %}
