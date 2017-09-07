@@ -56,7 +56,7 @@
 		$this->apiBaseUrl = $apiBaseUrl;
 
 {% for manager in managers %}
-		$this->{{ manager.lowerCamelCaseClassName }} = new {{ manager.className }}();
+		$this->{{ manager.lowerCamelCaseClassName }} = new {{ manager.className }}($this);
 {% endfor %}
 	}
 
