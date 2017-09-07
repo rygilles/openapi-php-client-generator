@@ -190,9 +190,12 @@ class Generator
 			'GuzzleHttp\Client as GuzzleClient'
 		];
 		$this->mainClientData['managers'] = [];
-		$this->mainClientData['className'] = 'Api';
-		$this->mainClientData['classPhpDocTitle'] = 'Api client class';
+		$this->mainClientData['className'] = 'ApiClient';
+		$this->mainClientData['classPhpDocTitle'] = $this->openApiFileContent['info']['title'] . ' client class';
+		$this->mainClientData['classPhpDocTitle'] .= $this->openApiFileContent['info']['version'] ? (' (version ' . $this->openApiFileContent['info']['title'] . ')') : '';
 		$this->mainClientData['namespace'] = $this->namespace;
+
+		$this->mainClientData['info'] = $this->openApiFileContent['info'];
 
 		$firstKey = array_keys($this->openApiFileContent['servers'])[0];
 		$this->mainClientData['apiBaseUrl'] = $this->openApiFileContent['servers'][$firstKey]['url'];
@@ -587,7 +590,7 @@ class Generator
 	{
 		$data = $this->mainClientData;
 
-		$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Api.php';
+		$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'ApiClient.php';
 
 		if (!is_null($this->outputInterface)) {
 			$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
