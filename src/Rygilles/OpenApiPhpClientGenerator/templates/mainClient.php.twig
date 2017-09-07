@@ -14,6 +14,21 @@
 	 */
 	protected $httpClient;
 
+{% if security is defined %}
+{% for scheme in security %}
+{% if scheme.type == 'http' %}
+{% if scheme.scheme == 'bearer' %}
+	/**
+	 * Bearer token
+	 *
+	 * @var string
+	 */
+	protected $bearerToken;
+
+{% endif %}
+{% end if %}
+{% endfor %}
+{% end if %}
 	/**
 	 * Authentication access token
 	 *
@@ -62,6 +77,24 @@
 		return $this->httpClient;
 	}
 
+{% if security is defined %}
+{% for scheme in security %}
+{% if scheme.type == 'http' %}
+{% if scheme.scheme == 'bearer' %}
+	/**
+	 * Set the bearer token manually
+	 *
+	 * @param string $bearerToken
+	 */
+	public function setBearerToken($bearerToken)
+	{
+		$this->bearerToken = $bearerToken;
+	}
+
+{% endif %}
+{% end if %}
+{% endfor %}
+{% end if %}
 {% for manager in managers %}
 	/**
 	 * Return the {{ manager.name }} manager
