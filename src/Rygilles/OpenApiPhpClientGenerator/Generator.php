@@ -192,7 +192,7 @@ class Generator
 		$this->mainClientData['managers'] = [];
 		$this->mainClientData['className'] = 'ApiClient';
 		$this->mainClientData['classPhpDocTitle'] = $this->openApiFileContent['info']['title'] . ' client class';
-		$this->mainClientData['classPhpDocTitle'] .= $this->openApiFileContent['info']['version'] ? (' (version ' . $this->openApiFileContent['info']['title'] . ')') : '';
+		$this->mainClientData['classPhpDocTitle'] .= $this->openApiFileContent['info']['version'] ? (' (version ' . $this->openApiFileContent['info']['version'] . ')') : '';
 		$this->mainClientData['namespace'] = $this->namespace;
 
 		$this->mainClientData['info'] = $this->openApiFileContent['info'];
