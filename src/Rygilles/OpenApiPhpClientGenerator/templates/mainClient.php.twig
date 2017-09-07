@@ -42,6 +42,30 @@
 
 {% endif %}
 {% endif %}
+{% if flow.tokenUrl is defined %}
+{% if tokenUrlDefined is not defined %}
+{% set tokenUrlUrlDefined = true  %}
+	/**
+	 * OAuth2 token url
+	 *
+	 * @var string
+	 */
+	protected $OAuthTokenUrl = '{{ flow.tokenUrl }}';
+
+{% endif %}
+{% endif %}
+{% if flow.refreshUrl is defined %}
+{% if refreshUrlDefined is not defined %}
+{% set refreshUrlDefined = true  %}
+	/**
+	 * OAuth2 refresh url
+	 *
+	 * @var string
+	 */
+	protected $OAuthRefreshUrl = '{{ flow.refreshUrl }}';
+
+{% endif %}
+{% endif %}
 {% endfor %}
 {% endif %}
 {% endfor %}
