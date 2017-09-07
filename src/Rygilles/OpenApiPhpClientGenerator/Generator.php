@@ -209,7 +209,7 @@ class Generator
 				if (!isset($this->mainClientData['security'])) {
 					$this->mainClientData['security'] = [];
 				}
-				$this->mainClientData['security'] = [$securityRequirement] = $this->openApiFileContent['components']['securitySchemes'][$securityRequirement];
+				$this->mainClientData['security'][$securityRequirement] = $this->openApiFileContent['components']['securitySchemes'][$securityRequirement];
 			}
 		}
 
