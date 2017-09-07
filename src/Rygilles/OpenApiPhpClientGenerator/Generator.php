@@ -203,6 +203,7 @@ class Generator
 		// Security
 		// @todo Not only OAuth support
 		// @todo Scopes support ?
+		$this->mainClientData['useBearerToken'] = false;
 		if (isset($this->openApiFileContent['security'])) {
 			foreach ($this->openApiFileContent['security'] as $s) {
 				foreach ($s as $securityRequirement => $scope) {
@@ -211,6 +212,16 @@ class Generator
 						$this->mainClientData['security'] = [];
 					}
 					$this->mainClientData['security'][$securityRequirement] = $this->openApiFileContent['components']['securitySchemes'][$securityRequirement];
+
+					if ($this->openApiFileContent['components']['securitySchemes'][$securityRequirement]['type'] == 'http') {
+						if ($this->openApiFileContent['components']['securitySchemes'][$securityRequirement]['type']['scheme'] == 'bearer') {
+							$this->mainClientData['useBearerToken'] = true;
+						}
+					}
+
+					if ($this->openApiFileContent['components']['securitySchemes'][$securityRequirement]['type'] == 'oauth2') {
+						$this->mainClientData['useBearerToken'] = true;
+					}
 				}
 			}
 		}

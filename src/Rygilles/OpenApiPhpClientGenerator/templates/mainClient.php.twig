@@ -18,69 +18,15 @@
 	 */
 	protected $httpClient;
 
-{% if security is defined %}
-{% for scheme in security %}
-{% if (scheme.type == 'http' and scheme.scheme == 'bearer') or scheme.type == 'oauth2' %}
-{% if bearerTokenDefined == false %}
-{% set bearerTokenDefined = true %}
+{% if useBearerToken == true %}
 	/**
-	 * Bearer token
+	 * Bearer authentication access token
 	 *
 	 * @var string
 	 */
 	protected $bearerToken;
 
 {% endif %}
-{% endif %}
-{% if scheme.type == 'oauth2' %}
-{% for flow in scheme.flows %}
-{% if flow.authorizationUrl is defined %}
-{% if authorizationUrlDefined == false %}
-{% set authorizationUrlDefined = true  %}
-	/**
-	 * OAuth2 authorization url
-	 *
-	 * @var string
-	 */
-	protected $OAuthAuthorizationUrl = '{{ flow.authorizationUrl }}';
-
-{% endif %}
-{% endif %}
-{% if flow.tokenUrl is defined %}
-{% if tokenUrlDefined == false %}
-{% set tokenUrlDefined = true  %}
-	/**
-	 * OAuth2 token url
-	 *
-	 * @var string
-	 */
-	protected $OAuthTokenUrl = '{{ flow.tokenUrl }}';
-
-{% endif %}
-{% endif %}
-{% if flow.refreshUrl is defined %}
-{% if refreshUrlDefined == false %}
-{% set refreshUrlDefined = true  %}
-	/**
-	 * OAuth2 refresh url
-	 *
-	 * @var string
-	 */
-	protected $OAuthRefreshUrl = '{{ flow.refreshUrl }}';
-
-{% endif %}
-{% endif %}
-{% endfor %}
-{% endif %}
-{% endfor %}
-{% endif %}
-	/**
-	 * Authentication access token
-	 *
-	 * @var string
-	 */
-	protected $token;
-
 {% for manager in managers %}
 	/**
 	 * {{ manager.name }} manager
@@ -124,7 +70,7 @@
 		return $this->httpClient;
 	}
 
-{% if bearerTokenDefined == true %}
+{% if useBearerToken == true %}
 	/**
 	 * Set the bearer token manually
 	 *
