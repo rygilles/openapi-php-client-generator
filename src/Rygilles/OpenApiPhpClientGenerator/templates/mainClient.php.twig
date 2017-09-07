@@ -26,6 +26,22 @@
 	 */
 	protected $bearerToken;
 
+{% if scheme.type == 'oauth2' %}
+{% for flow in scheme.flows %}
+{% if flow.authorizationUrl is defined %}
+{% if authorizationUrlDefined is not defined %}
+{% set authorizationUrlDefined = true  %}
+	/**
+	 * OAuth2 authorization url
+	 *
+	 * @var string
+	 */
+	protected $OAuthAuthorizationUrl = '{{ flow.authorizationUrl }}';
+
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}
 {% endif %}
 {% endif %}
 {% endfor %}
