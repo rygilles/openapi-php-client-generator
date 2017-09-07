@@ -26,6 +26,8 @@
 	 */
 	protected $bearerToken;
 
+{% endif %}
+{% endif %}
 {% if scheme.type == 'oauth2' %}
 {% for flow in scheme.flows %}
 {% if flow.authorizationUrl is defined %}
@@ -41,8 +43,6 @@
 {% endif %}
 {% endif %}
 {% endfor %}
-{% endif %}
-{% endif %}
 {% endif %}
 {% endfor %}
 {% endif %}
