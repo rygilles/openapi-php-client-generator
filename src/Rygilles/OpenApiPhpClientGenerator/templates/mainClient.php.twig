@@ -17,6 +17,8 @@
 {% if security is defined %}
 {% for scheme in security %}
 {% if (scheme.type == 'http' and scheme.scheme == 'bearer') or scheme.type == 'oauth2' %}
+{% if bearerTokenDefined is not defined %}
+{% set bearerTokenDefined = true  %}
 	/**
 	 * Bearer token
 	 *
@@ -24,6 +26,7 @@
 	 */
 	protected $bearerToken;
 
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endif %}
