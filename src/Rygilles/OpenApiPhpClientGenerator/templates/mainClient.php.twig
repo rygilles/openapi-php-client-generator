@@ -1,9 +1,18 @@
 {% include 'includes/classHeader.php.twig' %}
 {
+	public function __construct()
+	{
+{% for manager in managers %}
+		$this->{{ manager.lowerCamelCaseName }} = new {{ manager.name }}();
+{% endfor %}
+	}
+
 {% for manager in managers %}
 	public function {{ manager.name }}()
 	{
 		return $this->{{ manager.lowerCamelCaseName }};
 	}
+
+
 {% endfor %}
 }
