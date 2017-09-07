@@ -39,11 +39,17 @@
 	/**
 	 * API Client class constructor
 	 *
+{% if useBearerToken == true %}
+	 * @param string $bearerToken Bearer authentication access token
+{% end if %}
 	 * @param string $apiBaseUrl API base url for requests
 	 */
-	public function __construct($apiBaseUrl = '{{ apiBaseUrl }}')
+	public function __construct({% if useBearerToken == true %}$bearerToken, {% endif %}$apiBaseUrl = '{{ apiBaseUrl }}')
 	{
 		$this->apiBaseUrl = $apiBaseUrl;
+{% if useBearerToken == true %}
+		$this->bearerToken = $bearerToken;
+{% end if %}
 
 {% for manager in managers %}
 		$this->{{ manager.lowerCamelCaseClassName }} = new {{ manager.className }}($this);
@@ -70,18 +76,6 @@
 		return $this->httpClient;
 	}
 
-{% if useBearerToken == true %}
-	/**
-	 * Set the bearer token manually
-	 *
-	 * @param string $bearerToken
-	 */
-	public function setBearerToken($bearerToken)
-	{
-		$this->bearerToken = $bearerToken;
-	}
-
-{% endif %}
 {% for manager in managers %}
 	/**
 	 * Return the {{ manager.name }} manager
