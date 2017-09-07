@@ -1,4 +1,7 @@
 {% set bearerTokenDefined = false %}
+{% set authorizationUrlDefined = false %}
+{% set tokenUrlDefined = false %}
+{% set refreshUrlDefined = false %}
 {% include 'includes/classHeader.php.twig' %}
 {
 	/**
@@ -32,7 +35,7 @@
 {% if scheme.type == 'oauth2' %}
 {% for flow in scheme.flows %}
 {% if flow.authorizationUrl is defined %}
-{% if authorizationUrlDefined is not defined %}
+{% if authorizationUrlDefined == false %}
 {% set authorizationUrlDefined = true  %}
 	/**
 	 * OAuth2 authorization url
@@ -44,8 +47,8 @@
 {% endif %}
 {% endif %}
 {% if flow.tokenUrl is defined %}
-{% if tokenUrlDefined is not defined %}
-{% set tokenUrlUrlDefined = true  %}
+{% if tokenUrlDefined == false %}
+{% set tokenUrlDefined = true  %}
 	/**
 	 * OAuth2 token url
 	 *
@@ -56,7 +59,7 @@
 {% endif %}
 {% endif %}
 {% if flow.refreshUrl is defined %}
-{% if refreshUrlDefined is not defined %}
+{% if refreshUrlDefined == false %}
 {% set refreshUrlDefined = true  %}
 	/**
 	 * OAuth2 refresh url
@@ -120,6 +123,7 @@
 	{
 		return $this->httpClient;
 	}
+
 {% if bearerTokenDefined == true %}
 	/**
 	 * Set the bearer token manually
