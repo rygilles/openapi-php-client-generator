@@ -213,6 +213,8 @@ class Generator
 			}
 		}
 
+		die(print_r($this->mainClientData['security'], true));
+
 		foreach ($this->managersData as $managerName => $managerData) {
 			$this->mainClientData['uses'][] = $this->namespace . '\\Managers\\' . $managerName . 'Manager';
 			$this->mainClientData['managers'][$managerName] = [
