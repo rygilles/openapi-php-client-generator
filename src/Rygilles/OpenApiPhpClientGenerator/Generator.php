@@ -203,6 +203,7 @@ class Generator
 		// Security
 		// @todo Not only OAuth support
 		// @todo Scopes support ?
+		die(print_r($this->openApiFileContent['security'], true));
 		if (isset($this->openApiFileContent['security'])) {
 			foreach ($this->openApiFileContent['security'] as $securityRequirement => $scopes) {
 				// Ignoring scopes...
