@@ -1,5 +1,32 @@
 {% include 'includes/classHeader.php.twig' %}
 {
+	/**
+	 * API client
+	 *
+	 * @var ApiClient
+	 */
+	protected $apiClient;
+
+	/**
+	 * {{ classPhpDocTitle }} constructor
+	 *
+	 * @param ApiClient $apiClient API Client to use for this manager requests
+	 */
+	public function __construct(ApiClient $apiClient)
+	{
+		$this->apiClient = $apiClient;
+	}
+
+	/**
+	 * Return the API client used for this manager requests
+	 *
+	 * @return ApiClient
+	 */
+	public function getApiClient()
+	{
+		return $this->apiClient;
+	}
+
 {% if routes is defined %}
 {% for route in routes %}
 {% include 'includes/functionPhpDoc.php.twig' with {'route': route} %}

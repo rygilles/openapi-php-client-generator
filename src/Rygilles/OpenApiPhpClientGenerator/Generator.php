@@ -672,7 +672,10 @@ class Generator
 
 		$this->managersData[ucfirst($managerTag)] = [
 			'className' => ucfirst($managerTag),
-			'routes' => []
+			'routes' => [],
+			'uses' => [
+				$this->namespace . '\\ApiClient'
+			]
 		];
 	}
 
