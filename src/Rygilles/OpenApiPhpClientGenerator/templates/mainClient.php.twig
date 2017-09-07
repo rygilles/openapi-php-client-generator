@@ -66,6 +66,6 @@
 	{
 		return $this->{{ manager.lowerCamelCaseClassName }};
 	}
-
+{% if not loop.last %}{{ "\t\n" }}{% endif %}
 {% endfor %}
 }
