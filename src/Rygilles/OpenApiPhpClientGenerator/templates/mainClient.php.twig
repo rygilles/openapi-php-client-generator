@@ -1,7 +1,3 @@
-{% set bearerTokenDefined = false %}
-{% set authorizationUrlDefined = false %}
-{% set tokenUrlDefined = false %}
-{% set refreshUrlDefined = false %}
 {% include 'includes/classHeader.php.twig' %}
 {
 	/**
@@ -41,7 +37,7 @@
 	 *
 {% if useBearerToken == true %}
 	 * @param string $bearerToken Bearer authentication access token
-{% end if %}
+{% endif %}
 	 * @param string $apiBaseUrl API base url for requests
 	 */
 	public function __construct({% if useBearerToken == true %}$bearerToken, {% endif %}$apiBaseUrl = '{{ apiBaseUrl }}')
@@ -49,7 +45,7 @@
 		$this->apiBaseUrl = $apiBaseUrl;
 {% if useBearerToken == true %}
 		$this->bearerToken = $bearerToken;
-{% end if %}
+{% endif %}
 
 {% for manager in managers %}
 		$this->{{ manager.lowerCamelCaseClassName }} = new {{ manager.className }}($this);
