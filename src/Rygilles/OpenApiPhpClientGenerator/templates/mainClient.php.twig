@@ -16,8 +16,7 @@
 
 {% if security is defined %}
 {% for scheme in security %}
-{% if scheme.type == 'http' %}
-{% if scheme.scheme == 'bearer' %}
+{% if (scheme.type == 'http' and scheme.scheme == 'bearer') or scheme.type == 'oauth2' %}
 	/**
 	 * Bearer token
 	 *
@@ -47,6 +46,8 @@
 {% endfor %}
 	/**
 	 * API Client class constructor
+	 *
+	 * @param string $apiBaseUrl API base url for requests
 	 */
 	public function __construct($apiBaseUrl = '{{ apiBaseUrl }}')
 	{
