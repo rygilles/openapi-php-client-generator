@@ -3,14 +3,14 @@
 	public function __construct()
 	{
 {% for manager in managers %}
-		$this->{{ manager.lowerCamelCaseName }} = new {{ manager.name }}();
+		$this->{{ manager.lowerCamelCaseClassName }} = new {{ manager.className }}();
 {% endfor %}
 	}
 
 {% for manager in managers %}
-	public function {{ manager.name }}()
+	public function {{ manager.className }}()
 	{
-		return $this->{{ manager.lowerCamelCaseName }};
+		return $this->{{ manager.lowerCamelCaseClassName }};
 	}
 
 

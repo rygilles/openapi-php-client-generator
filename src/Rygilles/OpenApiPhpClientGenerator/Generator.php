@@ -196,7 +196,8 @@ class Generator
 			$this->mainClientData['uses'][] = $this->namespace . '\\Managers\\' . $managerName . 'Manager';
 			$this->mainClientData['managers'][$managerName] = [
 				'name' => $managerName,
-				'lowerCamelCaseName' => lcfirst($managerName)
+				'className' => $managerName . 'Manager',
+				'lowerCamelCaseClassName' => lcfirst($managerName . 'Manager')
 			];
 		}
 	}
