@@ -200,6 +200,19 @@ class Generator
 		$firstKey = array_keys($this->openApiFileContent['servers'])[0];
 		$this->mainClientData['apiBaseUrl'] = $this->openApiFileContent['servers'][$firstKey]['url'];
 
+		// Security
+		// @todo Not only OAuth support
+		// @todo Scopes support ?
+		if (isset($this->openApiFileContent['security'])) {
+			foreach ($this->openApiFileContent['security'] as $securityRequirement => $scopes) {
+				// Ignoring scopes...
+				if (!isset($this->mainClientData['security'])) {
+					$this->mainClientData['security'] = [];
+				}
+				$this->mainClientData['security'] = [$securityRequirement] = $this->openApiFileContent['components']['securitySchemes'][$securityRequirement];
+			}
+		}
+
 		foreach ($this->managersData as $managerName => $managerData) {
 			$this->mainClientData['uses'][] = $this->namespace . '\\Managers\\' . $managerName . 'Manager';
 			$this->mainClientData['managers'][$managerName] = [

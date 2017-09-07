@@ -14,6 +14,13 @@
 	 */
 	protected $httpClient;
 
+	/**
+	 * Authentication access token
+	 *
+	 * @var string
+	 */
+	protected $token;
+
 {% for manager in managers %}
 	/**
 	 * {{ manager.name }} manager
