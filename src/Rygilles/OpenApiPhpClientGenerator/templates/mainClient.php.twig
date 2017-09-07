@@ -21,9 +21,12 @@
 	 * @var {{ manager.className }}
 	 */
 	protected ${{ manager.lowerCamelCaseClassName }};
-	
+
 {% endfor %}
 
+	/**
+	 * API Client class constructor
+	 */
 	public function __construct($apiBaseUrl = '{{ apiBaseUrl }}')
 	{
 		$this->apiBaseUrl = $apiBaseUrl;
@@ -54,6 +57,11 @@
 	}
 
 {% for manager in managers %}
+	/**
+	 * Return the {{ manager.name }} manager
+	 *
+	 * @return {{ manager.className }}
+	 */
 	public function {{ manager.className }}()
 	{
 		return $this->{{ manager.lowerCamelCaseClassName }};
