@@ -1,3 +1,4 @@
+{% set bearerTokenDefined = false %}
 {% include 'includes/classHeader.php.twig' %}
 {
 	/**
@@ -17,7 +18,7 @@
 {% if security is defined %}
 {% for scheme in security %}
 {% if (scheme.type == 'http' and scheme.scheme == 'bearer') or scheme.type == 'oauth2' %}
-{% if bearerTokenDefined is not defined %}
+{% if bearerTokenDefined == false %}
 {% set bearerTokenDefined = true %}
 	/**
 	 * Bearer token
@@ -119,8 +120,7 @@
 	{
 		return $this->httpClient;
 	}
-B{{ bearerTokenDefined }}
-{% if bearerTokenDefined is defined %}
+{% if bearerTokenDefined == true %}
 	/**
 	 * Set the bearer token manually
 	 *
