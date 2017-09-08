@@ -9,3 +9,5 @@ if (file_exists(__DIR__.'/../../autoload.php')) {
 $app = new Symfony\Component\Console\Application('OpenAPI Client Generator', '0.1');
 $app->add(new Rygilles\OpenApiPhpClientGenerator\GenerateCommand);
 $app->run();
+
+
