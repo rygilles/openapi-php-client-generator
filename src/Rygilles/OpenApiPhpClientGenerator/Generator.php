@@ -516,7 +516,7 @@ class Generator
 		$callBody = '';
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
-				if (isset($this->resourcesData[$property['type'])) {
+				if (isset($this->resourcesData[$property['type']])) {
 					$callBody .= $this->computeOperationResponsesMaker($operation, $property['type'], $newTabs) . ', ' . "\n";
 				} else {
 					$callBody .= str_repeat("\t", $newTabs) . '$requestBody[' . $property['name'] . ']' . ', ' . "\n";
@@ -526,9 +526,8 @@ class Generator
 		$callBody = rtrim($callBody, (', ' . "\n");
 
 		$responseMaker = 'new ' . $return . '(' . ($callBody == '' ? '' : ("\n" . $callBody . "\n")) . str_repeat("\t", $tabs) . ')';
-
+		
 		return $responseMaker;
-		$tabs = $newTabs;
 	}
 	
 	/**
