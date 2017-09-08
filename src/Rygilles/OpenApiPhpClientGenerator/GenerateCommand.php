@@ -23,7 +23,7 @@ class GenerateCommand extends Command
 			->setDescription('Generate PHP client files.')
 			->addArgument('source', InputArgument::REQUIRED, 'The OpenAPI file path')
 			->addArgument('output', InputArgument::REQUIRED, 'The output folder path')
-			->addArgument('namespace', InputArgument::REQUIRED, 'The base namespace of PHP generated files')
+			->addArgument('namespace', InputArgument::REQUIRED, 'The base namespace of PHP generated files');
 	}
 
 	/**
