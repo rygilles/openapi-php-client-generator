@@ -559,7 +559,7 @@ class Generator
 					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
 					if ($isArrayResponse) {
-						$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+						$callBody .= str_repeat("\t", $newTabs) . '$data' . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 					} else {
 						$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 					}
