@@ -21,7 +21,7 @@
 
 		$requestBody = json_decode((string) $request->getBody(), true);
 
-		$response = {{ route.responseMaker }}
+		$response = {{ route.responseMaker|raw }}
 
 		return $request;
 {% endif %}
