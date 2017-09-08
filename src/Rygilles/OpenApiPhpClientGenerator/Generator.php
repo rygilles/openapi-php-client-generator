@@ -643,6 +643,29 @@ class Generator
 				else {
 					if (isset($property['type'])) {
 						$this->resourcesData[$name]['properties'][$propertyName]['type'] = $property['type'];
+
+						if ($property['type'] == 'array') {
+							if (isset($property['items']['$ref'])) {
+								$resolved = $this->resolveReference($property['items']['$ref']);
+								$this->resourcesData[$name]['properties'][$propertyName]['type'] = $resolved['name'];
+								$this->prepareResource($resolved['name']);
+
+								$this->makeResponseResource($resolved['name'], $resolved['target']);
+
+								if (!isset($this->resourcesData[$resolved['name']]['properties'])) {
+									$this->resourcesData[$resolved['name']]['properties'] = [];
+								}
+
+								if (!isset($this->resourcesData[$name]['uses'])) {
+									$this->resourcesData[$name]['uses'] = [];
+								}
+								if (!in_array($this->namespace . '\\Resources\\' . $resolved['name'], $this->resourcesData[$name]['uses'])) {
+									$this->resourcesData[$name]['uses'][] = $this->namespace . '\\Resources\\' . $resolved['name'];
+								}
+
+								$this->resourcesData[$name]['properties'][$propertyName]['type'] = $resolved['name'];
+							}
+						}
 					}
 					if (isset($property['format'])) {
 						$this->resourcesData[$name]['properties'][$propertyName]['format'] = $property['format'];
