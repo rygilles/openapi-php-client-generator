@@ -37,7 +37,7 @@
 
 		$pathReplacements = [
 {% for parameterName, phpCode in route.inPathParameters %}
-			'{{ parameterName }}' => {{ phpCode|raws }},
+			'{{ parameterName }}' => {{ phpCode|raw }},
 {% endfor %}
 		];
 
