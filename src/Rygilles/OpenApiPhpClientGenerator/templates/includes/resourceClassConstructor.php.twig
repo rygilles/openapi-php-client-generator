@@ -32,7 +32,7 @@
 {% set parametersDefinition = parametersDefinition ~ (parametersDefinition == '' ? '' : ', ') ~ '$' ~ property.name ~ ' = null' %}
 {% endfor %}
 {% endif %}
-{{ doc|phpdoc(1)|raw ~ "\t" }}public function __constructor({{ parametersDefinition }})
+{{ doc|phpdoc(1)|raw ~ "\t" }}public function __construct({{ parametersDefinition }})
 	{
 		$this->apiClient = $apiClient;
 {% if properties is defined %}
