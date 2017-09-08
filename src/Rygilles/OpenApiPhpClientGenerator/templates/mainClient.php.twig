@@ -47,9 +47,30 @@
 		$this->bearerToken = $bearerToken;
 {% endif %}
 
+		$this->httpClient = new GuzzleClient([
+			'base_uri' => $apiBaseUrl
+		]);
+
 {% for manager in managers %}
 		$this->{{ manager.lowerCamelCaseClassName }} = new {{ manager.className }}($this);
 {% endfor %}
+	}
+
+	/**
+	 * Return headers to apply for every requests
+	 *
+	 * @param string[] $additionalHeaders Additional headers
+	 * @return string
+	 */
+	public function getRequestHeaders($additionalHeaders = [])
+	{
+		$headers = [
+{% if useBearerToken == true %}
+			'Authorization' => 'Bearer '. $this->bearerToken
+{% endif %}
+		];
+		
+		return array_merge($headers, $additionalHeaders);
 	}
 
 	/**
