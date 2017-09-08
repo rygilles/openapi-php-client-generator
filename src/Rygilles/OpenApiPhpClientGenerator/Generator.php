@@ -535,7 +535,7 @@ class Generator
 							break;
 					}
 
-					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']', true) . ', ' . "\n";
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], $newTabs + 2, $arrayContext . '[\'' . $property['name'] . '\']', true) . ', ' . "\n";
 				}
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
 					// Add 'use'
@@ -552,7 +552,7 @@ class Generator
 							break;
 					}
 
-					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], $newTabs + 2, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
 					if ($isArrayResponse) {
 						$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
