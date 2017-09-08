@@ -260,6 +260,14 @@ class Generator
 			}
 		}
 
+		// Add extra Guzzle classes in uses
+		if ($this->mainClientData['useBearerToken']) {
+			$this->mainClientData['uses'][] = 'Psr\Http\Message\RequestInterface';
+			$this->mainClientData['uses'][] = 'GuzzleHttp\HandlerStack';
+			$this->mainClientData['uses'][] = 'GuzzleHttp\Handler\CurlHandler';
+			$this->mainClientData['uses'][] = 'GuzzleHttp\Middleware';
+		}
+
 		foreach ($this->managersData as $managerName => $managerData) {
 			$this->mainClientData['uses'][] = $this->namespace . '\\Managers\\' . $managerName . 'Manager';
 			$this->mainClientData['managers'][$managerName] = [

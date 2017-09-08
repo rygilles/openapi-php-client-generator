@@ -43,13 +43,26 @@
 	public function __construct({% if useBearerToken == true %}$bearerToken, {% endif %}$apiBaseUrl = '{{ apiBaseUrl }}')
 	{
 		$this->apiBaseUrl = $apiBaseUrl;
+
 {% if useBearerToken == true %}
 		$this->bearerToken = $bearerToken;
-{% endif %}
 
+		$stack = new HandlerStack();
+		$stack->setHandler(new CurlHandler());
+
+		$stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+			return $request->withHeader('Authorization', 'Bearer ' . $this->bearerToken);
+		}));
+
+		$this->httpClient = new GuzzleClient([
+			'handler' => $stack,
+			'base_uri' => $apiBaseUrl
+		]);
+{% else %}
 		$this->httpClient = new GuzzleClient([
 			'base_uri' => $apiBaseUrl
 		]);
+{% endif %}
 
 {% for manager in managers %}
 		$this->{{ manager.lowerCamelCaseClassName }} = new {{ manager.className }}($this);
