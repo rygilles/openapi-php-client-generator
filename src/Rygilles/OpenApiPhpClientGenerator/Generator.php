@@ -521,7 +521,7 @@ class Generator
 			foreach ($resourceData['properties'] as $property) {
 				if (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
 					// Add 'use'
-					switch ($classTypeName) {
+					switch ($typeTag) {
 						case 'Managers':
 							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
 								$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
