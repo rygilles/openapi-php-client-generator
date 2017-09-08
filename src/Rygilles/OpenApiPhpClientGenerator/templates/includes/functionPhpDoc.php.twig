@@ -1,6 +1,7 @@
 {% set doc = '' %}
 {% if route.summary != '' %}{% set doc = doc ~ route.summary|raw ~ "\n" %}{% endif %}
 {% if route.description != '' %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ route.description|raw ~ "\n" %}{% endif %}
+{% if route.exceptedResponseCode is not null %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ 'Excepted HTTP code : ' ~ route.exceptedResponseCode ~ "\n" %}{% endif %}
 {% set params = '' %}
 {% for parameterName, parameter in route.definitionParameters %}
 {% set paramType = 'mixed' %}

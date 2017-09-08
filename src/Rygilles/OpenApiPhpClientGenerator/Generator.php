@@ -312,7 +312,8 @@ class Generator
 										'operation' => $operation,
 										'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
 										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
-										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
+										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation),
+										'exceptedResponseCode' => $this->getRouteOperationExceptedResponseCode($operation)
 									];
 									
 									// Add response resource return
@@ -346,7 +347,8 @@ class Generator
 										'operation' => $operation,
 										'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation),
 										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
-										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation)
+										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation),
+										'exceptedResponseCode' => $this->getRouteOperationExceptedResponseCode($operation)
 									];
 									
 									// Add response resource return
@@ -447,6 +449,25 @@ class Generator
 				// @todo what to do ?
 			}
 		}
+	}
+
+	/**
+	 * Return the route operation excepted result HTTP code.
+	 *
+	 * @param mixed[] $operation
+	 * @return int|null
+	 */
+	protected function getRouteOperationExceptedResponseCode($operation)
+	{
+		if (!isset($operation['responses'])) {
+			return null;
+		}
+
+		foreach ($operation['responses'] as $httpCode => $response) {
+			return $httpCode;
+		}
+
+		return null;
 	}
 
 	/**
