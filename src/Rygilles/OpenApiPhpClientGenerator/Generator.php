@@ -38,15 +38,6 @@ class Generator
 	protected $namespace;
 
 	/**
-	 * Array of options
-	 *
-	 * @var mixed[]
-	 */
-	protected $options = [
-
-	];
-
-	/**
 	 * Output interface if running binary
 	 *
 	 * @var OutputInterface
@@ -143,15 +134,13 @@ class Generator
 	 * @param string $openApiFilePath Path of the OpenAPI file
 	 * @param string $outputPath Path where the PHP client library files will be generated
 	 * @param string $namespace Base namespace of generated files
-	 * @param mixed[] $options Array of options
 	 * @param OutputInterface $outputInterface Output interface if running binary
 	 */
-	public function __construct($openApiFilePath, $outputPath, $namespace, $options = [], $outputInterface = null)
+	public function __construct($openApiFilePath, $outputPath, $namespace, $outputInterface = null)
 	{
 		$this->openApiFilePath = $openApiFilePath;
 		$this->outputPath = $outputPath;
 		$this->namespace = $namespace;
-		$this->options = array_merge($this->options, $options);
 		$this->outputInterface = $outputInterface;
 	}
 
