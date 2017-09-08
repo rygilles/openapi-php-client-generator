@@ -212,6 +212,7 @@ class Generator
 		$this->mainExceptionData['className'] = 'ApiException';
 		$this->mainExceptionData['classPhpDocTitle'] = 'Api Exception class';
 		$this->mainExceptionData['namespace'] = $this->namespace . '\\Exceptions';
+		$this->mainExceptionData['extends'] = 'RuntimeException';
 	}
 
 	/**
