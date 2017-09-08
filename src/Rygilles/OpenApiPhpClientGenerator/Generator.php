@@ -808,7 +808,10 @@ class Generator
 
 		$this->resourcesData[ucfirst($resourceTag)] = [
 			'className' => ucfirst($resourceTag),
-			'routes' => []
+			'routes' => [],
+			'uses' => [
+				$this->namespace . '\\ApiClient'
+			]
 		];
 	}
 

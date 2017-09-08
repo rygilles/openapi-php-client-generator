@@ -1,5 +1,12 @@
 {% include 'includes/classHeader.php.twig' %}
 {
+	/**
+	 * API client
+	 *
+	 * @var ApiClient
+	 */
+	protected $apiClient;
+
 {% if properties is defined %}
 {% include 'includes/classProperties.php.twig' %}
 {% endif %}
