@@ -1,5 +1,5 @@
 {% set doc = classPhpDocTitle ~ ' constructor' %}
-{% set params = '' %}
+{% set params = '@param ApiClient $apiClient API Client to use for this manager requests' ~ "\n" %}
 {% if properties is defined %}
 {% for property in properties %}
 {% if property.type is defined %}
@@ -23,7 +23,7 @@
 {% set params = params ~ '@param ' ~ propType ~ ' $' ~ property.name ~ (propDescription == '' ? '' : (' ' ~ propDescription)) ~ "\n" %}
 {% endfor %}
 {% if params != '' %}{% set doc = doc ~ "\n\n" ~ params %}{% endif %}
-{% set parametersDefinition = '' %}
+{% set parametersDefinition = 'ApiClient $apiClient' %}
 {% for property in properties %}
 {% set parametersDefinition = parametersDefinition ~ (parametersDefinition == '' ? '' : ', ') ~ '$' ~ property.name ~ ' = null' %}
 {% endfor %}
