@@ -1,0 +1,23 @@
+{% if route.inPathParameters|length > 0 %}
+		$path = '{{ route.path }}';
+
+		$pathReplacements = [
+{% for parameterName, phpCode in route.inPathParameters %}
+			'{{ '{' ~ parameterName ~ '}' }}' => {{ phpCode|raw }},
+{% endfor %}
+		];
+
+		$url = str_replace(array_keys($pathReplacements), array_values($pathReplacements), $path);
+{% else %}
+		$url = '{{ route.path }}';
+{% endif %}
+
+		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url);
+
+		if ($request->getStatusCode() != {{ route.exceptedResponseCode }}) {
+			throw new ApiException('Unexpected response HTTP code : ' . $request->getStatusCode() . ' instead of {{ route.exceptedResponseCode }}');
+		}
+{% if route.return is defined %}
+		
+		return $request;
+{% endif %}
