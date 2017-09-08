@@ -613,7 +613,10 @@ class Generator
 	protected function makeResponseResource($name, $schema)
 	{
 		// Analyze properties for references
-		if (isset($schema['properties'])) {
+		if (isset($schema['allOf'])) {
+			$this->makeResponseResource($name, $schema['allOf']);
+		}
+		elseif (isset($schema['properties'])) {
 			foreach ($schema['properties'] as $propertyName => $property) {
 				$this->prepareResource($name);
 
@@ -638,7 +641,8 @@ class Generator
 					}
 
 					$this->resourcesData[$name]['properties'][$propertyName]['type'] = $resolved['name'];
-				} else {
+				}
+				else {
 					if (isset($property['type'])) {
 						$this->resourcesData[$name]['properties'][$propertyName]['type'] = $property['type'];
 					}
