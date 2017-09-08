@@ -17,7 +17,7 @@
 {% elseif property.type == 'number' %}{% set propType = 'float' %}
 {% else %}
 {% if (property.type == 'array') and (property.items is defined) %}
-{% set propType = property.type ~ '[]' %}
+{% set propType = property.items ~ '[]' %}
 {% else %}
 {% set propType = property.type %}
 {% endif %}
