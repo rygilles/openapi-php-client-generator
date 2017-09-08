@@ -519,17 +519,17 @@ class Generator
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
-				if (isset($this->resourcesData[$property['type']])) {
+				if (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
 					// Add 'use'
 					switch ($classTypeName) {
 						case 'Managers':
-							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->managersData[ucfirst($typeTag)]['uses'])) {
-								$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
+							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
+								$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
 							}
 							break;
 						case 'Resources':
-							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->resourcesData[ucfirst($typeTag)]['uses'])) {
-								$this->resourcesData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
+							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
+								$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
 							}
 							break;
 					}
