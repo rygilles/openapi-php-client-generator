@@ -507,12 +507,13 @@ class Generator
 	 * @param $classTypeName 'Managers' or 'Resources'
 	 * @param mixed[] $operation
 	 * @param string $return
+	 * @param boolean $addLeadingTabs
 	 * @param int $tabs Current indentation
 	 * @param string $arrayContext
 	 * @param boolean $isArrayResponse Create a array_map if it's an array type
 	 * @return string
 	 */
-	protected function computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $return, $tabs = 2, $arrayContext = '', $isArrayResponse = false)
+	protected function computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $return, $addLeadingTabs = true, $tabs = 2, $arrayContext = '', $isArrayResponse = false)
 	{
 		$newTabs = $tabs + 1;
 		$resourceData = $this->resourcesData[$return];
@@ -536,8 +537,8 @@ class Generator
 					}
 
 					$callBody .= str_repeat("\t", $newTabs) . 'array_map(function($data) {' . "\n";
-					$callBody .= str_repeat("\t", $newTabs + 1) . 'return new ';
-					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], $newTabs + 2, $arrayContext . '[\'' . $property['name'] . '\']', true) . '; ' . "\n";
+					$callBody .= str_repeat("\t", $newTabs + 1) . 'return ';
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 2, $arrayContext . '[\'' . $property['name'] . '\']', true) . '; ' . "\n";
 					$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 				}
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
@@ -555,7 +556,7 @@ class Generator
 							break;
 					}
 
-					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
 					if ($isArrayResponse) {
 						$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
@@ -567,7 +568,7 @@ class Generator
 		}
 		$callBody = rtrim($callBody, (', ' . "\n"));
 
-		$responseMaker = (($tabs > 2) ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . "\n" . $callBody . "\n" . str_repeat("\t", $tabs) . ')' . (($tabs == 2) ? ';' : '');
+		$responseMaker = ($addLeadingTabs ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . "\n" . $callBody . "\n" . str_repeat("\t", $tabs) . ')' . (($tabs == 2) ? ';' : '');
 
 		return $responseMaker;
 	}
