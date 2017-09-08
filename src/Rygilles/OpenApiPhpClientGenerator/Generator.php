@@ -544,6 +544,7 @@ class Generator
 
 		$responseMaker = (($tabs > 2) ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . "\n" . $callBody . "\n" . str_repeat("\t", $tabs) . ')' . (($tabs == 2) ? ';' : '');
 
+		die($responseMaker);
 		switch ($classTypeName) {
 			case 'Managers':
 				$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $responseMaker;
