@@ -538,7 +538,7 @@ class Generator
 
 					$callBody .= str_repeat("\t", $newTabs) . 'array_map(function($data) {' . "\n";
 					$callBody .= str_repeat("\t", $newTabs + 1) . 'return ';
-					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']', true) . '; ' . "\n";
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, $arrayContext . '[\'' . $property['name'] . '\']', true) . '; ' . "\n";
 					$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 				}
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
