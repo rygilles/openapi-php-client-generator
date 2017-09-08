@@ -547,6 +547,7 @@ class Generator
 		switch ($classTypeName) {
 			case 'Managers':
 				$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $responseMaker;
+				die($this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker']);
 				break;
 			case 'Resources':
 				$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $responseMaker;
