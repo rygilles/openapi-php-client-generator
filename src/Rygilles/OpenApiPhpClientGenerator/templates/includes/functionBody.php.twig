@@ -20,6 +20,7 @@
 {% if route.return is defined %}
 
 		$requestBody = json_decode((string) $request->getBody(), true);
+		die(print_r($requestBody, true));
 
 		$response = {{ route.responseMaker|raw }}
 
