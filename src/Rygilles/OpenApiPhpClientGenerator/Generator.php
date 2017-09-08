@@ -479,7 +479,7 @@ class Generator
 									if (isset($this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'])) {
 										$return = $this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'];
 										if (!is_null($return)) {
-											$this->computeOperationResponsesMaker('Managers', ucfirst($typeTag), $operation, $return);
+											$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $this->computeOperationResponsesMaker('Managers', $typeTag, $operation, $return);
 										}
 									}
 									break;
@@ -488,7 +488,7 @@ class Generator
 									if (isset($this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'])) {
 										$return = $this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'];
 										if (!is_null($return)) {
-											$this->computeOperationResponsesMaker('Resources', ucfirst($typeTag), $operation, $return);
+											$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $this->computeOperationResponsesMaker('Resources', $typeTag, $operation, $return);
 										}
 									}
 									break;
@@ -544,19 +544,7 @@ class Generator
 
 		$responseMaker = (($tabs > 2) ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . "\n" . $callBody . "\n" . str_repeat("\t", $tabs) . ')' . (($tabs == 2) ? ';' : '');
 
-		if ($tabs == 2) {
-			switch ($classTypeName) {
-				case 'Managers':
-					$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $responseMaker;
-					die($this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker']);
-					break;
-				case 'Resources':
-					$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $responseMaker;
-					break;
-			}
-		} else {
-			return $responseMaker;
-		}
+		return $responseMaker;
 	}
 	
 	/**
