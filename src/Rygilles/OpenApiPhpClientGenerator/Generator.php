@@ -506,9 +506,10 @@ class Generator
 	 * @param mixed[] $operation
 	 * @param string $return
 	 * @param int $tabs Current indentation
+	 * @param string $arrayContext
 	 * @return string
 	 */
-	protected function computeOperationResponsesMaker($operation, $return, $tabs = 2)
+	protected function computeOperationResponsesMaker($operation, $return, $tabs = 2, $arrayContext = '')
 	{
 		$newTabs = $tabs + 1;
 		$resourceData = $this->resourcesData[$return];
@@ -519,13 +520,13 @@ class Generator
 				if (isset($this->resourcesData[$property['type']])) {
 					$callBody .= $this->computeOperationResponsesMaker($operation, $property['type'], $newTabs) . ', ' . "\n";
 				} else {
-					$callBody .= str_repeat("\t", $newTabs) . '$requestBody[' . $property['name'] . ']' . ', ' . "\n";
+					$callBody .= str_repeat("\t", $newTabs) . '$requestBody[\'' . $property['name'] . '\']' . ', ' . "\n";
 				}
 			}
 		}
 		$callBody = rtrim($callBody, (', ' . "\n"));
 
-		$responseMaker = 'new ' . $return . '(' . ($callBody == '' ? '' : ("\n" . $callBody . "\n")) . str_repeat("\t", $tabs) . ')';
+		$responseMaker = str_repeat("\t", $tabs) . 'new ' . $return . '(' . ($callBody == '' ? '' : ("\n" . $callBody . "\n")) . str_repeat("\t", $tabs) . ')';
 
 		return $responseMaker;
 	}
