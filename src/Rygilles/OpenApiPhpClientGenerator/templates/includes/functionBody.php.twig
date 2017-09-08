@@ -19,6 +19,8 @@
 		}
 {% if route.return is defined %}
 
+		$requestBody = json_decode((string) $request->getBody(), true);
+
 		$response = {{ route.responseMaker }}
 
 		return $request;

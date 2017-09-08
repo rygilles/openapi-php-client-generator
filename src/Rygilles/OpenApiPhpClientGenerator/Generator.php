@@ -505,14 +505,30 @@ class Generator
 	 *
 	 * @param mixed[] $operation
 	 * @param string $return
+	 * @param int $tabs Current indentation
 	 * @return string
 	 */
-	protected function computeOperationResponsesMaker($operation, $return)
+	protected function computeOperationResponsesMaker($operation, $return, $tabs = 2)
 	{
+		$newTabs = $tabs + 1;
 		$resourceData = $this->resourcesData[$return];
-		die(print_r($resourceData, true));
-		$responseMaker = 'new ' . $return . '();';
+
+		$callBody = '';
+		if (isset($resourceData['properties'])) {
+			foreach ($resourceData['properties'] as $property) {
+				if (isset($this->resourcesData[$property['type'])) {
+					$callBody .= $this->computeOperationResponsesMaker($operation, $property['type'], $newTabs) . ', ' . "\n";
+				} else {
+					$callBody .= str_repeat("\t", $newTabs) . '$requestBody[' . $property['name'] . ']' . ', ' . "\n";
+				}
+			}
+		}
+		$callBody = rtrim($callBody, (', ' . "\n");
+
+		$responseMaker = 'new ' . $return . '(' . ($callBody == '' ? '' : ("\n" . $callBody . "\n")) . str_repeat("\t", $tabs) . ')';
+
 		return $responseMaker;
+		$tabs = $newTabs;
 	}
 	
 	/**
