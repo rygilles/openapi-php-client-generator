@@ -509,6 +509,8 @@ class Generator
 	 */
 	protected function computeOperationResponsesMaker($operation, $return)
 	{
+		$resourceData = $this->resourcesData[$return];
+		die(print_r($resourceData, true));
 		$responseMaker = 'new ' . $return . '();';
 		return $responseMaker;
 	}
