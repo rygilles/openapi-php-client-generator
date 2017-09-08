@@ -248,7 +248,7 @@ class Generator
 					$this->mainClientData['security'][$securityRequirement] = $this->openApiFileContent['components']['securitySchemes'][$securityRequirement];
 
 					if ($this->openApiFileContent['components']['securitySchemes'][$securityRequirement]['type'] == 'http') {
-						if ($this->openApiFileContent['components']['securitySchemes'][$securityRequirement]['type']['scheme'] == 'bearer') {
+						if ($this->openApiFileContent['components']['securitySchemes'][$securityRequirement]['scheme'] == 'bearer') {
 							$this->mainClientData['useBearerToken'] = true;
 						}
 					}
