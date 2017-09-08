@@ -523,12 +523,12 @@ class Generator
 					// Add 'use'
 					switch ($classTypeName) {
 						case 'Managers':
-							if (in_array($this->namespace . '\\Resources\\' . $property['type'], $this->managersData[ucfirst($typeTag)]['uses'])) {
+							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->managersData[ucfirst($typeTag)]['uses'])) {
 								$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
 							}
 							break;
 						case 'Resources':
-							if (in_array($this->namespace . '\\Resources\\' . $property['type'], $this->resourcesData[ucfirst($typeTag)]['uses'])) {
+							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->resourcesData[ucfirst($typeTag)]['uses'])) {
 								$this->resourcesData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
 							}
 							break;
@@ -544,7 +544,14 @@ class Generator
 
 		$responseMaker = (($tabs > 2) ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . "\n" . $callBody . "\n" . str_repeat("\t", $tabs) . ')' . (($tabs == 2) ? ';' : '');
 
-		return $responseMaker;
+		switch ($classTypeName) {
+			case 'Managers':
+				$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $responseMaker;
+				break;
+			case 'Resources':
+				$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $responseMaker;
+				break;
+		}
 	}
 	
 	/**
