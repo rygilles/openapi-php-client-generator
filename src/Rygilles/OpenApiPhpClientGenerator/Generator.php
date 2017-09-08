@@ -479,7 +479,7 @@ class Generator
 									if (isset($this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'])) {
 										$return = $this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'];
 										if (!is_null($return)) {
-											$this->computeOperationResponsesMaker('Resources', ucfirst($typeTag), $operation, $return);
+											$this->computeOperationResponsesMaker('Managers', ucfirst($typeTag), $operation, $return);
 										}
 									}
 									break;
@@ -547,7 +547,6 @@ class Generator
 		switch ($classTypeName) {
 			case 'Managers':
 				$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $responseMaker;
-				die($this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker']);
 				break;
 			case 'Resources':
 				$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $responseMaker;
