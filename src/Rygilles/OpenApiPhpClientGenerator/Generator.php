@@ -613,11 +613,7 @@ class Generator
 	protected function makeResponseResource($name, $schema)
 	{
 		// Analyze properties for references
-		if (isset($schema['type'])) {
-			if ($schema['type'] == 'array') {
-				$this->makeResponseResource($name, $schema['items']);
-			}
-		}
+
 		if (isset($schema['properties'])) {
 			foreach ($schema['properties'] as $propertyName => $property) {
 				$this->prepareResource($name);
