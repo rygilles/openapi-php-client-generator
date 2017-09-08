@@ -509,9 +509,10 @@ class Generator
 	 * @param string $return
 	 * @param int $tabs Current indentation
 	 * @param string $arrayContext
+	 * @param boolean $isArrayResponse Create a array_map if it's an array type
 	 * @return string
 	 */
-	protected function computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $return, $tabs = 2, $arrayContext = '')
+	protected function computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $return, $tabs = 2, $arrayContext = '', $isArrayResponse = false)
 	{
 		$newTabs = $tabs + 1;
 		$resourceData = $this->resourcesData[$return];
@@ -534,8 +535,7 @@ class Generator
 							break;
 					}
 
-					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
-
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']', true) . ', ' . "\n";
 				}
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
 					// Add 'use'
@@ -552,9 +552,13 @@ class Generator
 							break;
 					}
 
-					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], $newTabs + 2, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
-					$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+					if ($isArrayResponse) {
+						$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+					} else {
+						$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+					}
 				}
 			}
 		}
