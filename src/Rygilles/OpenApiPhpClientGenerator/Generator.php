@@ -883,7 +883,8 @@ class Generator
 			'className' => ucfirst($managerTag),
 			'routes' => [],
 			'uses' => [
-				$this->namespace . '\\ApiClient'
+				$this->namespace . '\\ApiClient',
+				$this->namespace . '\\Exceptions\\ApiException'
 			]
 		];
 	}
@@ -904,7 +905,8 @@ class Generator
 			'className' => ucfirst($resourceTag),
 			'routes' => [],
 			'uses' => [
-				$this->namespace . '\\ApiClient'
+				$this->namespace . '\\ApiClient',
+				$this->namespace . '\\Exceptions\\ApiException'
 			]
 		];
 	}

@@ -32,6 +32,10 @@
 
 		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url);
 
+		if ($request->getStatusCode() != {{ route.exceptedResponseCode }}) {
+		throw new ApiException('Unexpected response HTTP code : ' . $request->getStatusCode() . ' instead of {{ route.exceptedResponseCode }}');
+		}
+
 		return $request;
 	}
 {% if not loop.last %}{{ "\t\n" }}{% endif %}
