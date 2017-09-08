@@ -534,7 +534,7 @@ class Generator
 							break;
 					}
 
-					$callBody .= $this->computeOperationResponsesMaker($operation, $property['type'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
 					$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 				}
