@@ -514,19 +514,19 @@ class Generator
 		$newTabs = $tabs + 1;
 		$resourceData = $this->resourcesData[$return];
 
-		$callBody = '';
+		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
 				if (isset($this->resourcesData[$property['type']])) {
-					$callBody .= $this->computeOperationResponsesMaker($operation, $property['type'], $newTabs) . ', ' . "\n";
+					$callBody .= $this->computeOperationResponsesMaker($operation, $property['type'], $newTabs, $arrayContext . '[' . $property['name'] . ']') . ', ' . "\n";
 				} else {
-					$callBody .= str_repeat("\t", $newTabs) . '$requestBody[\'' . $property['name'] . '\']' . ', ' . "\n";
+					$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 				}
 			}
 		}
 		$callBody = rtrim($callBody, (', ' . "\n"));
 
-		$responseMaker = (($tabs > 2) ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . ($callBody == '' ? '' : ("\n" . $callBody . "\n")) . str_repeat("\t", $tabs) . ')';
+		$responseMaker = (($tabs > 2) ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . "\n" . $callBody . "\n" . str_repeat("\t", $tabs) . ');';
 
 		return $responseMaker;
 	}
