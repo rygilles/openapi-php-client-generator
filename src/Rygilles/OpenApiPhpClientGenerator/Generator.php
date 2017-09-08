@@ -535,7 +535,10 @@ class Generator
 							break;
 					}
 
-					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], $newTabs + 2, $arrayContext . '[\'' . $property['name'] . '\']', true) . ', ' . "\n";
+					$callBody .= str_repeat("\t", $newTabs) . 'array_map(function($data) {' . "\n";
+					$callBody .= str_repeat("\t", $newTabs + 1) . 'return new ';
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], $newTabs + 2, $arrayContext . '[\'' . $property['name'] . '\']', true) . '; ' . "\n";
+					$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 				}
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
 					// Add 'use'
