@@ -518,7 +518,7 @@ class Generator
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
 				if (isset($this->resourcesData[$property['type']])) {
-					$callBody .= $this->computeOperationResponsesMaker($operation, $property['type'], $newTabs, $arrayContext . '[' . $property['name'] . ']') . ', ' . "\n";
+					$callBody .= $this->computeOperationResponsesMaker($operation, $property['type'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
 					$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 				}
