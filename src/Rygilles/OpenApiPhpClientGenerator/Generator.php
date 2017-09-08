@@ -96,6 +96,13 @@ class Generator
 	protected $mainClientData = [];
 
 	/**
+	 * Main exception data
+	 *
+	 * @var mixed[]
+	 */
+	protected $mainExceptionData = [];
+
+	/**
 	 * Twig templates environment
 	 *
 	 * @var Twig_Environment
@@ -122,6 +129,13 @@ class Generator
 	 * @var Twig_TemplateWrapper
 	 */
 	protected $mainClientTemplate;
+
+	/**
+	 * Twig main exception template
+	 *
+	 * @var Twig_TemplateWrapper
+	 */
+	protected $mainExceptionTemplate;
 
 	/**
 	 * Generator constructor.
@@ -161,6 +175,9 @@ class Generator
 		// Make the main client data
 		$this->makeMainClient();
 
+		// Make the main exception data
+		$this->makeMainException();
+
 		// Load template filesystem
 		$this->loadTemplates();
 
@@ -182,6 +199,19 @@ class Generator
 		// @todo Step : "%libNamespace% subdirectory : Make "%libName%Client.php"
 		// @todo Step : Make "tests" directory
 
+	}
+
+	/**
+	 * Make the main exception data
+	 */
+	protected function makeMainException()
+	{
+		$this->mainExceptionData['uses'] = [
+			'RuntimeException'
+		];
+		$this->mainExceptionData['className'] = 'ApiException';
+		$this->mainExceptionData['classPhpDocTitle'] = 'Api Exception class';
+		$this->mainExceptionData['namespace'] = $this->namespace . '\\Exceptions';
 	}
 
 	/**
@@ -735,6 +765,23 @@ class Generator
 		$this->writeManagersTemplates();
 		$this->writeResourcesTemplates();
 		$this->writeMainClientTemplate();
+		$this->writeMainExceptionTemplate();
+	}
+
+	/**
+	 * Write main exception template file
+	 */
+	protected function writeMainExceptionTemplate()
+	{
+		$data = $this->mainExceptionData;
+
+		$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Exceptions' . DIRECTORY_SEPARATOR . 'ApiException.php';
+
+		if (!is_null($this->outputInterface)) {
+			$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
+		}
+
+		file_put_contents($filePath, $this->mainExceptionTemplate->render($data));
 	}
 
 	/**
@@ -879,6 +926,7 @@ class Generator
 		$this->managerTemplate = $this->twigEnv->load('manager.php.twig');
 		$this->resourceTemplate = $this->twigEnv->load('resource.php.twig');
 		$this->mainClientTemplate = $this->twigEnv->load('mainClient.php.twig');
+		$this->mainExceptionTemplate = $this->twigEnv->load('mainException.php.twig');
 	}
 
 	/**
@@ -961,6 +1009,7 @@ class Generator
 			mkdir($resourcesDirectoryPath ,0755, true);
 		}
 
+		/*
 		$responsesDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Responses";
 		if (file_exists($responsesDirectoryPath)) {
 			if (!is_null($this->outputInterface)) {
@@ -971,6 +1020,19 @@ class Generator
 				$this->outputInterface->writeln('<info>Making responses output directory (' . $responsesDirectoryPath . ')</info>');
 			}
 			mkdir($responsesDirectoryPath ,0755, true);
+		}
+		*/
+
+		$exceptionsDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Exceptions";
+		if (file_exists($exceptionsDirectoryPath)) {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Exceptions output directory already created (' . $exceptionsDirectoryPath . ')</info>');
+			}
+		} else {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Making exceptions output directory (' . $exceptionsDirectoryPath . ')</info>');
+			}
+			mkdir($exceptionsDirectoryPath ,0755, true);
 		}
 	}
 }
