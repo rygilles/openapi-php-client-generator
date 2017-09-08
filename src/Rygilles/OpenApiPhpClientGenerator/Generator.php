@@ -400,7 +400,7 @@ class Generator
 									break;
 
 								case 'Resources' :
-									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['inPathParameters'] = $this->getRouteOperationInPathParameters($operation, $this->resourcesData[ucfirst($typeTag)]['properties']);
+									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['inPathParameters'] = $this->getRouteOperationInPathParameters($operation, ucfirst($typeTag), $this->resourcesData[ucfirst($typeTag)]['properties']);
 									break;
 							}
 						}
@@ -564,10 +564,11 @@ class Generator
 	 * With the path parameter name as the key and the property name as the value if it's resource related
 	 *
 	 * @param mixed[] $operation
+	 * @param string $resourceName Resource name (If it's a resource)
 	 * @param mixed[] $resourceProperties Properties (If it's a resource)
 	 * @return string[]
 	 */
-	protected function getRouteOperationInPathParameters($operation, $resourceProperties = [])
+	protected function getRouteOperationInPathParameters($operation, $resourceName = '', $resourceProperties = [])
 	{
 		$result = [];
 
@@ -578,7 +579,7 @@ class Generator
 					continue;
 				}
 
-				$result[$parameter['name']] = '$' . $parameter['name'];
+				$result[$parameter['name']] = null;
 
 				// Check if it's a resource property
 				if (count($resourceProperties) > 0) {
@@ -593,6 +594,22 @@ class Generator
 							}
 						}
 					}
+				}
+
+				// This resource Id ?
+				if (is_null($result[$parameter['name']]) && ($resourceName != '')) {
+					// Resource Id pattern
+					$pattern = '/(\w+)Id$/';
+					if (preg_match($pattern, $parameter['name'])) {
+						$resourcePropertyToMatch = ucfirst(rtrim($parameter['name'], 'Id'));
+						if ($resourceName == $resourcePropertyToMatch) {
+							$result[$parameter['name']] = '$this->id';
+						}
+					}
+				}
+
+				if (is_null($result[$parameter['name']])) {
+					$result[$parameter['name']] = '$' . $parameter['name'];
 				}
 			}
 		}
