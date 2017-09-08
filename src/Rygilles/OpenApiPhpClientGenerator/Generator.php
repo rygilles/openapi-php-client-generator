@@ -493,7 +493,7 @@ class Generator
 							}
 						}
 						if (!is_null($return)) {
-							dd($return);
+							die($return);
 						}
 					}
 				}
