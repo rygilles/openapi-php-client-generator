@@ -519,7 +519,25 @@ class Generator
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
-				if (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
+				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
+					// Add 'use'
+					switch ($typeTag) {
+						case 'Managers':
+							if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
+								$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
+							}
+							break;
+						case 'Resources':
+							if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
+								$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
+							}
+							break;
+					}
+
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
+
+				}
+				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
 					// Add 'use'
 					switch ($typeTag) {
 						case 'Managers':
