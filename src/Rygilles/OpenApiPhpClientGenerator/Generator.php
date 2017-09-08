@@ -523,10 +523,10 @@ class Generator
 				}
 			}
 		}
-		$callBody = rtrim($callBody, (', ' . "\n");
+		$callBody = rtrim($callBody, (', ' . "\n"));
 
 		$responseMaker = 'new ' . $return . '(' . ($callBody == '' ? '' : ("\n" . $callBody . "\n")) . str_repeat("\t", $tabs) . ')';
-		
+
 		return $responseMaker;
 	}
 	
