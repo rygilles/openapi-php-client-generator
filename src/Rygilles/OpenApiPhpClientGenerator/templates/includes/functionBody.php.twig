@@ -18,6 +18,8 @@
 			throw new ApiException('Unexpected response HTTP code : ' . $request->getStatusCode() . ' instead of {{ route.exceptedResponseCode }}');
 		}
 {% if route.return is defined %}
-		
+
+		$response = {{ route.responseMaker }}
+
 		return $request;
 {% endif %}

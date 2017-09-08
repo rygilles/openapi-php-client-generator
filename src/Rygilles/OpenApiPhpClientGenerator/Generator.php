@@ -473,32 +473,44 @@ class Generator
 					}
 
 					foreach ($extractedTags as $tagType => $typeTags) {
-						$return = null;
-						$resourceData = null;
 						foreach ($typeTags as $typeTag) {
 							switch ($tagType) {
 								case 'Managers' :
 									if (isset($this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'])) {
 										$return = $this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'];
-										$resourceData = $this->resourcesData[$return];
+										if (!is_null($return)) {
+											$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $this->computeOperationResponsesMaker($operation, $return);
+										}
 									}
 									break;
 
 								case 'Resources' :
 									if (isset($this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'])) {
 										$return = $this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'];
-										$resourceData = $this->resourcesData[$return];
+										if (!is_null($return)) {
+											$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $this->computeOperationResponsesMaker($operation, $return);
+										}
 									}
 									break;
 							}
-						}
-						if (!is_null($return)) {
-							die($return);
 						}
 					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Create operation response maker
+	 *
+	 * @param mixed[] $operation
+	 * @param string $return
+	 * @return string
+	 */
+	protected function computeOperationResponsesMaker($operation, $return)
+	{
+		$responseMaker = 'new ' . $return . '();';
+		return $responseMaker;
 	}
 	
 	/**
