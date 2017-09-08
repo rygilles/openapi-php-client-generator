@@ -513,7 +513,7 @@ class Generator
 	 * @param boolean $isArrayResponse Create a array_map if it's an array type
 	 * @return string
 	 */
-	protected function computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $return, $addLeadingTabs = true, $tabs = 2, $arrayContext = '', $isArrayResponse = false)
+	protected function computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $return, $addLeadingTabs = false, $tabs = 2, $arrayContext = '', $isArrayResponse = false)
 	{
 		$newTabs = $tabs + 1;
 		$resourceData = $this->resourcesData[$return];
@@ -556,7 +556,7 @@ class Generator
 							break;
 					}
 
-					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
+					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
 					if ($isArrayResponse) {
 						$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
