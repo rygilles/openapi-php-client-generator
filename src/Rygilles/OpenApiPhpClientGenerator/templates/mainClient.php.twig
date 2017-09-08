@@ -70,23 +70,6 @@
 	}
 
 	/**
-	 * Return headers to apply for every requests
-	 *
-	 * @param string[] $additionalHeaders Additional headers
-	 * @return string
-	 */
-	public function getRequestHeaders($additionalHeaders = [])
-	{
-		$headers = [
-{% if useBearerToken == true %}
-			'Authorization' => 'Bearer ' . $this->bearerToken
-{% endif %}
-		];
-
-		return array_merge($headers, $additionalHeaders);
-	}
-
-	/**
 	 * Return the API base url
 	 *
 	 * @return string
