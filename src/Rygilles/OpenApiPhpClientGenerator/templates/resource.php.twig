@@ -4,13 +4,26 @@
 {% include 'includes/classProperties.php.twig' %}
 {% endif %}
 {% include 'includes/resourceClassConstructor.php.twig' %}
-
 {% if routes is defined %}
 {% for route in routes %}
 {% include 'includes/functionPhpDoc.php.twig' with {'route': route} %}
 	public function {{ route.operation.operationId }}({% include 'includes/functionDefinitionParameters.php.twig' with {'route': route} %})
 	{
+{% if route.inPathParameters|length > 0 %}
+		$path = '{{ route.path }}';
 
+		$pathReplacements = [
+{% for parameterName, phpCode in route.inPathParameters %}
+			'{{ parameterName }}' => {{ phpCode }},
+{% endfor %}
+		];
+
+		$url = str_replace(array_keys($pathReplacements), array_values($pathReplacements), $path);
+{% else %}
+		$url = '{{ route.path }}';
+{% endif %}
+
+		$request = $this->apiClient->request('{{ route.httpMethod }}', $url);
 	}
 {% if not loop.last %}{{ "\t\n" }}{% endif %}
 {% endfor %}

@@ -66,10 +66,10 @@
 	{
 		$headers = [
 {% if useBearerToken == true %}
-			'Authorization' => 'Bearer '. $this->bearerToken
+			'Authorization' => 'Bearer ' . $this->bearerToken
 {% endif %}
 		];
-		
+
 		return array_merge($headers, $additionalHeaders);
 	}
 

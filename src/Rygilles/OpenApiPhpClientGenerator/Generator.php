@@ -155,6 +155,9 @@ class Generator
 		// Parse OpenAPI file for operations
 		$this->parseOperations();
 
+		// Add in path parameters map based on resource properties
+		$this->computeInPathParameters();
+
 		// Make the main client data
 		$this->makeMainClient();
 
@@ -359,6 +362,54 @@ class Generator
 			}
 		}
 	}
+
+	/**
+	 * Add in path parameters map based on resoruce properties
+	 */
+	protected function computeInPathParameters()
+	{
+		foreach ($this->openApiFileContent['paths'] as $path => $operations) {
+			foreach ($operations as $httpMethod => $operation) {
+				if (isset($operation['tags'])) {
+					$extractedTags = [];
+					foreach ($operation['tags'] as $tag) {
+						$split = explode(':', $tag);
+						if (count($split) == 2) {
+							switch ($split[0]) {
+								case 'Manager' :
+									if (!isset($extractedTags['Managers'])) {
+										$extractedTags['Managers'] = [];
+									}
+									$extractedTags['Managers'][] = $split[1];
+									break;
+								case 'Resource' :
+									if (!isset($extractedTags['Resources'])) {
+										$extractedTags['Resources'] = [];
+									}
+									$extractedTags['Resources'][] = $split[1];
+									break;
+							}
+						}
+					}
+
+					foreach ($extractedTags as $tagType => $typeTags) {
+						foreach ($typeTags as $typeTag) {
+							switch ($tagType) {
+								case 'Managers' :
+									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['inPathParameters'] = $this->getRouteOperationInPathParameters($operation);
+									break;
+
+								case 'Resources' :
+									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['inPathParameters'] = $this->getRouteOperationInPathParameters($operation, $this->resourcesData[ucfirst($typeTag)]['properties']);
+									break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	
 	/**
 	 * Analyze the route operation responses and return te first resolved response reference if exists
@@ -509,6 +560,47 @@ class Generator
 	}
 
 	/**
+	 * Return a map of the operation path parameters
+	 * With the path parameter name as the key and the property name as the value if it's resource related
+	 *
+	 * @param mixed[] $operation
+	 * @param mixed[] $resourceProperties Properties (If it's a resource)
+	 * @return string[]
+	 */
+	protected function getRouteOperationInPathParameters($operation, $resourceProperties = [])
+	{
+		$result = [];
+
+		if (isset($operation['parameters'])) {
+			foreach ($operation['parameters'] as $parameter) {
+
+				if ($parameter['in'] != 'path') {
+					continue;
+				}
+
+				$result[$parameter['name']] = '$' . $parameter['name'];
+
+				// Check if it's a resource property
+				if (count($resourceProperties) > 0) {
+					// Resource Id pattern
+					$pattern = '/(\w+)Id$/';
+					if (preg_match($pattern, $parameter['name'])) {
+						$resourcePropertyToMatch = ucfirst(rtrim($parameter['name'], 'Id'));
+						$snakeCaseResourcePropertyToMatch = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $resourcePropertyToMatch));
+						foreach ($resourceProperties as $resourceProperty) {
+							if ($resourceProperty['name'] == $snakeCaseResourcePropertyToMatch) {
+								$result[$parameter['name']] = '$this->' . $snakeCaseResourcePropertyToMatch;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Return the definition parameters of a resource/manager class method
 	 *
 	 * @param boolean $inPath Grab parameters "in = path" (only for Managers)
@@ -523,8 +615,6 @@ class Generator
 		$result = [];
 
 		if (isset($operation['parameters'])) {
-			$result = [];
-
 			foreach ($operation['parameters'] as $parameter) {
 
 				if (!$inPath && $parameter['in'] == 'path') {
@@ -657,7 +747,6 @@ class Generator
 	 */
 	protected function writeResourcesTemplates()
 	{
-		echo("\n" . print_r($this->resourcesData, true) . "\n");
 		foreach ($this->resourcesData as $resourceName => $resourceData) {
 			$data = [
 				'className' => $resourceName,
