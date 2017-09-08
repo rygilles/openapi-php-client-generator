@@ -161,6 +161,9 @@ class Generator
 		// Add in path parameters map based on resource properties
 		$this->computeInPathParameters();
 
+		// Add operation responses makers
+		$this->computeOperationsResponsesMakers();
+
 		// Make the main client data
 		$this->makeMainClient();
 
@@ -440,6 +443,63 @@ class Generator
 		}
 	}
 
+	/**
+	 * Add operation responses makers
+	 */
+	protected function computeOperationsResponsesMakers()
+	{
+		foreach ($this->openApiFileContent['paths'] as $path => $operations) {
+			foreach ($operations as $httpMethod => $operation) {
+				if (isset($operation['tags'])) {
+					$extractedTags = [];
+					foreach ($operation['tags'] as $tag) {
+						$split = explode(':', $tag);
+						if (count($split) == 2) {
+							switch ($split[0]) {
+								case 'Manager' :
+									if (!isset($extractedTags['Managers'])) {
+										$extractedTags['Managers'] = [];
+									}
+									$extractedTags['Managers'][] = $split[1];
+									break;
+								case 'Resource' :
+									if (!isset($extractedTags['Resources'])) {
+										$extractedTags['Resources'] = [];
+									}
+									$extractedTags['Resources'][] = $split[1];
+									break;
+							}
+						}
+					}
+
+					foreach ($extractedTags as $tagType => $typeTags) {
+						$return = null;
+						$resourceData = null;
+						foreach ($typeTags as $typeTag) {
+							switch ($tagType) {
+								case 'Managers' :
+									if (isset($this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'])) {
+										$return = $this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'];
+										$resourceData = $this->resourcesData[$return];
+									}
+									break;
+
+								case 'Resources' :
+									if (isset($this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'])) {
+										$return = $this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'];
+										$resourceData = $this->resourcesData[$return];
+									}
+									break;
+							}
+						}
+						if (!is_null($return)) {
+							dd($return);
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Analyze the route operation responses and return te first resolved response reference if exists
