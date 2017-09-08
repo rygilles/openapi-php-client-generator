@@ -526,7 +526,7 @@ class Generator
 		}
 		$callBody = rtrim($callBody, (', ' . "\n"));
 
-		$responseMaker = (($tabs > 2) ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . "\n" . $callBody . "\n" . str_repeat("\t", $tabs) . ');';
+		$responseMaker = (($tabs > 2) ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . "\n" . $callBody . "\n" . str_repeat("\t", $tabs) . ')' . (($tabs == 2) ? ';' : '');
 
 		return $responseMaker;
 	}
