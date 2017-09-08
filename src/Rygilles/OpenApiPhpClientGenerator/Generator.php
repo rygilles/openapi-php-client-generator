@@ -663,7 +663,8 @@ class Generator
 									$this->resourcesData[$name]['uses'][] = $this->namespace . '\\Resources\\' . $resolved['name'];
 								}
 
-								$this->resourcesData[$name]['properties'][$propertyName]['type'] = $resolved['name'];
+								$this->resourcesData[$name]['properties'][$propertyName]['type'] = 'array';
+								$this->resourcesData[$name]['properties'][$propertyName]['items'] = $resolved['name'];
 							}
 						}
 					}
