@@ -479,7 +479,7 @@ class Generator
 									if (isset($this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'])) {
 										$return = $this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'];
 										if (!is_null($return)) {
-											$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $this->computeOperationResponsesMaker($operation, $return);
+											$this->computeOperationResponsesMaker('Resources', ucfirst($typeTag), $operation, $return);
 										}
 									}
 									break;
@@ -488,7 +488,7 @@ class Generator
 									if (isset($this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'])) {
 										$return = $this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'];
 										if (!is_null($return)) {
-											$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['responseMaker'] = $this->computeOperationResponsesMaker($operation, $return);
+											$this->computeOperationResponsesMaker('Resources', ucfirst($typeTag), $operation, $return);
 										}
 									}
 									break;
@@ -503,13 +503,15 @@ class Generator
 	/**
 	 * Create operation response maker
 	 *
+	 * @param $typeTag
+	 * @param $classTypeName 'Managers' or 'Resources'
 	 * @param mixed[] $operation
 	 * @param string $return
 	 * @param int $tabs Current indentation
 	 * @param string $arrayContext
 	 * @return string
 	 */
-	protected function computeOperationResponsesMaker($operation, $return, $tabs = 2, $arrayContext = '')
+	protected function computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $return, $tabs = 2, $arrayContext = '')
 	{
 		$newTabs = $tabs + 1;
 		$resourceData = $this->resourcesData[$return];
@@ -518,6 +520,20 @@ class Generator
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
 				if (isset($this->resourcesData[$property['type']])) {
+					// Add 'use'
+					switch ($classTypeName) {
+						case 'Managers':
+							if (in_array($this->namespace . '\\Resources\\' . $property['type'], $this->managersData[ucfirst($typeTag)]['uses'])) {
+								$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
+							}
+							break;
+						case 'Resources':
+							if (in_array($this->namespace . '\\Resources\\' . $property['type'], $this->resourcesData[ucfirst($typeTag)]['uses'])) {
+								$this->resourcesData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
+							}
+							break;
+					}
+
 					$callBody .= $this->computeOperationResponsesMaker($operation, $property['type'], $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
 					$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
