@@ -614,9 +614,10 @@ class Generator
 	{
 		// Analyze properties for references
 		if (isset($schema['type'])) {
-			die($schema['type'] . "\n");
+			if ($schema['type'] == 'array') {
+				$this->makeResponseResource($name, $schema['items']);
+			}
 		}
-
 		if (isset($schema['properties'])) {
 			foreach ($schema['properties'] as $propertyName => $property) {
 				$this->prepareResource($name);
