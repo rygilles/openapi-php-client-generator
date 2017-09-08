@@ -46,7 +46,7 @@
 		$url = '{{ route.path }}';
 {% endif %}
 
-		$request = $this->apiClient->request('{{ route.httpMethod }}', $url);
+		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url);
 
 		return $request;
 	}
