@@ -396,7 +396,7 @@ class Generator
 						foreach ($typeTags as $typeTag) {
 							switch ($tagType) {
 								case 'Managers' :
-									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['inPathParameters'] = $this->getRouteOperationInPathParameters($operation);
+									$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['inPathParameters'] = $this->getRouteOperationInPathParameters($operation);
 									break;
 
 								case 'Resources' :
