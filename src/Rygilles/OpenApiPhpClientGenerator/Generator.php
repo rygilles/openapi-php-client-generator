@@ -802,7 +802,7 @@ class Generator
 	 * @param boolean $isArrayResponse Create a array_map if it's an array type
 	 * @return string
 	 */
-	protected function computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $return, $addLeadingTabs = false, $tabs = 2, $arrayContext = '', $isArrayResponse = false)
+	protected function computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $return, $addLeadingTabs = false, $tabs = 3, $arrayContext = '', $isArrayResponse = false)
 	{
 		$newTabs = $tabs + 1;
 		$resourceData = $this->resourcesData[$return];
