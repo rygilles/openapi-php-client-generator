@@ -904,7 +904,7 @@ class Generator
 			// Get the required parameters first
 			foreach ($operation['parameters'] as $parameter) {
 				
-				if (!$parameter['in'] == 'query' || !$parameter['required']) {
+				if ($parameter['in'] != 'query' || !$parameter['required']) {
 					continue;
 				}
 				
@@ -962,7 +962,7 @@ class Generator
 			// Get the optional parameters next
 			foreach ($operation['parameters'] as $parameter) {
 
-				if (!$parameter['in'] == 'query' || $parameter['required']) {
+				if ($parameter['in'] != 'query' || $parameter['required']) {
 					continue;
 				}
 
