@@ -528,9 +528,12 @@ class Generator
 							}
 							break;
 						case 'Resources':
+							// Same namespace, no need to add "use" of another resource
+							/*
 							if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
 								$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
 							}
+							*/
 							break;
 					}
 
