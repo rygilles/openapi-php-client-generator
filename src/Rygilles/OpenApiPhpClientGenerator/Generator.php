@@ -359,7 +359,9 @@ class Generator
 								
 								case 'Resources' :
 									$this->prepareResource($typeTag);
-									
+
+									// Same namespace, no need to add "use" of another resource
+									/*
 									// Add the response resolved reference resource use if exists
 									if (!is_null($resolvedResponseReference)) {
 										if (!isset($this->resourcesData[ucfirst($typeTag)]['uses'])) {
@@ -369,6 +371,7 @@ class Generator
 											$this->resourcesData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $resolvedResponseReference['name'];
 										}
 									}
+									*/
 									
 									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']] = [
 										'path' => $path,
