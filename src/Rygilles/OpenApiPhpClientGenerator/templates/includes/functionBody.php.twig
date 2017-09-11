@@ -25,10 +25,27 @@
 {% endif %}
 {% endfor %}
 {% endif %}
+{% if route.bodyParameters|length > 0 %}
+
+		$bodyParameters = [];
+{% for bodyParameter in route.bodyParameters %}
+{% if bodyParameter.required %}
+		$bodyParameters['{{ bodyParameter.name }}'] = {{ bodyParameter.phpValue }};
+{% else %}
+
+		if (!is_null(${{ bodyParameter.name }})) {
+			$bodyParameters['{{ bodyParameter.name }}'] = {{ bodyParameter.phpValue }};
+		}
+{% endif %}
+{% endfor %}
+{% endif %}
 
 		$requestOptions = [];
 {% if route.inQueryParameters|length > 0 %}
 		$requestOptions['query'] = $queryParameters;
+{% endif %}
+{% if route.bodyParameters|length > 0 %}
+	$requestOptions['body'] = $bodyParameters;
 {% endif %}
 
 		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url, $requestOptions);

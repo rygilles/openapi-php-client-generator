@@ -179,6 +179,9 @@ class Generator
 		// Add in query parameters data based on resource properties
 		$this->computeInQueryParameters();
 
+		// dd body parameters data based on resource properties
+		$this->computeBodyParameters();
+
 		// Add operation responses makers
 		$this->computeOperationsResponsesMakers();
 
@@ -518,6 +521,53 @@ class Generator
 
 								case 'Resources' :
 									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['inQueryParameters'] = $this->getRouteOperationInQueryParameters($operation, ucfirst($typeTag), $this->resourcesData[ucfirst($typeTag)]['properties']);
+									break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Add body parameters data based on resource properties
+	 */
+	protected function computeBodyParameters()
+	{
+		foreach ($this->openApiFileContent['paths'] as $path => $operations) {
+			foreach ($operations as $httpMethod => $operation) {
+				if (isset($operation['tags'])) {
+					$extractedTags = [];
+					foreach ($operation['tags'] as $tag) {
+						$split = explode(':', $tag);
+						if (count($split) == 2) {
+							switch ($split[0]) {
+								case 'Manager' :
+									if (!isset($extractedTags['Managers'])) {
+										$extractedTags['Managers'] = [];
+									}
+									$extractedTags['Managers'][] = $split[1];
+									break;
+								case 'Resource' :
+									if (!isset($extractedTags['Resources'])) {
+										$extractedTags['Resources'] = [];
+									}
+									$extractedTags['Resources'][] = $split[1];
+									break;
+							}
+						}
+					}
+
+					foreach ($extractedTags as $tagType => $typeTags) {
+						foreach ($typeTags as $typeTag) {
+							switch ($tagType) {
+								case 'Managers' :
+									$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['bodyParameters'] = $this->getRouteOperationBodyParameters($path, $httpMethod, $operation);
+									break;
+
+								case 'Resources' :
+									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['bodyParameters'] = $this->getRouteOperationBodyParameters($path, $httpMethod, $operation, ucfirst($typeTag), $this->resourcesData[ucfirst($typeTag)]['properties']);
 									break;
 							}
 						}
@@ -1139,6 +1189,100 @@ class Generator
 
 						if (isset($parameter['description'])) {
 							$result[$parameterName]['description'] = $parameter['description'];
+						}
+					}
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Return the body (for update with POST/PUT/PATCH) parameters of a resource/manager class method
+	 *
+	 * @param string $path
+	 * @param string $httpMethod
+	 * @param mixed[] $operation
+	 * @param string $resourceName Resource name (If it's a resource)
+	 * @param mixed[] $resourceProperties Properties (If it's a resource)
+	 * @return mixed[]
+	 * @throws Exception
+	 */
+	protected function getRouteOperationBodyParameters($path, $httpMethod, $operation, $resourceName = '', $resourceProperties = [])
+	{
+		$result = [];
+
+		if (isset($operation['requestBody'])) {
+			if (isset($operation['requestBody']['$ref'])) {
+				// Resolver not supported here
+				throw new Exception('Reference object in requestBody is not supported' . "\n" . 'Path: ' . $path . ', HTTP Method: ' . $httpMethod);
+			} else {
+				if (count($operation['requestBody']['content']) > 0) {
+					$firstContentKey = array_keys($operation['requestBody']['content'])[0];
+					$firstContent = array_shift($operation['requestBody']['content']);
+					$schema = $firstContent['schema'];
+
+					$orderedParameters = [];
+
+					// Place required parameters first
+					foreach ($schema['required'] as $required) {
+						$orderedParameters[$required] = $schema['properties'][$required];
+					}
+					foreach ($schema['properties'] as $propertyName => $property) {
+						if (!isset($orderedParameters[$propertyName])) {
+							$orderedParameters[$propertyName] = $property;
+						}
+					}
+
+					foreach ($orderedParameters as $parameterName => $parameter) {
+						$result[$parameterName] = [
+							'name' => $parameterName,
+							'required' => in_array($parameterName, $schema['required']),
+							'phpValue' => null
+						];
+
+						if (isset($parameter['type'])) {
+							$result[$parameterName]['type'] = $parameter['type'];
+						}
+
+						if (isset($parameter['format'])) {
+							$result[$parameterName]['format'] = $parameter['format'];
+						}
+
+						if (isset($parameter['description'])) {
+							$result[$parameterName]['description'] = $parameter['description'];
+						}
+
+						// Check if it's a resource property
+						if (count($resourceProperties) > 0) {
+							// Resource Id pattern
+							$pattern = '/(\w+)Id$/';
+							if (preg_match($pattern, $parameter['name'])) {
+								$resourcePropertyToMatch = ucfirst(rtrim($parameter['name'], 'Id'));
+								$snakeCaseResourcePropertyToMatch = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $resourcePropertyToMatch));
+								foreach ($resourceProperties as $resourceProperty) {
+									if ($resourceProperty['name'] == $snakeCaseResourcePropertyToMatch) {
+										$result[$parameter['name']]['phpValue'] = '$this->' . $snakeCaseResourcePropertyToMatch;
+									}
+								}
+							}
+						}
+
+						// This resource Id ?
+						if (is_null($result[$parameter['name']]) && ($resourceName != '')) {
+							// Resource Id pattern
+							$pattern = '/(\w+)Id$/';
+							if (preg_match($pattern, $parameter['name'])) {
+								$resourcePropertyToMatch = ucfirst(rtrim($parameter['name'], 'Id'));
+								if ($resourceName == $resourcePropertyToMatch) {
+									$result[$parameter['name']]['phpValue'] = '$this->id';
+								}
+							}
+						}
+
+						if (is_null($result[$parameter['name']]['phpValue'])) {
+							$result[$parameter['name']]['phpValue'] = '$' . $parameter['name'];
 						}
 					}
 				}
