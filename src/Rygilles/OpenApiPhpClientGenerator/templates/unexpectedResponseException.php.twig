@@ -15,7 +15,7 @@
 	protected $expectedHttpCode;
 
 	/**
-	 * Psr\Http\Message\RequestInterface response
+	 * Psr\Http\Message\ResponseInterface response
 	 *
 	 * @var ResponseInterface
 	 */
@@ -26,12 +26,12 @@
 	 *
 	 * @param string $httpCode Response HTTP Code
 	 * @param string $expectedHttpCode Expected response HTTP Code
-	 * @param ResponseInterface|null Psr\Http\Message\RequestInterface response
+	 * @param ResponseInterface $response Psr\Http\Message\ResponseInterface response
 	 * @param string $message [optional] The Exception message to throw.
 	 * @param int $code [optional] The Exception code.
 	 * @param Exception $previous [optional] The previous exception used for the exception chaining.
 	 */
-	public function __construct($httpCode, $expectedHttpCode, $response, $message = "", $code = 0, Exception $previous = null) {
+	public function __construct($httpCode, $expectedHttpCode, ResponseInterface $response, $message = "", $code = 0, Exception $previous = null) {
 		$this->httpCode = $httpCode;
 		$this->expectedHttpCode = $expectedHttpCode;
 		$this->response = $response;
@@ -72,7 +72,7 @@
 	}
 
 	/**
-	 * Return the Psr\Http\Message\RequestInterface response
+	 * Return the Psr\Http\Message\ResponseInterface response
 	 *
 	 * @return ResponseInterface
 	 */

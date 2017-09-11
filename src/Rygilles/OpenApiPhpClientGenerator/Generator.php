@@ -234,7 +234,8 @@ class Generator
 	protected function makeUnexpectedResponseException()
 	{
 		$this->unexpectedResponseExceptionData['uses'] = [
-			'Psr\Http\Message\RequestInterface'
+			'Exception',
+			'Psr\Http\Message\ResponseInterface'
 		];
 		$this->unexpectedResponseExceptionData['className'] = 'UnexpectedResponseException';
 		$this->unexpectedResponseExceptionData['classPhpDocTitle'] = 'Api Unexpected Response Exception class';
