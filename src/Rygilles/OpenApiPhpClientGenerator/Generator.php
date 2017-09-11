@@ -388,13 +388,17 @@ class Generator
 									
 									// Add response resource return
 									if (!is_null($resolvedResponseReferences)) {
-										$returns = [];
-										foreach ($resolvedResponseReferences as $resolvedResponseReference) {
-											$returns[] = $resolvedResponseReference['name'];
-										}
-										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = implode('|', $returns);
+										// Use the first response (The default one is for errors purpose)
+										$resolvedResponseReferencesKeys = array_keys($resolvedResponseReferences);
+
+										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReferencesKeys[$resolvedResponseReferencesKeys[0]]['name'];
 									}
-									
+
+									// Add response resource return
+									if (!is_null($resolvedResponseReferences) && isset($resolvedResponseReferences['default'])) {
+										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['defaultReturn'] = $resolvedResponseReferences['default']['name'];
+									}
+
 									/*
 									if (!is_null($relatedResource)) {
 										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['relatedResource'] = $relatedResource;
@@ -427,14 +431,18 @@ class Generator
 										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation),
 										'exceptedResponseCode' => $this->getRouteOperationExceptedResponseCode($operation)
 									];
-									
+
 									// Add response resource return
 									if (!is_null($resolvedResponseReferences)) {
-										$returns = [];
-										foreach ($resolvedResponseReferences as $resolvedResponseReference) {
-											$returns[] = $resolvedResponseReference['name'];
-										}
-										$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = implode('|', $returns);
+										// Use the first response (The default one is for errors purpose)
+										$resolvedResponseReferencesKeys = array_keys($resolvedResponseReferences);
+
+										$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] =  $resolvedResponseReferencesKeys[$resolvedResponseReferencesKeys[0]]['name'];
+									}
+
+									// Add response resource return
+									if (!is_null($resolvedResponseReferences) && isset($resolvedResponseReferences['default'])) {
+										$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['defaultReturn'] = $resolvedResponseReferences['default']['name'];
 									}
 									
 									break;
@@ -753,7 +761,7 @@ class Generator
 			if (isset($response['content'][$mediaType]['schema']['$ref'])) {
 				$resolved = $this->resolveReference($response['content'][$mediaType]['schema']['$ref']);
 				$this->makeResponseResource($resolved['name'], $resolved['target']);
-				$resolvedResponsesReferences[] = $resolved;
+				$resolvedResponsesReferences[$httpCode] = $resolved;
 			} else {
 				//$schema = $response['content'][$mediaType]['schema'];
 				// @todo what to do ?
