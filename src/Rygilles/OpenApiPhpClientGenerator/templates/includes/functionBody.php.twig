@@ -45,7 +45,7 @@
 		$requestOptions['query'] = $queryParameters;
 {% endif %}
 {% if route.bodyParameters|length > 0 %}
-	$requestOptions['body'] = $bodyParameters;
+		$requestOptions['body'] = $bodyParameters;
 {% endif %}
 
 		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url, $requestOptions);
