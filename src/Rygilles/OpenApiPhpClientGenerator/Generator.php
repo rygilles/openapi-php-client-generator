@@ -768,6 +768,10 @@ class Generator
 			}
 		}
 
+		if (count($resolvedResponsesReferences) == 0) {
+			return null;
+		}
+
 		return $resolvedResponsesReferences;
 	}
 
