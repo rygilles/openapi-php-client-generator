@@ -391,7 +391,7 @@ class Generator
 										// Use the first response (The default one is for errors purpose)
 										$resolvedResponseReferencesKeys = array_keys($resolvedResponseReferences);
 
-										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReferencesKeys[$resolvedResponseReferencesKeys[0]]['name'];
+										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReferences[$resolvedResponseReferencesKeys[0]]['name'];
 									}
 
 									// Add response resource return
@@ -437,7 +437,7 @@ class Generator
 										// Use the first response (The default one is for errors purpose)
 										$resolvedResponseReferencesKeys = array_keys($resolvedResponseReferences);
 
-										$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] =  $resolvedResponseReferencesKeys[$resolvedResponseReferencesKeys[0]]['name'];
+										$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] =  $resolvedResponseReferences[$resolvedResponseReferencesKeys[0]]['name'];
 									}
 
 									// Add response resource return
