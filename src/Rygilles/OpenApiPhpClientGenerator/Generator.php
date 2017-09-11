@@ -1258,31 +1258,31 @@ class Generator
 						if (count($resourceProperties) > 0) {
 							// Resource Id pattern
 							$pattern = '/(\w+)Id$/';
-							if (preg_match($pattern, $parameter['name'])) {
-								$resourcePropertyToMatch = ucfirst(rtrim($parameter['name'], 'Id'));
+							if (preg_match($pattern, $parameterName)) {
+								$resourcePropertyToMatch = ucfirst(rtrim($parameterName, 'Id'));
 								$snakeCaseResourcePropertyToMatch = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $resourcePropertyToMatch));
 								foreach ($resourceProperties as $resourceProperty) {
 									if ($resourceProperty['name'] == $snakeCaseResourcePropertyToMatch) {
-										$result[$parameter['name']]['phpValue'] = '$this->' . $snakeCaseResourcePropertyToMatch;
+										$result[$parameterName]['phpValue'] = '$this->' . $snakeCaseResourcePropertyToMatch;
 									}
 								}
 							}
 						}
 
 						// This resource Id ?
-						if (is_null($result[$parameter['name']]) && ($resourceName != '')) {
+						if (is_null($result[$parameterName]) && ($resourceName != '')) {
 							// Resource Id pattern
 							$pattern = '/(\w+)Id$/';
-							if (preg_match($pattern, $parameter['name'])) {
-								$resourcePropertyToMatch = ucfirst(rtrim($parameter['name'], 'Id'));
+							if (preg_match($pattern, $parameterName)) {
+								$resourcePropertyToMatch = ucfirst(rtrim($parameterName, 'Id'));
 								if ($resourceName == $resourcePropertyToMatch) {
-									$result[$parameter['name']]['phpValue'] = '$this->id';
+									$result[$parameterName]['phpValue'] = '$this->id';
 								}
 							}
 						}
 
-						if (is_null($result[$parameter['name']]['phpValue'])) {
-							$result[$parameter['name']]['phpValue'] = '$' . $parameter['name'];
+						if (is_null($result[$parameterName]['phpValue'])) {
+							$result[$parameterName]['phpValue'] = '$' . $parameterName;
 						}
 					}
 				}
