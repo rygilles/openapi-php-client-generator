@@ -26,7 +26,12 @@
 {% endfor %}
 {% endif %}
 
-		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url{% if route.inQueryParameters|length > 0 %}, $queryParameters{% endif %});
+		$requestOptions = [];
+{% if route.inQueryParameters|length > 0 %}
+		$requestOptions['query'] = $queryParameters;
+{% endif %}
+
+		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url, $requestOptions);
 
 		if ($request->getStatusCode() != {{ route.exceptedResponseCode }}) {
 			throw new UnexpectedResponseException($request->getStatusCode(), {{ route.exceptedResponseCode }}, $request);
