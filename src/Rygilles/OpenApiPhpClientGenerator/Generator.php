@@ -233,13 +233,13 @@ class Generator
 	 */
 	protected function makeUnexpectedResponseException()
 	{
-		$this->mainExceptionData['uses'] = [
+		$this->unexpectedResponseExceptionData['uses'] = [
 			'Guzzle\ResponseInterface'
 		];
-		$this->mainExceptionData['className'] = 'UnexpectedResponseException';
-		$this->mainExceptionData['classPhpDocTitle'] = 'Api Unexpected Response Exception class';
-		$this->mainExceptionData['namespace'] = $this->namespace . '\\Exceptions';
-		$this->mainExceptionData['extends'] = 'ApiException';
+		$this->unexpectedResponseExceptionData['className'] = 'UnexpectedResponseException';
+		$this->unexpectedResponseExceptionData['classPhpDocTitle'] = 'Api Unexpected Response Exception class';
+		$this->unexpectedResponseExceptionData['namespace'] = $this->namespace . '\\Exceptions';
+		$this->unexpectedResponseExceptionData['extends'] = 'ApiException';
 	}
 
 	/**
