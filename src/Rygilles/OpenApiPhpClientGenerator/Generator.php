@@ -309,8 +309,7 @@ class Generator
 								case 'Managers' :
 									
 									//$relatedResource = null;
-									
-									/*
+
 									if (isset($extractedTags['Resources'])) {
 										$firstKey = array_keys($extractedTags['Resources'])[0];
 										$relatedResource = $extractedTags['Resources'][$firstKey];
@@ -323,7 +322,6 @@ class Generator
 											$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $relatedResource;
 										}
 									}
-									*/
 									
 									$this->prepareManager($typeTag);
 									
@@ -551,7 +549,8 @@ class Generator
 							break;
 						case 'Resources':
 							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
-								$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
+								// Same namespace, no need to add "use" of another resource
+								//$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
 							}
 							break;
 					}
@@ -657,12 +656,16 @@ class Generator
 						$this->resourcesData[$resolved['name']]['properties'] = [];
 					}
 
+					// Same namespace, no need to add "use" of another resource
+					/*
 					if (!isset($this->resourcesData[$name]['uses'])) {
 						$this->resourcesData[$name]['uses'] = [];
 					}
 					if (!in_array($this->namespace . '\\Resources\\' . $resolved['name'], $this->resourcesData[$name]['uses'])) {
-						$this->resourcesData[$name]['uses'][] = $this->namespace . '\\Resources\\' . $resolved['name'];
+
+						//$this->resourcesData[$name]['uses'][] = $this->namespace . '\\Resources\\' . $resolved['name'];
 					}
+					*/
 
 					$this->resourcesData[$name]['properties'][$propertyName]['type'] = $resolved['name'];
 				}
@@ -682,12 +685,15 @@ class Generator
 									$this->resourcesData[$resolved['name']]['properties'] = [];
 								}
 
+								// Same namespace, no need to add "use" of another resource
+								/*
 								if (!isset($this->resourcesData[$name]['uses'])) {
 									$this->resourcesData[$name]['uses'] = [];
 								}
 								if (!in_array($this->namespace . '\\Resources\\' . $resolved['name'], $this->resourcesData[$name]['uses'])) {
 									$this->resourcesData[$name]['uses'][] = $this->namespace . '\\Resources\\' . $resolved['name'];
 								}
+								*/
 
 								$this->resourcesData[$name]['properties'][$propertyName]['type'] = 'array';
 								$this->resourcesData[$name]['properties'][$propertyName]['items'] = $resolved['name'];
