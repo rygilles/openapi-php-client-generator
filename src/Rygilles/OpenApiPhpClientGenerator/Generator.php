@@ -94,6 +94,13 @@ class Generator
 	protected $mainExceptionData = [];
 
 	/**
+	 * Unexpected response exception data
+	 *
+	 * @var mixed[]
+	 */
+	protected $unexpectedResponseExceptionData = [];
+
+	/**
 	 * Twig templates environment
 	 *
 	 * @var Twig_Environment
@@ -127,6 +134,14 @@ class Generator
 	 * @var Twig_TemplateWrapper
 	 */
 	protected $mainExceptionTemplate;
+
+	/**
+	 * Twig unexpected response exception template
+	 *
+	 * @var Twig_TemplateWrapper
+	 */
+	protected $UnexpectedResponseExceptionTemplate;
+
 
 	/**
 	 * Generator constructor.
@@ -173,6 +188,9 @@ class Generator
 		// Make the main exception data
 		$this->makeMainException();
 
+		// Make the unexpected response exception data
+		$this->makeUnexpectedResponseException();
+
 		// Load template filesystem
 		$this->loadTemplates();
 
@@ -208,6 +226,20 @@ class Generator
 		$this->mainExceptionData['classPhpDocTitle'] = 'Api Exception class';
 		$this->mainExceptionData['namespace'] = $this->namespace . '\\Exceptions';
 		$this->mainExceptionData['extends'] = 'RuntimeException';
+	}
+
+	/**
+	 * Make the unexpected response exception data
+	 */
+	protected function makeUnexpectedResponseException()
+	{
+		$this->mainExceptionData['uses'] = [
+			'Guzzle\ResponseInterface'
+		];
+		$this->mainExceptionData['className'] = 'UnexpectedResponseException';
+		$this->mainExceptionData['classPhpDocTitle'] = 'Api Unexpected Response Exception class';
+		$this->mainExceptionData['namespace'] = $this->namespace . '\\Exceptions';
+		$this->mainExceptionData['extends'] = 'ApiException';
 	}
 
 	/**
@@ -1123,6 +1155,7 @@ class Generator
 		$this->writeResourcesTemplates();
 		$this->writeMainClientTemplate();
 		$this->writeMainExceptionTemplate();
+		$this->writeUnexpectedResponseExceptionTemplate();
 	}
 
 	/**
@@ -1139,6 +1172,22 @@ class Generator
 		}
 
 		file_put_contents($filePath, $this->mainExceptionTemplate->render($data));
+	}
+
+	/**
+	 * Write main unexpected response exception template file
+	 */
+	protected function writeUnexpectedResponseExceptionTemplate()
+	{
+		$data = $this->unexpectedResponseExceptionData;
+
+		$filePath = $this->outputPath . DIRECTORY_SEPARATOR . 'Exceptions' . DIRECTORY_SEPARATOR . 'UnexpectedResponseException.php';
+
+		if (!is_null($this->outputInterface)) {
+			$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
+		}
+
+		file_put_contents($filePath, $this->unexpectedResponseExceptionTemplate->render($data));
 	}
 
 	/**

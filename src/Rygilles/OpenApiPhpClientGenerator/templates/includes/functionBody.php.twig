@@ -14,12 +14,11 @@
 {% if route.inQueryParameters|length > 0 %}
 
 		$queryParameters = [];
-
 {% for queryParameter in route.inQueryParameters %}
 {% if queryParameter.required %}
 		$queryParameters['{{ queryParameter.name }}'] = {{ queryParameter.phpValue }};
 {% else %}
-
+	
 		if (!is_null(${{ queryParameter.name }})) {
 			$queryParameters['{{ queryParameter.name }}'] = {{ queryParameter.phpValue }};
 		}
