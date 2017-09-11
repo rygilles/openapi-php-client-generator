@@ -22,7 +22,7 @@
 {% endfor %}
 {% if params != '' %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ params %}{% endif %}
 {% if route.return is defined %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ '@return ' ~ route.return ~ "\n" %}{% endif %}
-{% set doc = doc ~ (doc == '' ? '' : "\n") ~ '@throws ApiException' ~ "\n" %}
+{% set doc = doc ~ (doc == '' ? '' : "\n") ~ '@throws UnexpectedResponseException' ~ "\n" %}
 {# relatedResource disabled, to remove
 {% if route.relatedResource is defined %}{% set doc = doc ~ (doc == '' ? '' : "\n") ~ '@return ' ~ route.relatedResource ~ "\n" %}{% endif %}
 #}
