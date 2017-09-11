@@ -1282,7 +1282,7 @@ class Generator
 			'routes' => [],
 			'uses' => [
 				$this->namespace . '\\ApiClient',
-				$this->namespace . '\\Exceptions\\ApiException'
+				$this->namespace . '\\Exceptions\\UnexpectedResponseException'
 			]
 		];
 	}
@@ -1304,7 +1304,7 @@ class Generator
 			'routes' => [],
 			'uses' => [
 				$this->namespace . '\\ApiClient',
-				$this->namespace . '\\Exceptions\\ApiException'
+				$this->namespace . '\\Exceptions\\UnexpectedResponseException'
 			]
 		];
 	}

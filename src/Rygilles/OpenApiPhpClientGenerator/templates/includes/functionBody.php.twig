@@ -18,7 +18,7 @@
 {% if queryParameter.required %}
 		$queryParameters['{{ queryParameter.name }}'] = {{ queryParameter.phpValue }};
 {% else %}
-	
+
 		if (!is_null(${{ queryParameter.name }})) {
 			$queryParameters['{{ queryParameter.name }}'] = {{ queryParameter.phpValue }};
 		}
@@ -29,7 +29,7 @@
 		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url{% if route.inQueryParameters|length > 0 %}, $queryParameters{% endif %});
 
 		if ($request->getStatusCode() != {{ route.exceptedResponseCode }}) {
-			throw new ApiException('Unexpected response HTTP code : ' . $request->getStatusCode() . ' instead of {{ route.exceptedResponseCode }}');
+			throw new UnexpectedResponseException($request->getStatusCode(), {{ route.exceptedResponseCode }}, $request);
 		}
 {% if route.return is defined %}
 
