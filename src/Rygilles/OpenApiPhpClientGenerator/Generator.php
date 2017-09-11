@@ -140,7 +140,7 @@ class Generator
 	 *
 	 * @var Twig_TemplateWrapper
 	 */
-	protected $UnexpectedResponseExceptionTemplate;
+	protected $unexpectedResponseExceptionTemplate;
 
 
 	/**
@@ -1335,6 +1335,7 @@ class Generator
 		$this->resourceTemplate = $this->twigEnv->load('resource.php.twig');
 		$this->mainClientTemplate = $this->twigEnv->load('mainClient.php.twig');
 		$this->mainExceptionTemplate = $this->twigEnv->load('mainException.php.twig');
+		$this->unexpectedResponseExceptionTemplate = $this->twigEnv->load('unexpectedResponseException.php.twig');
 	}
 
 	/**
