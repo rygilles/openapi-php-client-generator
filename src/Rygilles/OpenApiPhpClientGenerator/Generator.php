@@ -1002,6 +1002,7 @@ class Generator
 				$result[$parameter['name']] = [
 					'name' => $parameter['name'],
 					'required' => $parameter['required'],
+					'phpValue' => null
 				];
 
 				if (isset($parameter['schema'])) {
