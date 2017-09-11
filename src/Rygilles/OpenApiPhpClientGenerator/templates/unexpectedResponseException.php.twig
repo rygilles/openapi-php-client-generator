@@ -27,17 +27,17 @@
 	 * @param string $httpCode Response HTTP Code
 	 * @param string $expectedHttpCode Expected response HTTP Code
 	 * @param ResponseInterface $response Psr\Http\Message\ResponseInterface response
-	 * @param string $message [optional] The Exception message to throw.
+	 * @param string $message|null [optional] The Exception message to throw.
 	 * @param int $code [optional] The Exception code.
 	 * @param Exception $previous [optional] The previous exception used for the exception chaining.
 	 */
-	public function __construct($httpCode, $expectedHttpCode, ResponseInterface $response, $message = "", $code = 0, Exception $previous = null) {
+	public function __construct($httpCode, $expectedHttpCode, ResponseInterface $response, $message = null, $code = 0, Exception $previous = null) {
 		$this->httpCode = $httpCode;
 		$this->expectedHttpCode = $expectedHttpCode;
 		$this->response = $response;
 
-		if (!$this->message) {
-			$this->message = 'Unexpected response HTTP code : ' . $this->httpCode . ' instead of ' . $this->expectedHttpCode;
+		if (is_null(message)) {
+			$message = 'Unexpected response HTTP code : ' . $this->httpCode . ' instead of ' . $this->expectedHttpCode;
 		}
 
 		parent::__construct($message, $code, $previous);
