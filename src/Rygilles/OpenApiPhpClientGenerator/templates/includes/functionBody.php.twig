@@ -19,7 +19,6 @@
 {% if queryParameter.required %}
 		$queryParameters['{{ queryParameter.name }}'] = ${{ queryParameter.name }};
 {% else %}
-{% if requiredJump is not defined %}
 
 		if (!is_null(${{ queryParameter.name }})) {
 			$queryParameters['{{ queryParameter.name }}'] = ${{ queryParameter.name }};
