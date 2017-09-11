@@ -15,7 +15,7 @@
 	protected $expectedHttpCode;
 
 	/**
-	 * Guzzle response
+	 * Psr\Http\Message\RequestInterface response
 	 *
 	 * @var ResponseInterface
 	 */
@@ -26,7 +26,7 @@
 	 *
 	 * @param string $httpCode Response HTTP Code
 	 * @param string $expectedHttpCode Expected response HTTP Code
-	 * @param ResponseInterface|null Guzzle response
+	 * @param ResponseInterface|null Psr\Http\Message\RequestInterface response
 	 * @param string $message [optional] The Exception message to throw.
 	 * @param int $code [optional] The Exception code.
 	 * @param Exception $previous [optional] The previous exception used for the exception chaining.
@@ -72,7 +72,7 @@
 	}
 
 	/**
-	 * Return the Guzzle response
+	 * Return the Psr\Http\Message\RequestInterface response
 	 *
 	 * @return ResponseInterface
 	 */
