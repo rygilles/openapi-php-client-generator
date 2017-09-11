@@ -340,7 +340,7 @@ class Generator
 						}
 					}
 					
-					$resolvedResponseReference = $this->analyzeRouteOperationResponses($path, $httpMethod, $operation);
+					$resolvedResponseReferences = $this->analyzeRouteOperationResponses($path, $httpMethod, $operation);
 					
 					foreach ($extractedTags as $tagType => $typeTags) {
 						foreach ($typeTags as $typeTag) {
@@ -365,12 +365,14 @@ class Generator
 									$this->prepareManager($typeTag);
 									
 									// Add the response resolved reference resource use if exists
-									if (!is_null($resolvedResponseReference)) {
-										if (!isset($this->managersData[ucfirst($typeTag)]['uses'])) {
-											$this->managersData[ucfirst($typeTag)]['uses'] = [];
-										}
-										if (!in_array($this->namespace . '\\Resources\\' . $resolvedResponseReference['name'], $this->managersData[ucfirst($typeTag)]['uses'])) {
-											$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $resolvedResponseReference['name'];
+									if (!is_null($resolvedResponseReferences)) {
+										foreach ($resolvedResponseReferences as $resolvedResponseReference) {
+											if (!isset($this->managersData[ucfirst($typeTag)]['uses'])) {
+												$this->managersData[ucfirst($typeTag)]['uses'] = [];
+											}
+											if (!in_array($this->namespace . '\\Resources\\' . $resolvedResponseReference['name'], $this->managersData[ucfirst($typeTag)]['uses'])) {
+												$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $resolvedResponseReference['name'];
+											}
 										}
 									}
 									
@@ -385,8 +387,12 @@ class Generator
 									];
 									
 									// Add response resource return
-									if (!is_null($resolvedResponseReference)) {
-										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReference['name'];
+									if (!is_null($resolvedResponseReferences)) {
+										$returns = [];
+										foreach ($resolvedResponseReferences as $resolvedResponseReference) {
+											$returns[] = $resolvedResponseReference['name'];
+										}
+										$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = implode('|', $returns);
 									}
 									
 									/*
@@ -423,8 +429,12 @@ class Generator
 									];
 									
 									// Add response resource return
-									if (!is_null($resolvedResponseReference)) {
-										$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = $resolvedResponseReference['name'];
+									if (!is_null($resolvedResponseReferences)) {
+										$returns = [];
+										foreach ($resolvedResponseReferences as $resolvedResponseReference) {
+											$returns[] = $resolvedResponseReference['name'];
+										}
+										$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['return'] = implode('|', $returns);
 									}
 									
 									break;
@@ -723,8 +733,10 @@ class Generator
 	protected function analyzeRouteOperationResponses($path, $httpMethod, $operation)
 	{
 		if (!isset($operation['responses'])) {
-			return;
+			return null;
 		}
+
+		$resolvedResponsesReferences = [];
 
 		foreach ($operation['responses'] as $httpCode => $response) {
 			if (!isset($response['content'])) {
@@ -741,12 +753,14 @@ class Generator
 			if (isset($response['content'][$mediaType]['schema']['$ref'])) {
 				$resolved = $this->resolveReference($response['content'][$mediaType]['schema']['$ref']);
 				$this->makeResponseResource($resolved['name'], $resolved['target']);
-				return $resolved;
+				$resolvedResponsesReferences[] = $resolved;
 			} else {
 				//$schema = $response['content'][$mediaType]['schema'];
 				// @todo what to do ?
 			}
 		}
+
+		return $resolvedResponsesReferences;
 	}
 
 	/**
