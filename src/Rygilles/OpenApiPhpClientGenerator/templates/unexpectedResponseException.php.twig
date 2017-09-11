@@ -22,19 +22,28 @@
 	protected $response;
 
 	/**
+	 * Api exception response
+	 *
+	 * @var mixed
+	 */
+	protected $apiExceptionResponse;
+
+	/**
 	 * Construct the exception.
 	 *
 	 * @param string $httpCode Response HTTP Code
 	 * @param string $expectedHttpCode Expected response HTTP Code
 	 * @param ResponseInterface $response Psr\Http\Message\ResponseInterface response
+	 * @param mixed|null [optional] $apiExceptionResponse Api exception response
 	 * @param string $message|null [optional] The Exception message to throw.
 	 * @param int $code [optional] The Exception code.
 	 * @param Exception $previous [optional] The previous exception used for the exception chaining.
 	 */
-	public function __construct($httpCode, $expectedHttpCode, ResponseInterface $response, $message = null, $code = 0, Exception $previous = null) {
+	public function __construct($httpCode, $expectedHttpCode, ResponseInterface $response, $apiExceptionResponse = null, $message = null, $code = 0, Exception $previous = null) {
 		$this->httpCode = $httpCode;
 		$this->expectedHttpCode = $expectedHttpCode;
 		$this->response = $response;
+		$this->apiExceptionResponse = $apiExceptionResponse;
 
 		if (is_null($message)) {
 			$message = 'Unexpected response HTTP code : ' . $this->httpCode . ' instead of ' . $this->expectedHttpCode;
@@ -79,5 +88,15 @@
 	public function getResponse()
 	{
 		return $this->response;
+	}
+
+	/**
+	 * Return Api exception response
+	 *
+	 * @return mixed
+	 */
+	public function getApiExceptionResponse()
+	{
+		return $this->apiExceptionResponse;
 	}
 }

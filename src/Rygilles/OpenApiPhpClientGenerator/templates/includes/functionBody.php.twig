@@ -51,6 +51,10 @@
 		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url, $requestOptions);
 
 		if ($request->getStatusCode() != {{ route.exceptedResponseCode }}) {
+{% if route.defaultReturn is defined %}
+			$apiExceptionResponse = new {{ route.defaultReturn }}();
+	
+{% endif %}
 			throw new UnexpectedResponseException($request->getStatusCode(), {{ route.exceptedResponseCode }}, $request);
 		}
 {% if route.return is defined %}
