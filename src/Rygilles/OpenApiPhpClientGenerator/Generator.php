@@ -340,6 +340,7 @@ class Generator
 										'httpMethod' => $httpMethod,
 										'operation' => $operation,
 										'definitionParameters' => $this->getRouteOperationDefinitionParameters(true, $path, $httpMethod, $operation),
+										'inQueryParameters' => $this->getRouteOperationInQueryParameters($path, $httpMethod, $operation),
 										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
 										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation),
 										'exceptedResponseCode' => $this->getRouteOperationExceptedResponseCode($operation)
@@ -378,6 +379,7 @@ class Generator
 										'httpMethod' => $httpMethod,
 										'operation' => $operation,
 										'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation),
+										'inQueryParameters' => $this->getRouteOperationInQueryParameters($path, $httpMethod, $operation),
 										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
 										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation),
 										'exceptedResponseCode' => $this->getRouteOperationExceptedResponseCode($operation)
@@ -835,9 +837,81 @@ class Generator
 
 		return $result;
 	}
-
+	
 	/**
-	 * Return the definition parameters of a resource/manager class method
+	 * Return the query parameters of a resource/manager class method
+	 * Reordered bu requirement
+	 *
+	 * @param string $path
+	 * @param string $httpMethod
+	 * @param mixed[] $operation
+	 * @return mixed[]
+	 * @throws Exception
+	 */
+	protected function getRouteOperationInQueryParameters($path, $httpMethod, $operation)
+	{
+		$result = [];
+		
+		if (isset($operation['parameters'])) {
+			// Get the required parameters first
+			foreach ($operation['parameters'] as $parameter) {
+				
+				if (!$parameter['in'] == 'query' || !$parameter['required']) {
+					continue;
+				}
+				
+				$result[$parameter['name']] = [
+					'name' => $parameter['name'],
+					'required' => $parameter['required'],
+				];
+				
+				if (isset($parameter['schema'])) {
+					if (isset($parameter['schema']['type'])) {
+						$result[$parameter['name']]['type'] = $parameter['schema']['type'];
+					}
+					
+					if (isset($parameter['schema']['format'])) {
+						$result[$parameter['name']]['format'] = $parameter['schema']['format'];
+					}
+				}
+				
+				if (isset($parameter['description'])) {
+					$result[$parameter['name']]['description'] = $parameter['description'];
+				}
+			}
+			// Get the optional parameters next
+			foreach ($operation['parameters'] as $parameter) {
+
+				if (!$parameter['in'] == 'query' || $parameter['required']) {
+					continue;
+				}
+
+				$result[$parameter['name']] = [
+					'name' => $parameter['name'],
+					'required' => $parameter['required'],
+				];
+
+				if (isset($parameter['schema'])) {
+					if (isset($parameter['schema']['type'])) {
+						$result[$parameter['name']]['type'] = $parameter['schema']['type'];
+					}
+
+					if (isset($parameter['schema']['format'])) {
+						$result[$parameter['name']]['format'] = $parameter['schema']['format'];
+					}
+				}
+
+				if (isset($parameter['description'])) {
+					$result[$parameter['name']]['description'] = $parameter['description'];
+				}
+			}
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 * Return the definition parameters of a resource/manager class method (in path & query only)
 	 *
 	 * @param boolean $inPath Grab parameters "in = path" (only for Managers)
 	 * @param string $path
@@ -854,6 +928,10 @@ class Generator
 			foreach ($operation['parameters'] as $parameter) {
 
 				if (!$inPath && $parameter['in'] == 'path') {
+					continue;
+				}
+
+				if (in_array($parameter['in'], ['header', 'cookie'])) {
 					continue;
 				}
 

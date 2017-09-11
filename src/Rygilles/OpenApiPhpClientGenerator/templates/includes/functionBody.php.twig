@@ -11,8 +11,24 @@
 {% else %}
 		$url = '{{ route.path }}';
 {% endif %}
+{% if route.inQueryParameters|length > 0 %}
 
-		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url);
+		$queryParameters = [];
+
+{% for queryParameter in route.inQueryParameters %}
+{% if queryParameter.required %}
+		$queryParameters['{{ queryParameter.name }}'] = ${{ queryParameter.name }};
+{% else %}
+{% if requiredJump is not defined %}
+
+		if (!is_null(${{ queryParameter.name }})) {
+			$queryParameters['{{ queryParameter.name }}'] = ${{ queryParameter.name }};
+		}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url{% if route.inQueryParameters|length > 0 %}, $queryParameters{% endif %});
 
 		if ($request->getStatusCode() != {{ route.exceptedResponseCode }}) {
 			throw new ApiException('Unexpected response HTTP code : ' . $request->getStatusCode() . ' instead of {{ route.exceptedResponseCode }}');
