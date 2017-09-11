@@ -184,6 +184,9 @@ class Generator
 
 		// Add operation responses makers
 		$this->computeOperationsResponsesMakers();
+		
+		// Add operation default responses makers
+		$this->computeOperationsDefaultResponsesMakers();
 
 		// Make the main client data
 		$this->makeMainClient();
@@ -651,6 +654,63 @@ class Generator
 			}
 		}
 	}
+	
+	/**
+	 * Add operation default responses makers
+	 */
+	protected function computeOperationsDefaultResponsesMakers()
+	{
+		foreach ($this->openApiFileContent['paths'] as $path => $operations) {
+			foreach ($operations as $httpMethod => $operation) {
+				if (isset($operation['tags'])) {
+					$extractedTags = [];
+					foreach ($operation['tags'] as $tag) {
+						$split = explode(':', $tag);
+						if (count($split) == 2) {
+							switch ($split[0]) {
+								case 'Manager' :
+									if (!isset($extractedTags['Managers'])) {
+										$extractedTags['Managers'] = [];
+									}
+									$extractedTags['Managers'][] = $split[1];
+									break;
+								case 'Resource' :
+									if (!isset($extractedTags['Resources'])) {
+										$extractedTags['Resources'] = [];
+									}
+									$extractedTags['Resources'][] = $split[1];
+									break;
+							}
+						}
+					}
+					
+					foreach ($extractedTags as $tagType => $typeTags) {
+						foreach ($typeTags as $typeTag) {
+							switch ($tagType) {
+								case 'Managers' :
+									if (isset($this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['defaultReturn'])) {
+										$defaultReturn = $this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['defaultReturn'];
+										if (!is_null($defaultReturn)) {
+											$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['defaultResponseMaker'] = $this->computeOperationDefaultResponsesMaker('Managers', $typeTag, $operation, $defaultReturn);
+										}
+									}
+									break;
+								
+								case 'Resources' :
+									if (isset($this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['defaultReturn'])) {
+										$defaultReturn = $this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['defaultReturn'];
+										if (!is_null($defaultReturn)) {
+											$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['defaultResponseMaker'] = $this->computeOperationDefaultResponsesMaker('Resources', $typeTag, $operation, $defaultReturn);
+										}
+									}
+									break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	/**
 	 * Create operation response maker
@@ -713,6 +773,83 @@ class Generator
 					}
 
 					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
+				} else {
+					if ($isArrayResponse) {
+						$callBody .= str_repeat("\t", $newTabs) . '$data' . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+					} else {
+						$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+					}
+				}
+			}
+		}
+		$callBody = rtrim($callBody, (', ' . "\n"));
+
+		$responseMaker = ($addLeadingTabs ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . "\n" . $callBody . "\n" . str_repeat("\t", $tabs) . ')' . (($tabs == 2) ? ';' : '');
+
+		return $responseMaker;
+	}
+
+	/**
+	 * Create operation default response maker
+	 *
+	 * @param $typeTag
+	 * @param $classTypeName 'Managers' or 'Resources'
+	 * @param mixed[] $operation
+	 * @param string $return
+	 * @param boolean $addLeadingTabs
+	 * @param int $tabs Current indentation
+	 * @param string $arrayContext
+	 * @param boolean $isArrayResponse Create a array_map if it's an array type
+	 * @return string
+	 */
+	protected function computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $return, $addLeadingTabs = false, $tabs = 2, $arrayContext = '', $isArrayResponse = false)
+	{
+		$newTabs = $tabs + 1;
+		$resourceData = $this->resourcesData[$return];
+
+		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
+		if (isset($resourceData['properties'])) {
+			foreach ($resourceData['properties'] as $property) {
+				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
+					// Add 'use'
+					switch ($typeTag) {
+						case 'Managers':
+							if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
+								$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
+							}
+							break;
+						case 'Resources':
+							// Same namespace, no need to add "use" of another resource
+							/*
+							if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
+								$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
+							}
+							*/
+							break;
+					}
+
+					$callBody .= str_repeat("\t", $newTabs) . 'array_map(function($data) {' . "\n";
+					$callBody .= str_repeat("\t", $newTabs + 1) . 'return ';
+					$callBody .= $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, $arrayContext . '[\'' . $property['name'] . '\']', true) . '; ' . "\n";
+					$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . '), ' . "\n";
+				}
+				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
+					// Add 'use'
+					switch ($typeTag) {
+						case 'Managers':
+							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
+								$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
+							}
+							break;
+						case 'Resources':
+							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
+								// Same namespace, no need to add "use" of another resource
+								//$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
+							}
+							break;
+					}
+
+					$callBody .= $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
 					if ($isArrayResponse) {
 						$callBody .= str_repeat("\t", $newTabs) . '$data' . '[\'' . $property['name'] . '\']' . ', ' . "\n";

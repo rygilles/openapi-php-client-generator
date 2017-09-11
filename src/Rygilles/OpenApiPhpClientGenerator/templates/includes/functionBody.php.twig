@@ -52,10 +52,9 @@
 
 		if ($request->getStatusCode() != {{ route.exceptedResponseCode }}) {
 {% if route.defaultReturn is defined %}
-			$apiExceptionResponse = new {{ route.defaultReturn }}();
-	
+			$apiExceptionResponse = new {{ route.defaultReturn }}({{ route.defaultResponseMaker|raw }});
 {% endif %}
-			throw new UnexpectedResponseException($request->getStatusCode(), {{ route.exceptedResponseCode }}, $request);
+			throw new UnexpectedResponseException($request->getStatusCode(), {{ route.exceptedResponseCode }}, $request{% if route.defaultReturn is defined %}, $apiExceptionResponse{% endif %});
 		}
 {% if route.return is defined %}
 
