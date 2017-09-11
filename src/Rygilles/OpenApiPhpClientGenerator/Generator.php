@@ -162,7 +162,7 @@ class Generator
 		$this->computeInPathParameters();
 
 		// Add in query parameters data based on resource properties
-		$this->computeIQueryParameters();
+		$this->computeInQueryParameters();
 
 		// Add operation responses makers
 		$this->computeOperationsResponsesMakers();
