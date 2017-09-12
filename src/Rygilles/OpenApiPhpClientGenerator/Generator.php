@@ -1115,10 +1115,20 @@ class Generator
 				if (is_null($result[$parameter['name']]) && ($resourceName != '')) {
 					// Resource Id pattern
 					$pattern = '/(\w+)Id$/';
+
 					if (preg_match($pattern, $parameter['name'])) {
 						$resourcePropertyToMatch = ucfirst(rtrim($parameter['name'], 'Id'));
 						if ($resourceName == $resourcePropertyToMatch) {
 							$result[$parameter['name']] = '$this->id';
+						}
+					}
+				}
+				// This resource composite key or property defined ?
+				if (is_null($result[$parameter['name']]) && ($resourceName != '')) {
+					$snakeCaseParameterName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $parameter['name']));
+					foreach ($resourceProperties as $resourceProperty) {
+						if ($resourceProperty['name'] == $snakeCaseParameterName) {
+							$result[$parameter['name']] = '$this->' . $snakeCaseParameterName;
 						}
 					}
 				}
