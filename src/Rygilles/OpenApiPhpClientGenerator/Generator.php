@@ -1088,11 +1088,13 @@ class Generator
 		$result = [];
 
 		if (isset($operation['parameters'])) {
-			foreach ($operation['parameters'] as $parameter) {
+			foreach ($operation['parameters'] as $p) {
 
 				// Reference
-				if (isset($parameter['$ref'])) {
-					$parameter = $this->resolveReference($parameter['$ref'])['target'];
+				if (isset($p['$ref'])) {
+					$parameter = $this->resolveReference($p['$ref'])['target'];
+				} else {
+					$parameter = $p;
 				}
 
 				if ($parameter['in'] != 'path') {
@@ -1163,11 +1165,13 @@ class Generator
 
 		if (isset($operation['parameters'])) {
 			// Get the required parameters first
-			foreach ($operation['parameters'] as $parameter) {
+			foreach ($operation['parameters'] as $p) {
 
 				// Reference
-				if (isset($parameter['$ref'])) {
-					$parameter = $this->resolveReference($parameter['$ref'])['target'];
+				if (isset($p['$ref'])) {
+					$parameter = $this->resolveReference($p['$ref'])['target'];
+				} else {
+					$parameter = $p;
 				}
 				
 				if ($parameter['in'] != 'query' || !$parameter['required']) {
@@ -1227,11 +1231,13 @@ class Generator
 			}
 
 			// Get the optional parameters next
-			foreach ($operation['parameters'] as $parameter) {
+			foreach ($operation['parameters'] as $p) {
 
 				// Reference
-				if (isset($parameter['$ref'])) {
-					$parameter = $this->resolveReference($parameter['$ref'])['target'];
+				if (isset($p['$ref'])) {
+					$parameter = $this->resolveReference($p['$ref'])['target'];
+				} else {
+					$parameter = $p;
 				}
 
 				if ($parameter['in'] != 'query' || $parameter['required']) {
@@ -1309,11 +1315,13 @@ class Generator
 		$result = [];
 
 		if (isset($operation['parameters'])) {
-			foreach ($operation['parameters'] as $parameter) {
+			foreach ($operation['parameters'] as $p) {
 
 				// Reference
-				if (isset($parameter['$ref'])) {
-					$parameter = $this->resolveReference($parameter['$ref'])['target'];
+				if (isset($p['$ref'])) {
+					$parameter = $this->resolveReference($p['$ref'])['target'];
+				} else {
+					$parameter = $p;
 				}
 
 				if (!$inPath && $parameter['in'] == 'path') {
