@@ -1090,6 +1090,11 @@ class Generator
 		if (isset($operation['parameters'])) {
 			foreach ($operation['parameters'] as $parameter) {
 
+				// Reference
+				if (isset($parameter['$ref'])) {
+					$parameter = $this->resolveReference($parameter['$ref'])['target'];
+				}
+
 				if ($parameter['in'] != 'path') {
 					continue;
 				}
@@ -1310,7 +1315,7 @@ class Generator
 				if (isset($parameter['$ref'])) {
 					$parameter = $this->resolveReference($parameter['$ref'])['target'];
 				}
-				
+
 				if (!$inPath && $parameter['in'] == 'path') {
 					continue;
 				}
