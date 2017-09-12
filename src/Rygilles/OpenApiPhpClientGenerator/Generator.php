@@ -1159,6 +1159,11 @@ class Generator
 		if (isset($operation['parameters'])) {
 			// Get the required parameters first
 			foreach ($operation['parameters'] as $parameter) {
+
+				// Reference
+				if (isset($parameter['$ref'])) {
+					$parameter = $this->resolveReference($parameter['$ref'])['target'];
+				}
 				
 				if ($parameter['in'] != 'query' || !$parameter['required']) {
 					continue;
