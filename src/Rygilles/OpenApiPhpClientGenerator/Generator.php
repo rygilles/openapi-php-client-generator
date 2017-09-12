@@ -1123,7 +1123,7 @@ class Generator
 						}
 					}
 				}
-				// This resource composite key or property defined ?
+				// This resource composite key or foreign key ?
 				if (is_null($result[$parameter['name']]) && ($resourceName != '')) {
 					$snakeCaseParameterName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $parameter['name']));
 					foreach ($resourceProperties as $resourceProperty) {

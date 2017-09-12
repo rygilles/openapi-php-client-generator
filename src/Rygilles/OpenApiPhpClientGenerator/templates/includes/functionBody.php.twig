@@ -1,5 +1,5 @@
 {% if route.inPathParameters|length > 0 %}
-		$path = '{{ route.path }}';
+		$routePath = '{{ route.path }}';
 
 		$pathReplacements = [
 {% for parameterName, phpCode in route.inPathParameters %}
@@ -7,9 +7,9 @@
 {% endfor %}
 		];
 
-		$url = str_replace(array_keys($pathReplacements), array_values($pathReplacements), $path);
+		$routeUrl = str_replace(array_keys($pathReplacements), array_values($pathReplacements), $routePath);
 {% else %}
-		$url = '{{ route.path }}';
+		$routeUrl = '{{ route.path }}';
 {% endif %}
 {% if route.inQueryParameters|length > 0 %}
 
@@ -48,14 +48,14 @@
 		$requestOptions['form_params'] = $bodyParameters;
 {% endif %}
 
-		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $url, $requestOptions);
+		$request = $this->apiClient->getHttpClient()->request('{{ route.httpMethod }}', $routeUrl, $requestOptions);
 
 		if ($request->getStatusCode() != {{ route.exceptedResponseCode }}) {
 {% if route.defaultReturn is defined %}
 			$requestBody = json_decode((string) $request->getBody(), true);
 
 			$apiExceptionResponse = {{ route.defaultResponseMaker|raw }};
-	
+
 {% endif %}
 			throw new UnexpectedResponseException($request->getStatusCode(), {{ route.exceptedResponseCode }}, $request{% if route.defaultReturn is defined %}, $apiExceptionResponse{% endif %});
 		}
