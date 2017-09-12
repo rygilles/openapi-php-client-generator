@@ -1215,8 +1215,14 @@ class Generator
 					$result[$parameter['name']]['phpValue'] = '$' . $parameter['name'];
 				}
 			}
+
 			// Get the optional parameters next
 			foreach ($operation['parameters'] as $parameter) {
+
+				// Reference
+				if (isset($parameter['$ref'])) {
+					$parameter = $this->resolveReference($parameter['$ref'])['target'];
+				}
 
 				if ($parameter['in'] != 'query' || $parameter['required']) {
 					continue;
