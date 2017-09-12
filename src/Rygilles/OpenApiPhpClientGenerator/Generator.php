@@ -1118,6 +1118,7 @@ class Generator
 
 					if (preg_match($pattern, $parameter['name'])) {
 						$resourcePropertyToMatch = ucfirst(rtrim($parameter['name'], 'Id'));
+						echo("\n" . $resourcePropertyToMatch . "\n\n");
 						if ($resourceName == $resourcePropertyToMatch) {
 							$result[$parameter['name']] = '$this->id';
 						}
