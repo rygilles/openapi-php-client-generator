@@ -770,7 +770,7 @@ class Generator
 						$callBody .= $subMaker . '; ' . "\n";
 						$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . '), ' . "\n";
 					} else {
-						$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
+						$callBody .= str_repeat("\t", $newTabs) . 'nulla, ' . "\n";
 					}
 				}
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
