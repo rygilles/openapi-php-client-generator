@@ -733,7 +733,7 @@ class Generator
 
 		// Prevent recursion
 		if (in_array($return, $levelsReturns)) {
-			echo('noreturn : ' . implode(',', $levelsReturns) . "\n");
+			echo('noreturn : return=' . $return . ' with ' . implode(',', $levelsReturns) . "\n");
 			return 'norec';
 		}
 		$levelsReturns[] = $return;
