@@ -733,7 +733,7 @@ class Generator
 
 		// Prevent recursion
 		if (in_array($return, $levelsReturns)) {
-			return 'null';
+			return 'norec';
 		}
 		$levelsReturns[] = $return;
 
