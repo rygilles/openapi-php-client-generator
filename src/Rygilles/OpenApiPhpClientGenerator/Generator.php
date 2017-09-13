@@ -732,11 +732,15 @@ class Generator
 		$resourceData = $this->resourcesData[$return];
 
 		// Prevent recursion
-		if (in_array($classTypeName, $levelsReturns)) {
-			echo('noreturn : return=' . $classTypeName . ' with ' . implode(',', $levelsReturns) . "\n");
+		if (in_array($return, $levelsReturns)) {
+			echo('noreturn : return=' . $return . ' with ' . implode(',', $levelsReturns) . "\n");
 			return 'norec';
 		}
-		$levelsReturns[] = $classTypeName;
+		if (count($levelsReturns) == 0) {
+			$levelsReturns[] = $classTypeName;
+		}
+
+		$levelsReturns[] = $return;
 
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
