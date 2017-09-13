@@ -733,6 +733,13 @@ class Generator
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
+				$required = false;
+				if (isset($resourceData['required'])) {
+					if (in_array($property['name'], $resourceData['required'])) {
+						$required = true;
+					}
+				}
+
 				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
 					// Add 'use'
 					switch ($typeTag) {
@@ -775,9 +782,17 @@ class Generator
 					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
 					if ($isArrayResponse) {
-						$callBody .= str_repeat("\t", $newTabs) . '$data' . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+						if ($required) {
+							$callBody .= str_repeat("\t", $newTabs) . '$data' . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+						} else {
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . '[\'' . $property['name'] . '\']) ? $data' . '[\'' . $property['name'] . '\'] : null), ' . "\n";
+						}
 					} else {
-						$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+						if ($required) {
+							$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+						} else {
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']) ? $requestBody' . $arrayContext . '[\'' . $property['name'] . '\'] : null), ' . "\n";
+						}
 					}
 				}
 			}
@@ -810,6 +825,13 @@ class Generator
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
+				$required = false;
+				if (isset($resourceData['required'])) {
+					if (in_array($property['name'], $resourceData['required'])) {
+						$required = true;
+					}
+				}
+
 				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
 					// Add 'use'
 					switch ($typeTag) {
@@ -852,9 +874,17 @@ class Generator
 					$callBody .= $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 				} else {
 					if ($isArrayResponse) {
-						$callBody .= str_repeat("\t", $newTabs) . '$data' . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+						if ($required) {
+							$callBody .= str_repeat("\t", $newTabs) . '$data' . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+						} else {
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . '[\'' . $property['name'] . '\']) ? $data' . '[\'' . $property['name'] . '\'] : null), ' . "\n";
+						}
 					} else {
-						$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+						if ($required) {
+							$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+						} else {
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']) ? $requestBody' . $arrayContext . '[\'' . $property['name'] . '\'] : null), ' . "\n";
+						}
 					}
 				}
 			}
@@ -946,6 +976,13 @@ class Generator
 				$this->prepareResource($name);
 
 				$this->resourcesData[$name]['properties'][$propertyName]['name'] = $propertyName;
+				$this->resourcesData[$name]['properties'][$propertyName]['required'] = false;
+
+				if (isset($schema['required'])) {
+					if (in_array($propertyName, $schema['required'])) {
+						$this->resourcesData[$name]['properties'][$propertyName]['required'] = true;
+					}
+				}
 
 				if (isset($property['$ref'])) {
 					$resolved = $this->resolveReference($property['$ref']);
