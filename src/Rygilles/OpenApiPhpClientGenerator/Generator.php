@@ -729,18 +729,13 @@ class Generator
 	{
 		$newTabs = $tabs + 1;
 		$resourceData = $this->resourcesData[$return];
-		if ($return == 'Project') {
-			die(print_r($resourceData, true));
-		}
 
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
 				$required = false;
-				if (isset($resourceData['required'])) {
-					if (in_array($property['name'], $resourceData['required'])) {
-						$required = true;
-					}
+				if (isset($property['required'])) {
+					$required = $property['required'];
 				}
 
 				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
@@ -829,10 +824,8 @@ class Generator
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
 				$required = false;
-				if (isset($resourceData['required'])) {
-					if (in_array($property['name'], $resourceData['required'])) {
-						$required = true;
-					}
+				if (isset($property['required'])) {
+					$required = $property['required'];
 				}
 
 				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
