@@ -770,7 +770,7 @@ class Generator
 						$callBody .= $subMaker . '; ' . "\n";
 						$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . '), ' . "\n";
 					} else {
-						$callBody .= str_repeat("\t", $newTabs) . 'nulla, ' . "\n";
+						$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
 					}
 				}
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
@@ -822,7 +822,7 @@ class Generator
 							if ($subMaker != 'norec') {
 								$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $subMaker . ') : null), ' . "\n";
 							} else {
-								$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
+								$callBody .= str_repeat("\t", $newTabs) . 'nullaa, ' . "\n";
 							}
 						}
 					}
