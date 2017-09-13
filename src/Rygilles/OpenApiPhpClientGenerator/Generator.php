@@ -729,6 +729,9 @@ class Generator
 	{
 		$newTabs = $tabs + 1;
 		$resourceData = $this->resourcesData[$return];
+		if ($return == 'Project') {
+			die(print_r($resourceData, true));
+		}
 
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
