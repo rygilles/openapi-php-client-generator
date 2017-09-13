@@ -733,11 +733,9 @@ class Generator
 
 		// Prevent recursion
 		if (in_array($return, $levelsReturns)) {
+			// @todo debug eg.: link between ProjectListResponse List AND ProjectResponse -> DataStreamResponse -> Project Response
 			echo('noreturn : return=' . $return . ' with ' . implode(',', $levelsReturns) . "\n");
 			return 'norec';
-		}
-		if (count($levelsReturns) == 0) {
-			$levelsReturns[] = $classTypeName;
 		}
 
 		$levelsReturns[] = $return;
