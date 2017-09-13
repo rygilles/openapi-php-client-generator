@@ -848,6 +848,7 @@ class Generator
 				return '';
 			}
 		}
+		echo(implode(',', $levelsReturns) ."\n");
 
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
@@ -1001,6 +1002,10 @@ class Generator
 	 */
 	protected function makeResponseResource($name, $schema)
 	{
+		if (!is_null($this->outputInterface)) {
+			$this->outputInterface->writeln('<info>Making response resource "' . $name . '"</info>');
+		}
+
 		// Analyze properties for references
 
 		if (isset($schema['properties'])) {
