@@ -745,7 +745,7 @@ class Generator
 				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
 					// Prevent recursion
 					if (in_array($property['items'], $levelsReturns)) {
-						return 'null';
+						return '';
 					}
 
 					// Add 'use'
@@ -773,7 +773,7 @@ class Generator
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
 					// Prevent recursion
 					if (in_array($property['type'], $levelsReturns)) {
-						return 'nullaa';
+						return '';
 					}
 
 					// Add 'use'
@@ -797,7 +797,7 @@ class Generator
 							true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
 							$isArrayResponse, $levelsReturns
 						);
-						if ($subMaker != 'null') {
+						if ($subMaker != '') {
 							$callBody .= $subMaker . ', ' . "\n";
 						} else {
 							$callBody .= 'null, ' . "\n";
@@ -809,7 +809,7 @@ class Generator
 								false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
 								$isArrayResponse, $levelsReturns
 							);
-							if ($subMaker != 'null') {
+							if ($subMaker != '') {
 								$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $subMaker . ') : null), ' . "\n";
 							} else {
 								$callBody .= str_repeat("\t", $newTabs) .'null, ' . "\n";
@@ -820,7 +820,7 @@ class Generator
 								false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
 								$isArrayResponse, $levelsReturns
 							);
-							if ($subMaker != 'null') {
+							if ($subMaker != '') {
 								$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $subMaker . ') : null), ' . "\n";
 							} else {
 								$callBody .= str_repeat("\t", $newTabs) .'null, ' . "\n";
