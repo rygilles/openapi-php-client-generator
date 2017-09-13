@@ -777,7 +777,11 @@ class Generator
 							break;
 					}
 
-					$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
+					if ($required) {
+						$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
+					} else {
+						$callBody .= '(isset(' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ') : null), ' . "\n";
+					}
 				} else {
 					if ($isArrayResponse) {
 						if ($required) {
