@@ -884,11 +884,6 @@ class Generator
 				}
 
 				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
-					// Prevent recursion
-					if (in_array($property['items'], $levelsReturns)) {
-						return 'null';
-					}
-
 					$subMaker = $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, $arrayContext . '[\'' . $property['name'] . '\']', true, $levelsReturns);
 					if ($subMaker != 'norec') {
 						// Add 'use'
