@@ -889,7 +889,7 @@ class Generator
 						return 'null';
 					}
 
-					$subMaker = $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, $arrayContext . '[\'' . $property['name'] . '\']', true, $levelsReturns)
+					$subMaker = $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, $arrayContext . '[\'' . $property['name'] . '\']', true, $levelsReturns);
 					if ($subMaker != 'norec') {
 						// Add 'use'
 						switch ($typeTag) {
