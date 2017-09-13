@@ -740,8 +740,6 @@ class Generator
 			}
 		}
 
-		echo(implode(',', $levelsReturns) ."\n");
-
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
