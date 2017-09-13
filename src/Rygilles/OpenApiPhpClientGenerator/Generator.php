@@ -799,7 +799,7 @@ class Generator
 						if ($subMaker != 'norec') {
 							$callBody .= $subMaker . ', ' . "\n";
 						} else {
-							$callBody .= str_repeat("\t", $tabs) . 'null, ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
 						}
 					} else {
 						if ($isArrayResponse) {
@@ -937,7 +937,7 @@ class Generator
 						if ($subMaker != 'null') {
 							$callBody .= $subMaker . ', ' . "\n";
 						} else {
-							$callBody .= 'null, ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
 						}
 					} else {
 						if ($isArrayResponse) {
