@@ -771,6 +771,11 @@ class Generator
 					$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . '), ' . "\n";
 				}
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
+					// Prevent recursion
+					if (in_array($property['type'], $levelsReturns)) {
+						return '';
+					}
+
 					// Add 'use'
 					switch ($typeTag) {
 						case 'Managers':
