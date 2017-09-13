@@ -737,7 +737,6 @@ class Generator
 		}
 		$levelsReturns[] = $return;
 
-
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
 			foreach ($resourceData['properties'] as $property) {
@@ -871,6 +870,9 @@ class Generator
 		$resourceData = $this->resourcesData[$return];
 
 		// Prevent recursion
+		if (in_array($return, $levelsReturns)) {
+			return 'norec';
+		}
 		$levelsReturns[] = $return;
 
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
@@ -887,27 +889,32 @@ class Generator
 						return 'null';
 					}
 
-					// Add 'use'
-					switch ($typeTag) {
-						case 'Managers':
-							if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
-								$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
-							}
-							break;
-						case 'Resources':
-							// Same namespace, no need to add "use" of another resource
-							/*
-							if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
-								$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
-							}
-							*/
-							break;
-					}
+					$subMaker = $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, $arrayContext . '[\'' . $property['name'] . '\']', true, $levelsReturns)
+					if ($subMaker != 'norec') {
+						// Add 'use'
+						switch ($typeTag) {
+							case 'Managers':
+								if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
+									$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
+								}
+								break;
+							case 'Resources':
+								// Same namespace, no need to add "use" of another resource
+								/*
+								if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
+									$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
+								}
+								*/
+								break;
+						}
 
-					$callBody .= str_repeat("\t", $newTabs) . 'array_map(function($data) {' . "\n";
-					$callBody .= str_repeat("\t", $newTabs + 1) . 'return ';
-					$callBody .= $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, $arrayContext . '[\'' . $property['name'] . '\']', true, $levelsReturns) . '; ' . "\n";
-					$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . '), ' . "\n";
+						$callBody .= str_repeat("\t", $newTabs) . 'array_map(function($data) {' . "\n";
+						$callBody .= str_repeat("\t", $newTabs + 1) . 'return ';
+						$callBody .= $subMaker . '; ' . "\n";
+						$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . '), ' . "\n";
+					} else {
+						$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
+					}
 				}
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
 					// Add 'use'
@@ -924,6 +931,7 @@ class Generator
 							}
 							break;
 					}
+
 					if ($required) {
 						$subMaker = $this->computeOperationDefaultResponsesMaker(
 							$typeTag, $classTypeName, $operation, $property['type'],
