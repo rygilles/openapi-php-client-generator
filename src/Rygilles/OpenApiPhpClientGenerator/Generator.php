@@ -792,12 +792,33 @@ class Generator
 					}
 
 					if ($required) {
-						$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']', $isArrayResponse, $levelsReturns) . ', ' . "\n";
+						$subMaker = $this->computeOperationResponsesMaker(
+							$typeTag, $classTypeName, $operation, $property['type'],
+							true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
+							$isArrayResponse, $levelsReturns
+						);
+						if ($subMaker != 'null') {
+							$callBody .= $subMaker . ', ' . "\n";
+						}
 					} else {
 						if ($isArrayResponse) {
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']', $isArrayResponse, $levelsReturns) . ') : null), ' . "\n";
+							$subMaker = $this->computeOperationResponsesMaker(
+								$typeTag, $classTypeName, $operation, $property['type'],
+								false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
+								$isArrayResponse, $levelsReturns
+							);
+							if ($subMaker != 'null') {
+								$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $subMaker . ') : null), ' . "\n";
+							}
 						} else {
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']', $isArrayResponse, $levelsReturns) . ') : null), ' . "\n";
+							$subMaker = $this->computeOperationResponsesMaker(
+								$typeTag, $classTypeName, $operation, $property['type'],
+								false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
+								$isArrayResponse, $levelsReturns
+							);
+							if ($subMaker != 'null') {
+								$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $subMaker . ') : null), ' . "\n";
+							}
 						}
 					}
 				} else {
