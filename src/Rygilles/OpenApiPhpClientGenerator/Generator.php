@@ -874,8 +874,15 @@ class Generator
 							}
 							break;
 					}
-
-					$callBody .= $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
+					if ($required) {
+						$callBody .= $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']', $isArrayResponse) . ', ' . "\n";
+					} else {
+						if ($isArrayResponse) {
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']', $isArrayResponse) . ') : null), ' . "\n";
+						} else {
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']', $isArrayResponse) . ') : null), ' . "\n";
+						}
+					}
 				} else {
 					if ($isArrayResponse) {
 						if ($required) {
