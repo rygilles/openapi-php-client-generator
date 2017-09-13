@@ -1001,10 +1001,12 @@ class Generator
 	 */
 	protected function makeResponseResource($name, $schema, $resourcesInProgress = [])
 	{
+		/*
 		if (!is_null($this->outputInterface)) {
 			$this->outputInterface->writeln('<info>Making response resource "' . $name . '"</info>');
 		}
-
+		*/
+		
 		// Prevent recursion
 		$resourcesInProgress[] = $name;
 		$valuesCounts = (array_count_values($resourcesInProgress));
