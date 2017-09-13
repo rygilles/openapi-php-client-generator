@@ -780,7 +780,11 @@ class Generator
 					if ($required) {
 						$callBody .= $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ', ' . "\n";
 					} else {
-						$callBody .= str_repeat("\t", $newTabs) . '(isset(' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ') : null), ' . "\n";
+						if ($isArrayResponse) {
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']', true) . ') : null), ' . "\n";
+						} else {
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['type'], false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']') . ') : null), ' . "\n";
+						}
 					}
 				} else {
 					if ($isArrayResponse) {
