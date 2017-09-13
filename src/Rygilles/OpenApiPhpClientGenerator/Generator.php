@@ -999,12 +999,23 @@ class Generator
 	 *
 	 * @param string $name
 	 * @param mixed[] $schema
+	 * @param string[] $resourcesInProgress Resources done names (to prevent recursion)
 	 */
-	protected function makeResponseResource($name, $schema)
+	protected function makeResponseResource($name, $schema, $resourcesInProgress = [])
 	{
 		if (!is_null($this->outputInterface)) {
 			$this->outputInterface->writeln('<info>Making response resource "' . $name . '"</info>');
 		}
+
+		// Prevent recursion
+		$resourcesInProgress[] = $name;
+		$valuesCounts = (array_count_values($resourcesInProgress));
+		foreach ($valuesCounts as $count) {
+			if ($count > 1) {
+				return;
+			}
+		}
+		echo(implode(',', $resourcesInProgress) ."\n");
 
 		// Analyze properties for references
 
@@ -1026,7 +1037,7 @@ class Generator
 					$this->resourcesData[$name]['properties'][$propertyName]['type'] = $resolved['name'];
 					$this->prepareResource($resolved['name']);
 
-					$this->makeResponseResource($resolved['name'], $resolved['target']);
+					$this->makeResponseResource($resolved['name'], $resolved['target'], $resourcesInProgress);
 
 					if (!isset($this->resourcesData[$resolved['name']]['properties'])) {
 						$this->resourcesData[$resolved['name']]['properties'] = [];
@@ -1055,7 +1066,7 @@ class Generator
 								$this->resourcesData[$name]['properties'][$propertyName]['type'] = $resolved['name'];
 								$this->prepareResource($resolved['name']);
 
-								$this->makeResponseResource($resolved['name'], $resolved['target']);
+								$this->makeResponseResource($resolved['name'], $resolved['target'], $resourcesInProgress);
 
 								if (!isset($this->resourcesData[$resolved['name']]['properties'])) {
 									$this->resourcesData[$resolved['name']]['properties'] = [];
