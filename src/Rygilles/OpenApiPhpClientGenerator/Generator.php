@@ -733,12 +733,6 @@ class Generator
 
 		// Prevent recursion
 		$levelsReturns[] = $return;
-		$valuesCounts = (array_count_values($levelsReturns));
-		foreach ($valuesCounts as $count) {
-			if ($count > 1) {
-				return '';
-			}
-		}
 
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
 		if (isset($resourceData['properties'])) {
@@ -749,6 +743,11 @@ class Generator
 				}
 
 				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
+					// Prevent recursion
+					if (in_array($property['items'], $levelsReturns)) {
+						return '';
+					}
+
 					// Add 'use'
 					switch ($typeTag) {
 						case 'Managers':
@@ -1006,7 +1005,7 @@ class Generator
 			$this->outputInterface->writeln('<info>Making response resource "' . $name . '"</info>');
 		}
 		*/
-		
+
 		// Prevent recursion
 		$resourcesInProgress[] = $name;
 		$valuesCounts = (array_count_values($resourcesInProgress));
