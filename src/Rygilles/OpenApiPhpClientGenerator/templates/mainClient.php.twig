@@ -23,6 +23,13 @@
 	protected $bearerToken;
 
 {% endif %}
+	/**
+	 * Map of global headers to use with every requests
+	 *
+	 * @var string[]
+	 */
+	protected $globalHeaders = [];
+
 {% for manager in managers %}
 	/**
 	 * {{ manager.name }} manager
@@ -39,10 +46,12 @@
 	 * @param string $bearerToken Bearer authentication access token
 {% endif %}
 	 * @param string $apiBaseUrl API base url for requests
+	 * @param string[] $globalHeaders Map of global headers to use with every requests
 	 */
-	public function __construct({% if useBearerToken == true %}$bearerToken, {% endif %}$apiBaseUrl = '{{ apiBaseUrl }}')
+	public function __construct({% if useBearerToken == true %}$bearerToken, {% endif %}$apiBaseUrl = '{{ apiBaseUrl }}', $globalHeaders = [])
 	{
 		$this->apiBaseUrl = $apiBaseUrl;
+		$this->globalHeaders = $globalHeaders;
 
 {% if useBearerToken == true %}
 		$this->bearerToken = $bearerToken;
@@ -51,7 +60,15 @@
 		$stack->setHandler(new CurlHandler());
 
 		$stack->push(Middleware::mapRequest(function (RequestInterface $request) {
-			return $request->withHeader('Authorization', 'Bearer ' . $this->bearerToken);
+			if (count($this->globalHeaders) > 0) {
+				$request = $request->withHeader('Authorization', 'Bearer ' . $this->bearerToken);
+				foreach ($this->globalHeaders as $header => $value) {
+					$request = $request->withHeader($header, $value);
+				}
+				return $request;
+			} else {
+				return $request->withHeader('Authorization', 'Bearer ' . $this->bearerToken);
+			}
 		}));
 
 		$this->httpClient = new GuzzleClient([
@@ -59,9 +76,26 @@
 			'base_uri' => $apiBaseUrl
 		]);
 {% else %}
-		$this->httpClient = new GuzzleClient([
-			'base_uri' => $apiBaseUrl
-		]);
+		if (count($this->globalHeaders) > 0) {
+			$stack = new HandlerStack();
+			$stack->setHandler(new CurlHandler());
+
+			$stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+				foreach ($this->globalHeaders as $header => $value) {
+					$request = $request->withHeader($header, $value);
+				}
+				return $request;
+			}));
+
+			$this->httpClient = new GuzzleClient([
+				'handler' => $stack,
+				'base_uri' => $apiBaseUrl
+			]);
+		} else {
+			$this->httpClient = new GuzzleClient([
+				'base_uri' => $apiBaseUrl
+			]);
+		}
 {% endif %}
 
 {% for manager in managers %}
@@ -77,6 +111,16 @@
 	public function getApiBaseUrl()
 	{
 		return $this->apiBaseUrl;
+	}
+
+	/**
+	 * Return the map of global headers to use with every requests
+	 *
+	 * @return string[]
+	 */
+	public function getGlobalHeaders()
+	{
+		return $this->globalHeaders;
 	}
 
 	/**
