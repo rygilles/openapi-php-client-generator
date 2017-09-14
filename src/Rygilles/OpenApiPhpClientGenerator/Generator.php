@@ -810,14 +810,14 @@ class Generator
 								false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
 								$isArrayResponse, $levelsReturns
 							);
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $subMaker . ') : null), ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . '((isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') && !is_null($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ')) ? (' . $subMaker . ') : null), ' . "\n";
 						} else {
 							$subMaker = $this->computeOperationResponsesMaker(
 								$typeTag, $classTypeName, $operation, $property['type'],
 								false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
 								$isArrayResponse, $levelsReturns
 							);
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $subMaker . ') : null), ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . '((isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') && !is_null($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ')) ? (' . $subMaker . ') : null), ' . "\n";
 						}
 					}
 				} else {
@@ -944,7 +944,7 @@ class Generator
 								$isArrayResponse, $levelsReturns
 							);
 
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $subMaker . ') : null), ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . '((isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') && (!is_null($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ')) ? (' . $subMaker . ') : null), ' . "\n";
 						} else {
 							$subMaker = $this->computeOperationDefaultResponsesMaker(
 								$typeTag, $classTypeName, $operation, $property['type'],
@@ -952,7 +952,7 @@ class Generator
 								$isArrayResponse, $levelsReturns
 							);
 
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') ? (' . $subMaker . ') : null), ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . '((isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') && (!is_null($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ')) ? (' . $subMaker . ') : null), ' . "\n";
 						}
 					}
 				} else {
