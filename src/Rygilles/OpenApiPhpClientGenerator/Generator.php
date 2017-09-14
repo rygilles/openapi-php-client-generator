@@ -795,7 +795,6 @@ class Generator
 							break;
 					}
 
-					/*
 					if ($required) {
 						$subMaker = $this->computeOperationResponsesMaker(
 							$typeTag, $classTypeName, $operation, $property['type'],
@@ -804,7 +803,7 @@ class Generator
 						);
 
 						$callBody .= $subMaker . ', ' . "\n";
-					} else {*/
+					} else {
 						if ($isArrayResponse) {
 							$subMaker = $this->computeOperationResponsesMaker(
 								$typeTag, $classTypeName, $operation, $property['type'],
@@ -820,7 +819,7 @@ class Generator
 							);
 							$callBody .= str_repeat("\t", $newTabs) . '((isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') && !is_null($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ')) ? (' . $subMaker . ') : null), ' . "\n";
 						}
-					//}
+					}
 				} else {
 					if ($isArrayResponse) {
 						if ($required) {
