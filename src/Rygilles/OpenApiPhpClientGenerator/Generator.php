@@ -749,7 +749,7 @@ class Generator
 						continue;
 					}
 
-					$subMaker = $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, $arrayContext . '[\'' . $property['name'] . '\']', true, $levelsReturns);
+					$subMaker = $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, '', true, $levelsReturns);
 
 					// Add 'use'
 					switch ($typeTag) {
@@ -881,7 +881,7 @@ class Generator
 						continue;
 					}
 
-					$subMaker = $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, $arrayContext . '[\'' . $property['name'] . '\']', true, $levelsReturns);
+					$subMaker = $this->computeOperationDefaultResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, '', true, $levelsReturns);
 
 					// Add 'use'
 					switch ($typeTag) {
