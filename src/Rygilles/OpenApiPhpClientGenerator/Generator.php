@@ -753,6 +753,7 @@ class Generator
 				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
 					// Prevent recursion
 					if (in_array($property['items'], $levelsReturns)) {
+						$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
 						continue;
 					}
 
@@ -783,6 +784,7 @@ class Generator
 				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
 					// Prevent recursion
 					if (in_array($property['type'], $levelsReturns)) {
+						$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
 						continue;
 					}
 
