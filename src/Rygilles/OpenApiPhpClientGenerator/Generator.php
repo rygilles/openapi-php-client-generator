@@ -823,9 +823,9 @@ class Generator
 				} else {
 					if ($isArrayResponse) {
 						if ($required) {
-							$callBody .= str_repeat("\t", $newTabs) . '$data' . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . '$data' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 						} else {
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . '[\'' . $property['name'] . '\']) ? $data' . '[\'' . $property['name'] . '\'] : null), ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']) ? $data' . '[\'' . $property['name'] . '\'] : null), ' . "\n";
 						}
 					} else {
 						if ($required) {
@@ -958,15 +958,15 @@ class Generator
 				} else {
 					if ($isArrayResponse) {
 						if ($required) {
-							$callBody .= str_repeat("\t", $newTabs) . '$data' . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . '$data' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 						} else {
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . '[\'' . $property['name'] . '\']) ? $data' . '[\'' . $property['name'] . '\'] : null), ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']) ? $data' . '[\'' . $property['name'] . '\'] : null), ' . "\n";
 						}
 					} else {
 						if ($required) {
-							$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
 						} else {
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']) ? $requestBody' . $arrayContext . '[\'' . $property['name'] . '\'] : null), ' . "\n";
+							$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . $arrayContext . '[\'' . $property['name'] . '\']) ? $requestBody' . $arrayContext . '[\'' . $property['name'] . '\'] : null), ' . "\n";
 						}
 					}
 				}
