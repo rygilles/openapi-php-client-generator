@@ -350,6 +350,8 @@ class Generator
 							switch ($tagType) {
 								case 'Managers' :
 									
+									$this->prepareManager($typeTag);
+
 									//$relatedResource = null;
 
 									if (isset($extractedTags['Resources'])) {
@@ -364,9 +366,7 @@ class Generator
 											$this->managersData[ucfirst($typeTag)]['uses'][] = $this->namespace . '\\Resources\\' . $relatedResource;
 										}
 									}
-									
-									$this->prepareManager($typeTag);
-									
+
 									// Add the response resolved reference resource use if exists
 									if (!is_null($resolvedResponseReferences)) {
 										foreach ($resolvedResponseReferences as $resolvedResponseReference) {
@@ -490,10 +490,12 @@ class Generator
 						foreach ($typeTags as $typeTag) {
 							switch ($tagType) {
 								case 'Managers' :
+									$this->prepareManager($typeTag);
 									$this->managersData[ucfirst($typeTag)]['routes'][$operation['operationId']]['inPathParameters'] = $this->getRouteOperationInPathParameters($operation);
 									break;
 
 								case 'Resources' :
+									$this->prepareResource($typeTag);
 									$this->resourcesData[ucfirst($typeTag)]['routes'][$operation['operationId']]['inPathParameters'] = $this->getRouteOperationInPathParameters($operation, ucfirst($typeTag), $this->resourcesData[ucfirst($typeTag)]['properties']);
 									break;
 							}
