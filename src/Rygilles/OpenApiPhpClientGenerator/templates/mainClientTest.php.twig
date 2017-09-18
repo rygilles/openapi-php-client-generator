@@ -1,0 +1,13 @@
+{% include 'includes/classHeader.php.twig' %}
+{
+	public function testCanConnect()
+	{
+		$this->assertInstanceOf(
+			ApiClient::class,
+			new ApiClient(
+				env('bearerToken'),
+				env('apiBaseUrl')
+			)
+		);
+	}
+}

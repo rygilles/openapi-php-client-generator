@@ -23,7 +23,9 @@ class GenerateCommand extends Command
 			->setDescription('Generate PHP client files.')
 			->addArgument('source', InputArgument::REQUIRED, 'The OpenAPI file path')
 			->addArgument('output', InputArgument::REQUIRED, 'The output folder path')
-			->addArgument('namespace', InputArgument::REQUIRED, 'The base namespace of PHP generated files');
+			->addArgument('namespace', InputArgument::REQUIRED, 'The base namespace of PHP generated files')
+			->addArgument('testsOutput', InputArgument::OPTIONAL, 'The output folder path for unit tests')
+			->addArgument('testsNamespace', InputArgument::OPTIONAL, 'The base namespace of PHP generated tests files');
 	}
 
 	/**
@@ -38,8 +40,16 @@ class GenerateCommand extends Command
 		$openApiFilePath = $input->getArgument('source');
 		$outputPath = $input->getArgument('output');
 		$namespace = $input->getArgument('namespace');
+		$testsOutputPath = null;
+		if ($input->hasArgument('testsOutputPath')) {
+			$testsOutputPath = $input->getArgument('testsOutput');
+		}
+		$testsNamespace = null;
+		if ($input->hasArgument('testsNamespace')) {
+			$testsNamespace = $input->getArgument('testsNamespace');
+		}
 
-		$generator = new Generator($openApiFilePath, $outputPath, $namespace, $output);
+		$generator = new Generator($openApiFilePath, $outputPath, $namespace, $testsOutputPath, $testsNamespace, $output);
 		$generator->generate();
 
 		$output->writeln('<info>Generation complete</info>');

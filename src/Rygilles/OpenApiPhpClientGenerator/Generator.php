@@ -31,11 +31,24 @@ class Generator
 	protected $outputPath;
 
 	/**
+	 * Path where the PHP client library unit test files will be generated
+	 * @var null|string
+	 */
+	protected $testsOutputPath;
+
+	/**
 	 * Output files base namespace
 	 *
 	 * @var string
 	 */
 	protected $namespace;
+
+	/**
+	 * Output tests files base namespace
+	 *
+	 * @var string
+	 */
+	protected $testsNamespace;
 
 	/**
 	 * Output interface if running binary
@@ -87,6 +100,13 @@ class Generator
 	protected $mainClientData = [];
 
 	/**
+	 * Main client test data
+	 *
+	 * @var mixed[]
+	 */
+	protected $mainClientTestData = [];
+
+	/**
 	 * Main exception data
 	 *
 	 * @var mixed[]
@@ -129,6 +149,13 @@ class Generator
 	protected $mainClientTemplate;
 
 	/**
+	 * Twig main client test template
+	 *
+	 * @var Twig_TemplateWrapper|null
+	 */
+	protected $mainClientTestTemplate;
+
+	/**
 	 * Twig main exception template
 	 *
 	 * @var Twig_TemplateWrapper
@@ -149,13 +176,17 @@ class Generator
 	 * @param string $openApiFilePath Path of the OpenAPI file
 	 * @param string $outputPath Path where the PHP client library files will be generated
 	 * @param string $namespace Base namespace of generated files
+	 * @param string $testsOutputPath Path where the PHP client library unit tests files will be generated
+	 * @param string $testsNamespace Base namespace of PHP generated tests files
 	 * @param OutputInterface $outputInterface Output interface if running binary
 	 */
-	public function __construct($openApiFilePath, $outputPath, $namespace, $outputInterface = null)
+	public function __construct($openApiFilePath, $outputPath, $namespace, $testsOutputPath = null, $testsNamespace = null ,$outputInterface = null)
 	{
 		$this->openApiFilePath = $openApiFilePath;
 		$this->outputPath = $outputPath;
 		$this->namespace = $namespace;
+		$this->testsOutputPath = $testsOutputPath;
+		$this->testsNamespace = $testsNamespace;
 		$this->outputInterface = $outputInterface;
 	}
 
@@ -169,6 +200,11 @@ class Generator
 
 		// Make the output directory
 		$this->makeOutputDirectory();
+
+		// Make the tests output directory
+		if (!is_null($this->testsOutputPath)) {
+			$this->makeTestsOutputDirectory();
+		}
 
 		// Parse OpenAPI file for operations
 		$this->parseOperations();
@@ -196,6 +232,11 @@ class Generator
 
 		// Make the unexpected response exception data
 		$this->makeUnexpectedResponseException();
+
+		// Make the main client data
+		if (!is_null($this->testsOutputPath)) {
+			$this->makeMainClientTest();
+		}
 
 		// Load template filesystem
 		$this->loadTemplates();
@@ -310,6 +351,22 @@ class Generator
 				'lowerCamelCaseClassName' => lcfirst($managerName . 'Manager')
 			];
 		}
+	}
+
+	/**
+	 * Make the main client test data
+	 */
+	protected function makeMainClientTest()
+	{
+		$this->mainClientTestData['uses'] = [
+			'PHPUnit\Framework\TestCase',
+			$this->namespace . '\ApiClient'
+		];
+
+		$this->mainClientTestData['className'] = 'ApiClientTest';
+		$this->mainClientTestData['classPhpDocTitle'] = $this->openApiFileContent['info']['title'] . ' client test class';
+		$this->mainClientTestData['classPhpDocTitle'] .= $this->openApiFileContent['info']['version'] ? (' (test for version ' . $this->openApiFileContent['info']['version'] . ')') : '';
+		$this->mainClientTestData['namespace'] = $this->testsNamespace;
 	}
 	
 	/**
@@ -1642,6 +1699,10 @@ class Generator
 		$this->writeMainClientTemplate();
 		$this->writeMainExceptionTemplate();
 		$this->writeUnexpectedResponseExceptionTemplate();
+
+		if (!is_null($this->testsOutputPath)) {
+			$this->writeMainClientTestTemplate();
+		}
 	}
 
 	/**
@@ -1690,6 +1751,22 @@ class Generator
 		}
 
 		file_put_contents($filePath, $this->mainClientTemplate->render($data));
+	}
+
+	/**
+	 * Write main client test template file
+	 */
+	protected function writeMainClientTestTemplate()
+	{
+		$data = $this->mainClientTestData;
+
+		$filePath = $this->testsOutputPath . DIRECTORY_SEPARATOR . 'ApiClientTest.php';
+
+		if (!is_null($this->outputInterface)) {
+			$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
+		}
+
+		file_put_contents($filePath, $this->mainClientTestTemplate->render($data));
 	}
 
 	/**
@@ -1822,6 +1899,10 @@ class Generator
 		$this->mainClientTemplate = $this->twigEnv->load('mainClient.php.twig');
 		$this->mainExceptionTemplate = $this->twigEnv->load('mainException.php.twig');
 		$this->unexpectedResponseExceptionTemplate = $this->twigEnv->load('unexpectedResponseException.php.twig');
+
+		if (!is_null($this->testsOutputPath)) {
+			$this->mainClientTestTemplate = $this->twigEnv->load('mainClientTest.php.twig');
+		}
 	}
 
 	/**
@@ -1928,6 +2009,23 @@ class Generator
 				$this->outputInterface->writeln('<info>Making exceptions output directory (' . $exceptionsDirectoryPath . ')</info>');
 			}
 			mkdir($exceptionsDirectoryPath ,0755, true);
+		}
+	}
+
+	/**
+	 * Make the tests output directory
+	 */
+	protected function makeTestsOutputDirectory()
+	{
+		if (file_exists($this->testsOutputPath)) {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Main tests output directory already created (' . $this->testsOutputPath . ')</info>');
+			}
+		} else {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Making main tests output directory (' . $this->testsOutputPath . ')</info>');
+			}
+			mkdir($this->testsOutputPath ,0755, true);
 		}
 	}
 }
