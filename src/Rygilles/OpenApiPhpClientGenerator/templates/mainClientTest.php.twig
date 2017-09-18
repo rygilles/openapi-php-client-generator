@@ -5,8 +5,8 @@
 		$this->assertInstanceOf(
 			ApiClient::class,
 			new ApiClient(
-				env('bearerToken'),
-				env('apiBaseUrl')
+				getenv('bearerToken'),
+				getenv('apiBaseUrl')
 			)
 		);
 	}
