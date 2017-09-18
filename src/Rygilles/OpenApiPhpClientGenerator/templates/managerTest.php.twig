@@ -5,5 +5,6 @@
 	{
 	{% include 'includes/testFunctionBody.php.twig' with {'route': route} %}
 	}
+{% if not loop.last %}{{ "\t\n" }}{% endif %}
 {% endfor %}
 }
