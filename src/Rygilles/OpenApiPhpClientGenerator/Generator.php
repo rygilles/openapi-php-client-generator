@@ -364,6 +364,7 @@ class Generator
 		];
 
 		$this->mainClientTestData['className'] = 'ApiClientTest';
+		$this->mainClientTestData['extends'] = 'TestCase';
 		$this->mainClientTestData['classPhpDocTitle'] = $this->openApiFileContent['info']['title'] . ' client test class';
 		$this->mainClientTestData['classPhpDocTitle'] .= $this->openApiFileContent['info']['version'] ? (' (test for version ' . $this->openApiFileContent['info']['version'] . ')') : '';
 		$this->mainClientTestData['namespace'] = $this->testsNamespace;
