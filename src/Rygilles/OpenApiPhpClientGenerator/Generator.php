@@ -1823,6 +1823,7 @@ class Generator
 				'className' => $managerName . 'ManagerTest',
 				'classPhpDocTitle' => $managerName . ' manager test class',
 				'namespace' => $this->testsNamespace . '\ManagersTests',
+				'extends' => 'TestCase',
 				'routes' => $managerTestsData['routes'],
 			];
 
@@ -1910,7 +1911,8 @@ class Generator
 				'PHPUnit\Framework\TestCase',
 				$this->namespace . '\\ApiClient',
 				$this->namespace . '\\Exceptions\\UnexpectedResponseException',
-			]
+			],
+			'routes' => []
 		];
 	}
 
