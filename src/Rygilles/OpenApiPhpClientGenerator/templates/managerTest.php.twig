@@ -3,7 +3,7 @@
 {% for route in routes %}
 	public function {{ route.methodName }}()
 	{
-{% include 'includes/testFunctionBody.php.twig' with {'route': route} %}
+	{% include 'includes/testFunctionBody.php.twig' with {'route': route} %}
 	}
 {% endfor %}
 }
