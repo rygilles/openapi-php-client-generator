@@ -41,7 +41,7 @@ class GenerateCommand extends Command
 		$outputPath = $input->getArgument('output');
 		$namespace = $input->getArgument('namespace');
 		$testsOutputPath = null;
-		if ($input->hasArgument('testsOutputPath')) {
+		if ($input->hasArgument('testsOutput')) {
 			$testsOutputPath = $input->getArgument('testsOutput');
 		}
 		$testsNamespace = null;
