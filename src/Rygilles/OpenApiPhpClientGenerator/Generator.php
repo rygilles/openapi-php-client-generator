@@ -461,6 +461,10 @@ class Generator
 										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation),
 										'exceptedResponseCode' => $this->getRouteOperationExceptedResponseCode($operation)
 									];
+
+									$this->managersTestsData[ucfirst($typeTag)]['routes'][$operation['operationId']] = [
+										'methodName' => $operation['operationId'] . 'Test'
+									];
 									
 									// Add response resource return
 									if (!is_null($resolvedResponseReferences)) {
