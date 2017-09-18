@@ -1831,7 +1831,7 @@ class Generator
 				$data['uses'] = $managerTestsData['uses'];
 			}
 
-			$filePath = $this->testsOutputPath . DIRECTORY_SEPARATOR . 'ManagersTests' . DIRECTORY_SEPARATOR . $managerName . 'ManagerTests.php';
+			$filePath = $this->testsOutputPath . DIRECTORY_SEPARATOR . 'ManagersTests' . DIRECTORY_SEPARATOR . $managerName . 'ManagerTest.php';
 
 			if (!is_null($this->outputInterface)) {
 				$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
