@@ -5,7 +5,7 @@
 		$apiClient = new ApiClient(
 			getenv('bearerToken'),
 			getenv('apiBaseUrl')
-		)
+		);
 
 		$this->assertNotNull(
 			$apiClient->getHttpClient()
