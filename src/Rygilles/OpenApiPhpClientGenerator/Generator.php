@@ -86,6 +86,13 @@ class Generator
 	protected $managersData = [];
 
 	/**
+	 * Managers tests data
+	 *
+	 * @var mixed[]f
+	 */
+	protected $managersTestsData = [];
+
+	/**
 	 * Resources data
 	 *
 	 * @var mixed[]
@@ -416,6 +423,7 @@ class Generator
 								case 'Managers' :
 									
 									$this->prepareManager($typeTag);
+									$this->prepareManagerTests($typeTag);
 
 									//$relatedResource = null;
 
@@ -1886,6 +1894,27 @@ class Generator
 	}
 
 	/**
+	 * Prepare new manager tests data if not already done
+	 *
+	 * @param string $managerTag
+	 */
+	protected function prepareManagerTests($managerTag)
+	{
+		// Already prepared ?
+		if (isset($this->managersTestsData[ucfirst($managerTag)])) {
+			return;
+		}
+
+		$this->managersTestsData[ucfirst($managerTag)] = [
+			'uses' => [
+				'PHPUnit\Framework\TestCase',
+				$this->namespace . '\\ApiClient',
+				$this->namespace . '\\Exceptions\\UnexpectedResponseException',
+			]
+		];
+	}
+
+	/**
 	 * Prepare new resource data if not already done
 	 *
 	 * @param string $resourceTag
@@ -1995,7 +2024,7 @@ class Generator
 			if (!is_null($this->outputInterface)) {
 				$this->outputInterface->writeln('<info>Making main output directory (' . $this->outputPath . ')</info>');
 			}
-			mkdir($this->outputPath ,0755, true);
+			mkdir($this->outputPath, 0755, true);
 		}
 
 		$managersDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Managers";
@@ -2007,7 +2036,7 @@ class Generator
 			if (!is_null($this->outputInterface)) {
 				$this->outputInterface->writeln('<info>Making managers output directory (' . $managersDirectoryPath . ')</info>');
 			}
-			mkdir($managersDirectoryPath ,0755, true);
+			mkdir($managersDirectoryPath, 0755, true);
 		}
 
 		$resourcesDirectoryPath = $this->outputPath . DIRECTORY_SEPARATOR . "Resources";
@@ -2019,7 +2048,7 @@ class Generator
 			if (!is_null($this->outputInterface)) {
 				$this->outputInterface->writeln('<info>Making resources output directory (' . $resourcesDirectoryPath . ')</info>');
 			}
-			mkdir($resourcesDirectoryPath ,0755, true);
+			mkdir($resourcesDirectoryPath, 0755, true);
 		}
 
 		/*
@@ -2045,7 +2074,7 @@ class Generator
 			if (!is_null($this->outputInterface)) {
 				$this->outputInterface->writeln('<info>Making exceptions output directory (' . $exceptionsDirectoryPath . ')</info>');
 			}
-			mkdir($exceptionsDirectoryPath ,0755, true);
+			mkdir($exceptionsDirectoryPath, 0755, true);
 		}
 	}
 
@@ -2062,7 +2091,31 @@ class Generator
 			if (!is_null($this->outputInterface)) {
 				$this->outputInterface->writeln('<info>Making main tests output directory (' . $this->testsOutputPath . ')</info>');
 			}
-			mkdir($this->testsOutputPath ,0755, true);
+			mkdir($this->testsOutputPath, 0755, true);
+		}
+
+		$managersTestsDirectoryPath = $this->testsOutputPath . DIRECTORY_SEPARATOR . "ManagersTests";
+		if (file_exists($managersTestsDirectoryPath)) {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Managers tests output directory already created (' . $managersTestsDirectoryPath . ')</info>');
+			}
+		} else {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Making managers tests  output directory (' . $managersTestsDirectoryPath . ')</info>');
+			}
+			mkdir($managersTestsDirectoryPath, 0755, true);
+		}
+
+		$resourcesTestsDirectoryPath = $this->testsOutputPath . DIRECTORY_SEPARATOR . "ResourcesTests";
+		if (file_exists($resourcesTestsDirectoryPath)) {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Resources tests output directory already created (' . $resourcesTestsDirectoryPath . ')</info>');
+			}
+		} else {
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Making resources tests output directory (' . $resourcesTestsDirectoryPath . ')</info>');
+			}
+			mkdir($resourcesTestsDirectoryPath, 0755, true);
 		}
 	}
 }
