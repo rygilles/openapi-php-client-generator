@@ -156,6 +156,13 @@ class Generator
 	protected $mainClientTestTemplate;
 
 	/**
+	 * Twig manager test template
+	 *
+	 * @var Twig_TemplateWrapper|null
+	 */
+	protected $managerTestTemplate;
+
+	/**
 	 * Twig main exception template
 	 *
 	 * @var Twig_TemplateWrapper
@@ -1703,6 +1710,7 @@ class Generator
 
 		if (!is_null($this->testsOutputPath)) {
 			$this->writeMainClientTestTemplate();
+			$this->writeManagersTestsTemplates();
 		}
 	}
 
@@ -1794,6 +1802,33 @@ class Generator
 			}
 
 			file_put_contents($filePath, $this->managerTemplate->render($data));
+		}
+	}
+
+	/**
+	 * Write managers tests templates files
+	 */
+	protected function writeManagersTestsTemplates()
+	{
+		foreach ($this->managersTestsData as $managerName => $managerTestsData) {
+			$data = [
+				'className' => $managerName . 'ManagerTest',
+				'classPhpDocTitle' => $managerName . ' manager test class',
+				'namespace' => $this->testsNamespace . '\ManagersTests',
+				'routes' => $managerTestsData['routes'],
+			];
+
+			if (isset($managerTestsData['uses'])) {
+				$data['uses'] = $managerTestsData['uses'];
+			}
+
+			$filePath = $this->testsOutputPath . DIRECTORY_SEPARATOR . 'ManagersTests' . DIRECTORY_SEPARATOR . $managerName . 'ManagerTests.php';
+
+			if (!is_null($this->outputInterface)) {
+				$this->outputInterface->writeln('<info>Writing ' . $filePath . '</info>');
+			}
+
+			file_put_contents($filePath, $this->managerTestTemplate->render($data));
 		}
 	}
 
@@ -1903,6 +1938,7 @@ class Generator
 
 		if (!is_null($this->testsOutputPath)) {
 			$this->mainClientTestTemplate = $this->twigEnv->load('mainClientTest.php.twig');
+			$this->managerTestTemplate = $this->twigEnv->load('managerTest.php.twig');
 		}
 	}
 

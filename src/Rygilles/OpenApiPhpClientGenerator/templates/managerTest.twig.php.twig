@@ -1,0 +1,9 @@
+{% include 'includes/classHeader.php.twig' %}
+{
+{% for route in routes %}
+	public function {{ route.methodName }}()
+	{
+{% include 'includes/testFunctionBody.php.twig' with {'route': route} %}
+	}
+{% endfor %}
+}
