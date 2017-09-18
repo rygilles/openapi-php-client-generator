@@ -2,12 +2,13 @@
 {
 	public function testCanConnect()
 	{
-		$this->assertInstanceOf(
-			ApiClient::class,
-			new ApiClient(
-				getenv('bearerToken'),
-				getenv('apiBaseUrl')
-			)
+		$apiClient = new ApiClient(
+			getenv('bearerToken'),
+			getenv('apiBaseUrl')
+		)
+
+		$this->assertNotNull(
+			$apiClient->getHttpClient()
 		);
 	}
 }
