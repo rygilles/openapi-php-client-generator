@@ -47,8 +47,9 @@
 {% endif %}
 	 * @param string $apiBaseUrl API base url for requests
 	 * @param string[] $globalHeaders Map of global headers to use with every requests
+	 * @param mixed[] $guzzleClientConfig Additional Guzzle client configuration
 	 */
-	public function __construct({% if useBearerToken == true %}$bearerToken, {% endif %}$apiBaseUrl = '{{ apiBaseUrl }}', $globalHeaders = [])
+	public function __construct({% if useBearerToken == true %}$bearerToken, {% endif %}$apiBaseUrl = '{{ apiBaseUrl }}', $globalHeaders = [], $guzzleClientConfig = [])
 	{
 		$this->apiBaseUrl = $apiBaseUrl;
 		$this->globalHeaders = $globalHeaders;
@@ -70,11 +71,11 @@
 				return $request->withHeader('Authorization', 'Bearer ' . $this->bearerToken);
 			}
 		}));
+	
+		$guzzleClientConfig['handler'] = $stack;
+		$guzzleClientConfig['base_uri'] = $apiBaseUrl;
 
-		$this->httpClient = new GuzzleClient([
-			'handler' => $stack,
-			'base_uri' => $apiBaseUrl
-		]);
+		$this->httpClient = new GuzzleClient($guzzleClientConfig);
 {% else %}
 		if (count($this->globalHeaders) > 0) {
 			$stack = new HandlerStack();
@@ -86,15 +87,15 @@
 				}
 				return $request;
 			}));
-
-			$this->httpClient = new GuzzleClient([
-				'handler' => $stack,
-				'base_uri' => $apiBaseUrl
-			]);
+	
+			$guzzleClientConfig['handler'] = $stack;
+			$guzzleClientConfig['base_uri'] = $apiBaseUrl;
+			
+			$this->httpClient = new GuzzleClient($guzzleClientConfig);
 		} else {
-			$this->httpClient = new GuzzleClient([
-				'base_uri' => $apiBaseUrl
-			]);
+			$guzzleClientConfig['base_uri'] = $apiBaseUrl;
+		
+			$this->httpClient = new GuzzleClient($guzzleClientConfig);
 		}
 {% endif %}
 
