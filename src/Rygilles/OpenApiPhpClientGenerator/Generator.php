@@ -1147,6 +1147,17 @@ class Generator
 			}
 		}
 
+		// Extends handling
+		
+		if (isset($schema['allOf'])) {
+			foreach ($schema['allOf'] as $property) {
+				$this->prepareResource($name);
+				$resolved = $this->resolveReference($property['$ref']);
+				$this->resourcesData[$name] = array_merge($this->resourcesData[$name], $resolved['target']);
+				$schema = array_merge($schema, $resolved['target']);
+			}
+		}
+
 		// Analyze properties for references
 
 		if (isset($schema['properties'])) {
