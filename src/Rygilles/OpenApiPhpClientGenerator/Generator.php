@@ -506,7 +506,7 @@ class Generator
 										'path' => $path,
 										'httpMethod' => $httpMethod,
 										'operation' => $operation,
-										'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation),
+										'definitionParameters' => $this->getRouteOperationDefinitionParameters(false, $path, $httpMethod, $operation, ucfirst($typeTag), $this->resourcesData[ucfirst($typeTag)]['properties']),
 										'summary' => $this->getRouteOperationSummary($path, $httpMethod, $operation),
 										'description' => $this->getRouteOperationDescription($path, $httpMethod, $operation),
 										'exceptedResponseCode' => $this->getRouteOperationExceptedResponseCode($operation)
@@ -1376,6 +1376,62 @@ class Generator
 	}
 	
 	/**
+	 * Check if a parameter exists in the resource properties
+	 *
+	 * @param mixed $p Parameter
+	 * @param string $resourceName Resource name
+	 * @param mixed[] $resourceProperties Properties
+	 * @return boolean
+	 */
+	protected function isParameterExistsInResourceProperties($p, $resourceName = '', $resourceProperties)
+	{
+		// Reference
+		if (isset($p['$ref'])) {
+			$parameter = $this->resolveReference($p['$ref'])['target'];
+		} else {
+			$parameter = $p;
+		}
+		
+		// Check if it's a resource property
+		if (count($resourceProperties) > 0) {
+			// Resource Id pattern
+			$pattern = '/(\w+)Id$/';
+			if (preg_match($pattern, $parameter['name'])) {
+				$resourcePropertyToMatch = ucfirst(substr($parameter['name'], 0, strlen($parameter['name']) - 2));
+				$snakeCaseResourcePropertyToMatch = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $resourcePropertyToMatch));
+				foreach ($resourceProperties as $resourceProperty) {
+					if ($resourceProperty['name'] == $snakeCaseResourcePropertyToMatch) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		// This resource Id ?
+		
+		// Resource Id pattern
+		$pattern = '/(\w+)Id$/';
+		
+		if (preg_match($pattern, $parameter['name'])) {
+			$resourcePropertyToMatch = ucfirst(substr($parameter['name'], 0, strlen($parameter['name']) - 2));
+			if ($resourceName == $resourcePropertyToMatch) {
+				return true;
+			}
+		}
+		
+		// This resource composite key or foreign key ?
+		
+		$snakeCaseParameterName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $parameter['name']));
+		foreach ($resourceProperties as $resourceProperty) {
+			if ($resourceProperty['name'] == $snakeCaseParameterName) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * Return the query parameters of a resource/manager class method
 	 * Reordered bu requirement
 	 *
@@ -1533,10 +1589,12 @@ class Generator
 	 * @param string $path
 	 * @param string $httpMethod
 	 * @param mixed[] $operation
+	 * @param string $resourceName Resource name
+	 * @param mixed[] $resourceProperties Properties
 	 * @return mixed[]
 	 * @throws Exception
 	 */
-	protected function getRouteOperationDefinitionParameters($inPath, $path, $httpMethod, $operation)
+	protected function getRouteOperationDefinitionParameters($inPath, $path, $httpMethod, $operation, $resourceName = '', $resourceProperties = [])
 	{
 		$result = [];
 
@@ -1549,8 +1607,11 @@ class Generator
 				} else {
 					$parameter = $p;
 				}
-
-				if (!$inPath && $parameter['in'] == 'path') {
+				
+				if (!$inPath &&
+					$parameter['in'] == 'path' &&
+					$this->isParameterExistsInResourceProperties($p, $resourceName, $resourceProperties))
+				{
 					continue;
 				}
 
