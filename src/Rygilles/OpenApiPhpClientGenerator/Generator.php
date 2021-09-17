@@ -808,6 +808,16 @@ class Generator
 	protected function computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $return, $addLeadingTabs = false, $tabs = 2, $arrayContext = '', $isArrayResponse = false, $levelsReturns = [])
 	{
 		$newTabs = $tabs + 1;
+		
+		if (!isset($this->resourcesData[$return])) {
+			dd([
+				'typeTag' => $typeTag,
+				'classTypeName' => $classTypeName,
+				'operation' => $operation,
+				'return' => $return,
+			]);
+		}
+		
 		$resourceData = $this->resourcesData[$return];
 
 		// Prevent recursion
