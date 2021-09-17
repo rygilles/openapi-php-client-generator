@@ -6,11 +6,9 @@ use Exception;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Environment;
+use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFilter;
-use Twig_Environment;
-use Twig_Extension_Debug;
-use Twig_TemplateWrapper;
 
 
 /**
@@ -133,56 +131,56 @@ class Generator
 	/**
 	 * Twig templates environment
 	 *
-	 * @var Twig_Environment
+	 * @var TwigEnvironment
 	 */
 	protected $twigEnv;
 
 	/**
 	 * Twig manager template
 	 *
-	 * @var Twig_TemplateWrapper
+	 * @var TwigTemplateWrapper
 	 */
 	protected $managerTemplate;
 
 	/**
 	 * Twig resource template
 	 *
-	 * @var Twig_TemplateWrapper
+	 * @var TwigTemplateWrapper
 	 */
 	protected $resourceTemplate;
 
 	/**
 	 * Twig main client template
 	 *
-	 * @var Twig_TemplateWrapper
+	 * @var TwigTemplateWrapper
 	 */
 	protected $mainClientTemplate;
 
 	/**
 	 * Twig main client test template
 	 *
-	 * @var Twig_TemplateWrapper|null
+	 * @var TwigTemplateWrapper|null
 	 */
 	protected $mainClientTestTemplate;
 
 	/**
 	 * Twig manager test template
 	 *
-	 * @var Twig_TemplateWrapper|null
+	 * @var TwigTemplateWrapper|null
 	 */
 	protected $managerTestTemplate;
 
 	/**
 	 * Twig main exception template
 	 *
-	 * @var Twig_TemplateWrapper
+	 * @var TwigTemplateWrapper
 	 */
 	protected $mainExceptionTemplate;
 
 	/**
 	 * Twig unexpected response exception template
 	 *
-	 * @var Twig_TemplateWrapper
+	 * @var TwigTemplateWrapper
 	 */
 	protected $unexpectedResponseExceptionTemplate;
 
@@ -2029,7 +2027,7 @@ class Generator
 	{
 		$loader = new FilesystemLoader(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'templates');
 		$this->twigEnv = new  Environment($loader, ['cache' => false, 'debug' => true]);
-		$this->twigEnv->addExtension(new Twig_Extension_Debug());
+		$this->twigEnv->addExtension(new DebugExtension());
 
 		// Custom filter for phpdoc
 		$filter = new TwigFilter('phpdoc', function($string, $indentationCount = 0, $indentChar = "\t") {
