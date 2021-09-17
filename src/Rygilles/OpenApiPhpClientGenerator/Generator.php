@@ -810,16 +810,11 @@ class Generator
 		$newTabs = $tabs + 1;
 		
 		if (!isset($this->resourcesData[$return])) {
-			\dump([
-				'typeTag' => $typeTag,
-				'classTypeName' => $classTypeName,
-				'operation' => $operation,
-				'return' => $return,
-			]);
+			return '';
 		}
 		
 		$resourceData = $this->resourcesData[$return];
-
+		
 		// Prevent recursion
 		$levelsReturns[] = $return;
 
