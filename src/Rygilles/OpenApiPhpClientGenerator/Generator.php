@@ -1385,11 +1385,11 @@ class Generator
 	 * Check if a parameter exists in the resource properties
 	 *
 	 * @param mixed $p Parameter
-	 * @param string $resourceName Resource name
 	 * @param mixed[] $resourceProperties Properties
+	 * @param string $resourceName Resource name
 	 * @return boolean
 	 */
-	protected function isParameterExistsInResourceProperties($p, $resourceName = '', $resourceProperties)
+	protected function isParameterExistsInResourceProperties($p, $resourceProperties, $resourceName = '')
 	{
 		// Reference
 		if (isset($p['$ref'])) {
@@ -1616,7 +1616,7 @@ class Generator
 				
 				if (!$inPath &&
 					$parameter['in'] == 'path' &&
-					$this->isParameterExistsInResourceProperties($p, $resourceName, $resourceProperties))
+					$this->isParameterExistsInResourceProperties($p, $resourceProperties, $resourceName))
 				{
 					continue;
 				}
