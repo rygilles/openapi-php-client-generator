@@ -810,7 +810,7 @@ class Generator
 		$newTabs = $tabs + 1;
 		
 		if (!isset($this->resourcesData[$return])) {
-			dd([
+			dump([
 				'typeTag' => $typeTag,
 				'classTypeName' => $classTypeName,
 				'operation' => $operation,
