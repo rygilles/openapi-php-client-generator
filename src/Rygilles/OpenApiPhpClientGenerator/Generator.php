@@ -810,118 +810,119 @@ class Generator
 	{
 		$newTabs = $tabs + 1;
 		
-		if (!isset($this->resourcesData[$return])) {
-			return '';
+		if (isset($this->resourcesData[$return])) {
+			$resourceData = $this->resourcesData[$return];
 		}
-		
-		$resourceData = $this->resourcesData[$return];
 		
 		// Prevent recursion
 		$levelsReturns[] = $return;
-
+		
 		$callBody = str_repeat("\t", $newTabs) . '$this->apiClient, ' . "\n";
-		if (isset($resourceData['properties'])) {
-			foreach ($resourceData['properties'] as $property) {
-				$required = false;
-				if (isset($property['required'])) {
-					$required = $property['required'];
-				}
-
-				if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
-					// Prevent recursion
-					if (in_array($property['items'], $levelsReturns)) {
-						$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
-						continue;
+		
+		if (isset($this->resourcesData[$return])) {
+			if (isset($resourceData['properties'])) {
+				foreach ($resourceData['properties'] as $property) {
+					$required = false;
+					if (isset($property['required'])) {
+						$required = $property['required'];
 					}
-
-					$subMaker = $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, '', true, $levelsReturns);
-
-					// Add 'use'
-					switch ($typeTag) {
-						case 'Managers':
-							if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
-								$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
-							}
-							break;
-						case 'Resources':
-							// Same namespace, no need to add "use" of another resource
-							/*
-							if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
-								$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
-							}
-							*/
-							break;
-					}
-
-					$callBody .= str_repeat("\t", $newTabs) . 'array_map(function($data) {' . "\n";
-					$callBody .= str_repeat("\t", $newTabs + 1) . 'return ';
-					$callBody .= $subMaker . '; ' . "\n";
-					$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . '), ' . "\n";
-				}
-				elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
-					// Prevent recursion
-					if (in_array($property['type'], $levelsReturns)) {
-						$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
-						continue;
-					}
-
-					// Add 'use'
-					switch ($typeTag) {
-						case 'Managers':
-							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
-								$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
-							}
-							break;
-						case 'Resources':
-							if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
+					
+					if (isset($property['type']) && ($property['type'] == 'array') && isset($property['items']) && isset($this->resourcesData[$property['items']])) {
+						// Prevent recursion
+						if (in_array($property['items'], $levelsReturns)) {
+							$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
+							continue;
+						}
+						
+						$subMaker = $this->computeOperationResponsesMaker($typeTag, $classTypeName, $operation, $property['items'], false, $newTabs + 1, '', true, $levelsReturns);
+						
+						// Add 'use'
+						switch ($typeTag) {
+							case 'Managers':
+								if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
+									$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
+								}
+								break;
+							case 'Resources':
 								// Same namespace, no need to add "use" of another resource
-								//$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
+								/*
+								if (!in_array($this->namespace . '\\Resources\\' . $property['items'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
+									$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['items'];
+								}
+								*/
+								break;
+						}
+						
+						$callBody .= str_repeat("\t", $newTabs) . 'array_map(function($data) {' . "\n";
+						$callBody .= str_repeat("\t", $newTabs + 1) . 'return ';
+						$callBody .= $subMaker . '; ' . "\n";
+						$callBody .= str_repeat("\t", $newTabs) . '}, $requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . '), ' . "\n";
+					} elseif (isset($property['type']) && isset($this->resourcesData[$property['type']])) {
+						// Prevent recursion
+						if (in_array($property['type'], $levelsReturns)) {
+							$callBody .= str_repeat("\t", $newTabs) . 'null, ' . "\n";
+							continue;
+						}
+						
+						// Add 'use'
+						switch ($typeTag) {
+							case 'Managers':
+								if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->managersData[ucfirst($classTypeName)]['uses'])) {
+									$this->managersData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
+								}
+								break;
+							case 'Resources':
+								if (!in_array($this->namespace . '\\Resources\\' . $property['type'], $this->resourcesData[ucfirst($classTypeName)]['uses'])) {
+									// Same namespace, no need to add "use" of another resource
+									//$this->resourcesData[ucfirst($classTypeName)]['uses'][] = $this->namespace . '\\Resources\\' . $property['type'];
+								}
+								break;
+						}
+						
+						if ($required) {
+							$subMaker = $this->computeOperationResponsesMaker(
+								$typeTag, $classTypeName, $operation, $property['type'],
+								true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
+								$isArrayResponse, $levelsReturns
+							);
+							
+							$callBody .= $subMaker . ', ' . "\n";
+						} else {
+							if ($isArrayResponse) {
+								$subMaker = $this->computeOperationResponsesMaker(
+									$typeTag, $classTypeName, $operation, $property['type'],
+									false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
+									$isArrayResponse, $levelsReturns
+								);
+								$callBody .= str_repeat("\t", $newTabs) . '((isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') && !is_null($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ')) ? (' . $subMaker . ') : null), ' . "\n";
+							} else {
+								$subMaker = $this->computeOperationResponsesMaker(
+									$typeTag, $classTypeName, $operation, $property['type'],
+									false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
+									$isArrayResponse, $levelsReturns
+								);
+								$callBody .= str_repeat("\t", $newTabs) . '((isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') && !is_null($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ')) ? (' . $subMaker . ') : null), ' . "\n";
 							}
-							break;
-					}
-
-					if ($required) {
-						$subMaker = $this->computeOperationResponsesMaker(
-							$typeTag, $classTypeName, $operation, $property['type'],
-							true, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
-							$isArrayResponse, $levelsReturns
-						);
-
-						$callBody .= $subMaker . ', ' . "\n";
+						}
 					} else {
 						if ($isArrayResponse) {
-							$subMaker = $this->computeOperationResponsesMaker(
-								$typeTag, $classTypeName, $operation, $property['type'],
-								false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
-								$isArrayResponse, $levelsReturns
-							);
-							$callBody .= str_repeat("\t", $newTabs) . '((isset($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ') && !is_null($data' . $arrayContext . '[\'' . $property['name'] . '\']' . ')) ? (' . $subMaker . ') : null), ' . "\n";
+							if ($required) {
+								$callBody .= str_repeat("\t", $newTabs) . '$data' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+							} else {
+								$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']) ? $data' . '[\'' . $property['name'] . '\'] : null), ' . "\n";
+							}
 						} else {
-							$subMaker = $this->computeOperationResponsesMaker(
-								$typeTag, $classTypeName, $operation, $property['type'],
-								false, $newTabs, $arrayContext . '[\'' . $property['name'] . '\']',
-								$isArrayResponse, $levelsReturns
-							);
-							$callBody .= str_repeat("\t", $newTabs) . '((isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ') && !is_null($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ')) ? (' . $subMaker . ') : null), ' . "\n";
-						}
-					}
-				} else {
-					if ($isArrayResponse) {
-						if ($required) {
-							$callBody .= str_repeat("\t", $newTabs) . '$data' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
-						} else {
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($data' . $arrayContext . '[\'' . $property['name'] . '\']) ? $data' . '[\'' . $property['name'] . '\'] : null), ' . "\n";
-						}
-					} else {
-						if ($required) {
-							$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
-						} else {
-							$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']) ? $requestBody' . $arrayContext . '[\'' . $property['name'] . '\'] : null), ' . "\n";
+							if ($required) {
+								$callBody .= str_repeat("\t", $newTabs) . '$requestBody' . $arrayContext . '[\'' . $property['name'] . '\']' . ', ' . "\n";
+							} else {
+								$callBody .= str_repeat("\t", $newTabs) . '(isset($requestBody' . $arrayContext . '[\'' . $property['name'] . '\']) ? $requestBody' . $arrayContext . '[\'' . $property['name'] . '\'] : null), ' . "\n";
+							}
 						}
 					}
 				}
 			}
 		}
+		
 		$callBody = rtrim($callBody, (', ' . "\n"));
 
 		$responseMaker = ($addLeadingTabs ? str_repeat("\t", $tabs) : '') . 'new ' . $return . '(' . "\n" . $callBody . "\n" . str_repeat("\t", $tabs) . ')' . (($tabs == 2) ? ';' : '');
