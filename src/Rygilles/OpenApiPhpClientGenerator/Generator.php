@@ -5,6 +5,9 @@ namespace Rygilles\OpenApiPhpClientGenerator;
 use Exception;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+use Twig\TwigFilter;
 use Twig_Environment;
 use Twig_Extension_Debug;
 use Twig_TemplateWrapper;
@@ -2024,12 +2027,12 @@ class Generator
 	 */
 	protected function loadTemplates()
 	{
-		$loader = new \Twig_Loader_Filesystem(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'templates');
-		$this->twigEnv = new Twig_Environment($loader, ['cache' => false, 'debug' => true]);
+		$loader = new FilesystemLoader(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'templates');
+		$this->twigEnv = new  Environment($loader, ['cache' => false, 'debug' => true]);
 		$this->twigEnv->addExtension(new Twig_Extension_Debug());
 
 		// Custom filter for phpdoc
-		$filter = new \Twig_Filter('phpdoc', function($string, $indentationCount = 0, $indentChar = "\t") {
+		$filter = new TwigFilter('phpdoc', function($string, $indentationCount = 0, $indentChar = "\t") {
 			$result = str_repeat($indentChar, $indentationCount) . '/**' . "\n";
 			// Split per line
 			$lines = explode("\n", trim($string));
